@@ -4,13 +4,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v2
-      - name: Setup JDK
+      - name: setup JDK
         uses: actions/setup-java@v2
         with:
           distribution: temurin
           java-version: 8
+      - name: check
+        run: sbt scalafmtSbtCheck scalafmtCheckAll
       - name: compile
         run: sbt compile
       - name: test
