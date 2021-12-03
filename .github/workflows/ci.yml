@@ -15,7 +15,7 @@ jobs:
           distribution: temurin
           java-version: 8
       - name: check
-        run: sbt -v scalafmtSbtCheck scalafmtCheckAll
+        run: sbt -v +scalafmtSbtCheck 
       - name: compile
         run: sbt -v compile
       - name: test
