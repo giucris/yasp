@@ -1,36 +1,28 @@
-name: CI
+name: ci
 on: [push]
 jobs:
-  test:
+  ci:
     runs-on: ubuntu-latest
     env:
-      # define Java options for both official sbt and sbt-extras
       JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
       JVM_OPTS:  -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
     steps:
     - name: checkout
       uses: actions/checkout@v2
-    - name: setup JDK
+    - name: setup jdk
       uses: actions/setup-java@v2
       with:
         distribution: temurin
         java-version: 8
-    - name: Coursier cache
+    - name: setup cache
       uses: coursier/cache-action@v6
-    - name: Build and test
-      shell: bash
-      run: |
-        sbt -v "scalafmtCheckAll; +test;"
-    - name: Build and test (2)
-      shell: bash
-      run: |
-        sbt -v "scripted actions/*"
-    - name: Build and test (3)
-      shell: bash
-      run: |
-        sbt -v "dependency-management/*"
-    - name: Cleanup before cache
-      shell: bash
+    - name: check style
+      run: sbt scalafmtSbtCheck scalafmtCheckAll
+    - name: compile
+      run: sbt compile
+    - name: test
+      run: sbt test
+    - name: cleanup cache
       run: |
         rm -rf "$HOME/.ivy2/local" || true
         find $HOME/Library/Caches/Coursier/v1        -name "ivydata-*.properties" -delete || true
