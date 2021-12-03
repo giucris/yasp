@@ -20,7 +20,7 @@ jobs:
     - name: Build and test
       shell: bash
       run: |
-        sbt -v "mimaReportBinaryIssues; scalafmtCheckAll; +test;"
+        sbt -v "scalafmtCheckAll; +test;"
     - name: Build and test (2)
       shell: bash
       run: |
