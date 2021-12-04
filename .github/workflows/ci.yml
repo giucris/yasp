@@ -21,7 +21,7 @@ jobs:
     - name: compile
       run: sbt compile
     - name: test
-      run: sbt clean coverage test coverageReport
+      run: sbt clean coverage test coverageAggregate
     - name: Upload coverage to codecov
       uses: codecov/codecov-action@v1
       with:
