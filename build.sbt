@@ -11,7 +11,8 @@ lazy val dependencies = new {
   val scalatest = "org.scalatest"    %% "scalatest" % scalaTestV
 }
 
-lazy val root = project in file(".")
+lazy val root = (project in file("."))
+  .aggregate(core)
 
 lazy val core = (project in file("yasp-core"))
   .settings(
