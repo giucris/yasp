@@ -21,7 +21,12 @@ jobs:
     - name: compile
       run: sbt compile
     - name: test
-      run: sbt test
+      run: sbt clean coverage test coverageAggregate
+    - name: upload coverage to codecov
+      uses: codecov/codecov-action@v2
+      with:
+        token: ${{secrets.CODECOV_TOKEN}}
+        fail_ci_if_error: true
     - name: cleanup cache
       run: |
         rm -rf "$HOME/.ivy2/local" || true
