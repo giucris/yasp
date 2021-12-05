@@ -22,9 +22,10 @@ jobs:
       run: sbt compile
     - name: test
       run: sbt clean coverage test coverageAggregate
-    - name: Upload coverage to codecov
-      uses: codecov/codecov-action@v1
+    - name: upload coverage to codecov
+      uses: codecov/codecov-action@v2
       with:
+        token: ${{secrets.CODECOV_TOKEN}}
         fail_ci_if_error: true
     - name: cleanup cache
       run: |
