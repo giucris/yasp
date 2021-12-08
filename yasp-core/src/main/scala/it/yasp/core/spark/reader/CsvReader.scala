@@ -13,8 +13,10 @@ class CsvReader(spark: SparkSession) {
     *   the csv path as [[String]]
     * @param header
     *   a [[Boolean]] that describe if there is header on the csv files
+    * @param separator
+    *   a separator that will be used to parse the input csv files
     * @return
     */
-  def read(path: String, header: Boolean): Dataset[Row] =
-    spark.read.option("header", header).csv(path)
+  def read(path: String, header: Boolean, separator: String): Dataset[Row] =
+    spark.read.option("header", header).option("sep", separator).csv(path)
 }
