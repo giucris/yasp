@@ -1,11 +1,12 @@
 package it.yasp.core.spark
 
-import it.yasp.core.spark.reader.CsvReaderTest
+import it.yasp.core.spark.reader.{CsvReaderTest, ParquetReaderTest}
 import it.yasp.core.spark.session.SparkSessionFactoryTest
 import org.scalatest.Stepwise
 
-class YaspCoreSparkSuites
+class YaspCoreSuites
     extends Stepwise(
       new SparkSessionFactoryTest,
-      new CsvReaderTest
+      new CsvReaderTest,
+      new ParquetReaderTest
     )

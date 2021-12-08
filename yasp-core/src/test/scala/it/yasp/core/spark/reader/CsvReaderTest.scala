@@ -1,5 +1,6 @@
 package it.yasp.core.spark.reader
 
+import it.yasp.core.spark.testutils.SparkTestSuite
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes._
 import org.apache.spark.sql.types.{StructField, StructType}
@@ -12,15 +13,19 @@ import scala.collection.JavaConverters.asJavaIterableConverter
 import scala.reflect.io.Path
 
 @DoNotDiscover
-class CsvReaderTest extends AnyFunSuite with BeforeAndAfterAll {
+class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
 
   private val workspace = "yasp-core/src/test/resources/CsvReaderTest"
 
-  override protected def beforeAll(): Unit =
+  override protected def beforeAll(): Unit = {
     cleanWorkspace(workspace)
+    super.beforeAll()
+  }
 
-  override protected def afterAll(): Unit =
+  override protected def afterAll(): Unit = {
     cleanWorkspace(workspace)
+    super.afterAll()
+  }
 
   test("read without header") {
     createFile(Seq("h1,h2,h3", "a,b,c"), s"$workspace/read1/file1.csv")
@@ -58,15 +63,6 @@ class CsvReaderTest extends AnyFunSuite with BeforeAndAfterAll {
     val actual   = new CsvReader(session).read(s"$workspace/read1/file2.csv", header = true)
     assertDatasetEquals(actual, expected)
     session.stop()
-  }
-
-  private def assertDatasetEquals(actual: Dataset[Row], expected: Dataset[Row]): Assertion = {
-    val actualSchema      = actual.schema
-    val expectedSchema    = expected.schema
-    val actualCollected   = actual.collect()
-    val expectedCollected = expected.collect()
-    assert(actualSchema == expectedSchema)
-    assert(actualCollected sameElements expectedCollected)
   }
 
   def createFile(content: Seq[String], filePath: String): Unit = {
