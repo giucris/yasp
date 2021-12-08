@@ -6,7 +6,7 @@ import org.scalatest.{BeforeAndAfterAll, Suite}
 trait SharedSparkSession extends BeforeAndAfterAll {
   this: Suite =>
 
-  @transient var spark: SparkSession = _
+  var spark: SparkSession = _
 
   override protected def beforeAll(): Unit = {
     spark = SparkSession
