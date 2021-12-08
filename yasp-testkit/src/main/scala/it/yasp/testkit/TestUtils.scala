@@ -1,4 +1,4 @@
-package it.yasp.core.spark.testutils
+package it.yasp.testkit
 
 import java.nio.file.{Files, Paths}
 import scala.collection.JavaConverters.asJavaIterableConverter

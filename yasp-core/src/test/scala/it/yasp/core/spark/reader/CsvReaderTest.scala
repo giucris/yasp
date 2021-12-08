@@ -1,16 +1,12 @@
 package it.yasp.core.spark.reader
 
-import it.yasp.core.spark.testutils.{SparkTestSuite, TestUtils}
+import it.yasp.testkit.{SparkTestSuite, TestUtils}
+import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes._
 import org.apache.spark.sql.types.{StructField, StructType}
-import org.apache.spark.sql.{Dataset, Row, SparkSession}
+import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.{Assertion, BeforeAndAfterAll, DoNotDiscover}
-
-import java.nio.file.{Files, Paths}
-import scala.collection.JavaConverters.asJavaIterableConverter
-import scala.reflect.io.Path
 
 @DoNotDiscover
 class CsvReaderTest extends AnyFunSuite with SparkTestSuite {

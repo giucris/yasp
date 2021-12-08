@@ -12,7 +12,17 @@ lazy val dependencies = new {
 }
 
 lazy val root = (project in file("."))
-  .aggregate(core)
+  .aggregate(testKit, core)
+
+lazy val testKit = (project in file("yasp-testkit"))
+  .settings(
+    name := "yasp-testkit",
+    libraryDependencies ++= Seq(
+      dependencies.sparkSql,
+      dependencies.scalactic,
+      dependencies.scalatest
+    )
+  )
 
 lazy val core = (project in file("yasp-core"))
   .settings(
@@ -23,3 +33,4 @@ lazy val core = (project in file("yasp-core"))
       dependencies.scalatest % "test"
     )
   )
+  .dependsOn(testKit % "test")
