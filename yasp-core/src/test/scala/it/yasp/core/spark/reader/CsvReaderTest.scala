@@ -3,9 +3,9 @@ package it.yasp.core.spark.reader
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes._
 import org.apache.spark.sql.types.{StructField, StructType}
-import org.apache.spark.sql.{DataFrame, DataFrameReader, Dataset, Row, SparkSession}
-import org.scalatest.{Assertion, BeforeAndAfterAll, DoNotDiscover}
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.{Assertion, BeforeAndAfterAll, DoNotDiscover}
 
 import java.nio.file.{Files, Paths}
 import scala.collection.JavaConverters.asJavaIterableConverter
@@ -61,8 +61,6 @@ class CsvReaderTest extends AnyFunSuite with BeforeAndAfterAll {
   }
 
   private def assertDatasetEquals(actual: Dataset[Row], expected: Dataset[Row]): Assertion = {
-    actual.show()
-    expected.show()
     val actualSchema      = actual.schema
     val expectedSchema    = expected.schema
     val actualCollected   = actual.collect()

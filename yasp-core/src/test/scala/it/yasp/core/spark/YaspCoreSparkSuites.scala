@@ -2,7 +2,7 @@ package it.yasp.core.spark
 
 import it.yasp.core.spark.reader.CsvReaderTest
 import it.yasp.core.spark.session.SparkSessionFactoryTest
-import org.scalatest.{Stepwise, Suite}
+import org.scalatest.Stepwise
 
 class YaspCoreSparkSuites
     extends Stepwise(
