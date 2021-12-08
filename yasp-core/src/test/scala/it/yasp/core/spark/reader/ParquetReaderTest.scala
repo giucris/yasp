@@ -1,5 +1,6 @@
 package it.yasp.core.spark.reader
 
+import it.yasp.core.spark.model.Parquet
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -51,7 +52,8 @@ class ParquetReaderTest extends AnyFunSuite with SparkTestSuite {
           )
         )
       )
-    val actual   = new ParquetReader(spark).read(s"$workspace/parquet1/")
+    val actual   =
+      new ParquetReader(spark).read(Parquet(s"$workspace/parquet1/", mergeSchema = false))
     assertDatasetEquals(actual, expected)
   }
 

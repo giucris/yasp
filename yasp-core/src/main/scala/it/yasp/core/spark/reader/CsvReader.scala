@@ -1,5 +1,6 @@
 package it.yasp.core.spark.reader
 
+import it.yasp.core.spark.model.Csv
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 /** CsvReader
@@ -17,6 +18,6 @@ class CsvReader(spark: SparkSession) {
     *   a separator that will be used to parse the input csv files
     * @return
     */
-  def read(path: String, header: Boolean, separator: String): Dataset[Row] =
-    spark.read.option("header", header).option("sep", separator).csv(path)
+  def read(csv: Csv): Dataset[Row] =
+    spark.read.option("header", csv.header).option("sep", csv.separator).csv(csv.path)
 }
