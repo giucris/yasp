@@ -4,7 +4,9 @@ import it.yasp.core.spark.session.SessionType.{Distributed, Local}
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 
-/** SparkSessionFactory provide a create method to build SparkSession starting from SparkSessionConf
+/** SparkSessionFactory
+  *
+  * Provide a create method to build SparkSession starting from SparkSessionConf
   */
 class SparkSessionFactory {
 
