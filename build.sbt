@@ -3,7 +3,7 @@ ThisBuild / version      := "0.0.1"
 ThisBuild / scalaVersion := "2.12.10"
 
 lazy val dependencies = new {
-  val sparkSqlV   = "2.4.7"
+  val sparkSqlV   = "2.4.4"
   val scalaTestV  = "3.2.10"
   val h2databaseV = "1.4.200"
 
@@ -11,6 +11,7 @@ lazy val dependencies = new {
   val scalactic  = "org.scalactic"    %% "scalactic" % scalaTestV
   val scalatest  = "org.scalatest"    %% "scalatest" % scalaTestV
   val h2database = "com.h2database"    % "h2"        % h2databaseV
+
 }
 
 lazy val root = (project in file("."))
@@ -36,4 +37,4 @@ lazy val core = (project in file("yasp-core"))
       dependencies.h2database % Test
     )
   )
-  .dependsOn(testKit % "test")
+  .dependsOn(testKit % Test)

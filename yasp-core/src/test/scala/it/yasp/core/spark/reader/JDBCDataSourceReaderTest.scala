@@ -11,50 +11,54 @@ import org.h2.Driver
 import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
+import java.sql.Connection
 import java.sql.DriverManager._
-import java.sql.{Connection, DriverManager}
 
 @DoNotDiscover
 class JDBCDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
-  val connUrl1: String  = "jdbc:h2:mem:db1"
-  val connUrl2: String  = "jdbc:h2:mem:db2"
+  val connUrl1: String = "jdbc:h2:mem:db1"
+  val connUrl2: String = "jdbc:h2:mem:db2"
+
   registerDriver(new Driver)
   val conn1: Connection = getConnection(connUrl1)
   val conn2: Connection = getConnection(connUrl2, "usr", "pwd")
 
   override protected def beforeAll(): Unit = {
-    executeStatement(
-      conn1,
-      "CREATE TABLE table_1(id INT NOT NULL, name VARCHAR(20) NOT NULL,PRIMARY KEY(id)"
-    )
-    val DDL = "CREATE TABLE test_table (" +
-      "id INT NOT NULL, " +
-      "name VARCHAR(20) NOT NULL, " +
-      "PRIMARY KEY (id))"
-    val DML = "INSERT INTO test_table VALUES (1, 'test_data'), (2,'t2'), (3,'t3'),(4,'t4')"
-    executeStatement(conn1, DDL)
-    executeStatement(conn1, DML)
-    executeStatement(conn2, DDL)
-    executeStatement(conn2, DML)
     super.beforeAll()
+    executeStatement(
+      conn = conn1,
+      stmt = "CREATE TABLE my_table (id INT,name VARCHAR(20),PRIMARY KEY (id))"
+    )
+    executeStatement(
+      conn = conn2,
+      stmt = "CREATE TABLE my_table (id INT,name VARCHAR(20),PRIMARY KEY (id))"
+    )
+    executeStatement(
+      conn = conn1,
+      stmt = "INSERT INTO my_table VALUES (1, 'name1'), (2,'name2'), (3,'name3'),(4,'name4')"
+    )
+    executeStatement(
+      conn = conn2,
+      stmt = "INSERT INTO my_table VALUES (1, 'name1'), (2,'name2'), (3,'name3'),(4,'name4')"
+    )
   }
 
-  override def afterAll(): Unit = {
-    super.afterAll()
-    executeStatement(conn1, "DROP TABLE test_table")
-    executeStatement(conn2, "DROP TABLE test_table")
+  override protected def afterAll(): Unit = {
+    executeStatement(conn1, "DROP TABLE my_table")
+    executeStatement(conn2, "DROP TABLE my_table")
     executeStatement(conn1, "SHUTDOWN")
     executeStatement(conn2, "SHUTDOWN")
+    super.afterAll()
   }
 
   test("read database table") {
     val expected = spark.createDataset(
       Seq(
-        Row(1, "test_data"),
-        Row(2, "t2"),
-        Row(3, "t3"),
-        Row(4, "t4")
+        Row(1, "name1"),
+        Row(2, "name2"),
+        Row(3, "name3"),
+        Row(4, "name4")
       )
     )(
       RowEncoder(
@@ -67,18 +71,18 @@ class JDBCDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
     val actual   = new JDBCDataSourceReader(spark).read(
-      JDBC(url = connUrl1, table = "test_table", credentials = None)
+      JDBC(url = connUrl1, table = "my_table", credentials = None)
     )
     assertDatasetEquals(actual, expected)
   }
 
-  test("read database table with credentials") {
+  test("read database table with BasicCredentials") {
     val expected = spark.createDataset(
       Seq(
-        Row(1, "test_data"),
-        Row(2, "t2"),
-        Row(3, "t3"),
-        Row(4, "t4")
+        Row(1, "name1"),
+        Row(2, "name2"),
+        Row(3, "name3"),
+        Row(4, "name4")
       )
     )(
       RowEncoder(
@@ -91,11 +95,7 @@ class JDBCDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
     val actual   = new JDBCDataSourceReader(spark).read(
-      JDBC(
-        url = connUrl2,
-        table = "test_table",
-        credentials = Some(BasicCredentials("usr", "pwd"))
-      )
+      JDBC(url = connUrl2, table = "my_table", credentials = Some(BasicCredentials("usr", "pwd")))
     )
     assertDatasetEquals(actual, expected)
   }
@@ -114,18 +114,17 @@ class JDBCDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
     val actual = new JDBCDataSourceReader(spark)
       .read(
         JDBC(
-          url = connUrl2,
-          table = "(select ID from test_table where id=1) test",
+          url = "jdbc:h2:mem:db2",
+          table = "(select ID from my_table where id=1) test",
           credentials = Some(BasicCredentials("usr", "pwd"))
         )
       )
     assertDatasetEquals(actual, expected)
   }
 
-  private def executeStatement(conn: Connection, DDL: String): Unit = {
-    val stmnt1 = conn.createStatement
-    stmnt1.execute(DDL)
-    stmnt1.close()
+  private def executeStatement(conn: Connection, stmt: String): Unit = {
+    val statement = conn.createStatement
+    statement.execute(stmt)
+    statement.close()
   }
-
 }

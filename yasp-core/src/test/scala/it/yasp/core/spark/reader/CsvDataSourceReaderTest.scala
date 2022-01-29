@@ -15,19 +15,15 @@ class CsvDataSourceReaderTest extends AnyFunSuite with BeforeAndAfterEach with S
 
   private val workspace = "yasp-core/src/test/resources/CsvReaderTest"
 
-  override protected def beforeEach(): Unit = {
+  override protected def beforeAll(): Unit = {
     TestUtils.cleanFolder(workspace)
-    super.beforeEach()
+    super.beforeAll()
   }
 
-  override protected def afterEach(): Unit = {
+  override protected def afterAll(): Unit = {
     TestUtils.cleanFolder(workspace)
-    super.afterEach()
+    super.afterAll()
   }
-
-  override protected def beforeAll(): Unit = super.beforeAll()
-
-  override protected def afterAll(): Unit = super.afterAll()
 
   test("read single file without header") {
     TestUtils.createFile(s"$workspace/singleCsv/file1.csv", Seq("h1,h2,h3", "a,b,c"))
@@ -53,7 +49,7 @@ class CsvDataSourceReaderTest extends AnyFunSuite with BeforeAndAfterEach with S
   }
 
   test("read single file with header") {
-    TestUtils.createFile(s"$workspace/singleCsv/file1.csv", Seq("h1,h2,h3", "a,b,c"))
+    TestUtils.createFile(s"$workspace/singleCsv/file2.csv", Seq("h1,h2,h3", "a,b,c"))
     val expected = spark.createDataset(Seq(Row("a", "b", "c")))(
       RowEncoder(
         StructType(
@@ -67,32 +63,9 @@ class CsvDataSourceReaderTest extends AnyFunSuite with BeforeAndAfterEach with S
     )
     val actual   = new CsvDataSourceReader(spark).read(
       Csv(
-        Seq(s"$workspace/singleCsv/file1.csv"),
+        Seq(s"$workspace/singleCsv/file2.csv"),
         header = true,
         separator = ","
-      )
-    )
-    assertDatasetEquals(actual, expected)
-  }
-
-  test("read single file without header and custom separator") {
-    TestUtils.createFile(s"$workspace/singleCsvCustomSep/file1.csv", Seq("h1|h2|h3", "a|b|c"))
-    val expected = spark.createDataset(Seq(Row("h1", "h2", "h3"), Row("a", "b", "c")))(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("_c0", StringType, nullable = true),
-            StructField("_c1", StringType, nullable = true),
-            StructField("_c2", StringType, nullable = true)
-          )
-        )
-      )
-    )
-    val actual   = new CsvDataSourceReader(spark).read(
-      Csv(
-        Seq(s"$workspace/singleCsvCustomSep/file1.csv"),
-        header = false,
-        separator = "|"
       )
     )
     assertDatasetEquals(actual, expected)
@@ -121,41 +94,16 @@ class CsvDataSourceReaderTest extends AnyFunSuite with BeforeAndAfterEach with S
     assertDatasetEquals(actual, expected)
   }
 
-  test("read multiple file without header") {
-    TestUtils.createFile(s"$workspace/multipleCsv/file1.csv", Seq("h1,h2,h3", "a,b,c"))
-    TestUtils.createFile(s"$workspace/multipleCsv/file2.csv", Seq("h1,h2,h3", "d,e,f"))
-    val expected = spark.createDataset(
-      Seq(
-        Row("h1", "h2", "h3"),
-        Row("a", "b", "c"),
-        Row("h1", "h2", "h3"),
-        Row("d", "e", "f")
-      )
-    )(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("_c0", StringType, nullable = true),
-            StructField("_c1", StringType, nullable = true),
-            StructField("_c2", StringType, nullable = true)
-          )
-        )
-      )
-    )
-    val actual   = new CsvDataSourceReader(spark).read(
-      Csv(
-        Seq(s"$workspace/multipleCsv/file1.csv", s"$workspace/multipleCsv/file2.csv"),
-        header = false,
-        separator = ","
-      )
-    )
-    assertDatasetEquals(actual, expected)
-  }
-
   test("read multiple file with header") {
     TestUtils.createFile(s"$workspace/multipleCsv/file1.csv", Seq("h1,h2,h3", "a,b,c"))
     TestUtils.createFile(s"$workspace/multipleCsv/file2.csv", Seq("h1,h2,h3", "d,e,f"))
-    val expected = spark.createDataset(Seq(Row("a", "b", "c"), Row("d", "e", "f")))(
+
+    val expected = spark.createDataset(
+      Seq(
+        Row("a", "b", "c"),
+        Row("d", "e", "f")
+      )
+    )(
       RowEncoder(
         StructType(
           Seq(
@@ -176,44 +124,15 @@ class CsvDataSourceReaderTest extends AnyFunSuite with BeforeAndAfterEach with S
     assertDatasetEquals(actual, expected)
   }
 
-  test("read multiple file without header and custom separator") {
+  test("read multiple file with header and custom separator") {
     TestUtils.createFile(s"$workspace/multipleCsvCustomSep/file1.csv", Seq("h1|h2|h3", "a|b|c"))
     TestUtils.createFile(s"$workspace/multipleCsvCustomSep/file2.csv", Seq("h1|h2|h3", "d|e|f"))
     val expected = spark.createDataset(
       Seq(
-        Row("h1", "h2", "h3"),
         Row("a", "b", "c"),
-        Row("h1", "h2", "h3"),
         Row("d", "e", "f")
       )
     )(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("_c0", StringType, nullable = true),
-            StructField("_c1", StringType, nullable = true),
-            StructField("_c2", StringType, nullable = true)
-          )
-        )
-      )
-    )
-    val actual   = new CsvDataSourceReader(spark).read(
-      Csv(
-        Seq(
-          s"$workspace/multipleCsvCustomSep/file1.csv",
-          s"$workspace/multipleCsvCustomSep/file2.csv"
-        ),
-        header = false,
-        separator = "|"
-      )
-    )
-    assertDatasetEquals(actual, expected)
-  }
-
-  test("read multiple file with header and custom separator") {
-    TestUtils.createFile(s"$workspace/multipleCsvCustomSep/file1.csv", Seq("h1|h2|h3", "a|b|c"))
-    TestUtils.createFile(s"$workspace/multipleCsvCustomSep/file2.csv", Seq("h1|h2|h3", "d|e|f"))
-    val expected = spark.createDataset(Seq(Row("a", "b", "c"), Row("d", "e", "f")))(
       RowEncoder(
         StructType(
           Seq(
@@ -226,10 +145,7 @@ class CsvDataSourceReaderTest extends AnyFunSuite with BeforeAndAfterEach with S
     )
     val actual   = new CsvDataSourceReader(spark).read(
       Csv(
-        Seq(
-          s"$workspace/multipleCsvCustomSep/file1.csv",
-          s"$workspace/multipleCsvCustomSep/file2.csv"
-        ),
+        paths = Seq(s"$workspace/multipleCsvCustomSep/"),
         header = true,
         separator = "|"
       )
