@@ -4,4 +4,5 @@
 
 Yet Another SPark Framework
 
-An easy tool for data engineering process built on top of Apache Spark
+An easy tool for data engineering process built on top of Apache Spark.
+

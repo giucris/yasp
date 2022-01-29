@@ -11,7 +11,7 @@ import org.scalatest.{BeforeAndAfterEach, DoNotDiscover}
 import org.scalatest.funsuite.AnyFunSuite
 
 @DoNotDiscover
-class CsvDataSourceReaderTest extends AnyFunSuite with BeforeAndAfterEach with SparkTestSuite {
+class CsvDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
   private val workspace = "yasp-core/src/test/resources/CsvReaderTest"
 

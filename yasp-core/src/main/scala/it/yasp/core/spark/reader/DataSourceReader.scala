@@ -1,7 +1,7 @@
 package it.yasp.core.spark.reader
 
 import it.yasp.core.spark.model.DataSource
-import it.yasp.core.spark.model.DataSource.{Csv, JDBC, Parquet}
+import it.yasp.core.spark.model.DataSource.{Csv, Jdbc, Json, Parquet}
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 /** DataSourceReader
@@ -37,8 +37,13 @@ object DataSourceReader {
         .parquet(source.paths: _*)
   }
 
-  class JDBCDataSourceReader(spark: SparkSession) extends DataSourceReader[JDBC] {
-    override def read(source: JDBC): Dataset[Row] =
+  class JsonDataSourceReader(spark: SparkSession) extends DataSourceReader[Json] {
+    override def read(source: Json): Dataset[Row] =
+      spark.read.json(source.paths: _*)
+  }
+
+  class JDBCDataSourceReader(spark: SparkSession) extends DataSourceReader[Jdbc] {
+    override def read(source: Jdbc): Dataset[Row] =
       spark.read
         .options(
           Map(

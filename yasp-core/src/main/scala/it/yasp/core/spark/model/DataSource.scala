@@ -15,7 +15,11 @@ object DataSource {
       mergeSchema: Boolean
   ) extends DataSource
 
-  case class JDBC(
+  case class Json(
+      paths: Seq[String]
+  ) extends DataSource
+
+  case class Jdbc(
       url: String,
       table: String,
       credentials: Option[BasicCredentials]
