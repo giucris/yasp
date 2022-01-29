@@ -3,9 +3,9 @@ ThisBuild / version      := "0.0.1"
 ThisBuild / scalaVersion := "2.12.10"
 
 lazy val dependencies = new {
-  val sparkSqlV  = "2.4.4"
+  val sparkSqlV  = "2.4.7"
   val scalaTestV = "3.2.10"
-  val derbyV     = "10.15.2.0"
+  val derbyV     = "10.14.2.0"
 
   val sparkSql  = "org.apache.spark" %% "spark-sql" % sparkSqlV
   val scalactic = "org.scalactic"    %% "scalactic" % scalaTestV
