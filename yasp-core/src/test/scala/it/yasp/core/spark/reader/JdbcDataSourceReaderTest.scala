@@ -1,7 +1,7 @@
 package it.yasp.core.spark.reader
 
 import it.yasp.core.spark.model.BasicCredentials
-import it.yasp.core.spark.model.DataSource.JDBC
+import it.yasp.core.spark.model.DataSource.Jdbc
 import it.yasp.core.spark.reader.DataSourceReader.JDBCDataSourceReader
 import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.Row
@@ -15,7 +15,7 @@ import java.sql.Connection
 import java.sql.DriverManager._
 
 @DoNotDiscover
-class JDBCDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
+class JdbcDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
   val connUrl1: String = "jdbc:h2:mem:db1"
   val connUrl2: String = "jdbc:h2:mem:db2"
@@ -71,7 +71,7 @@ class JDBCDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
     val actual   = new JDBCDataSourceReader(spark).read(
-      JDBC(url = connUrl1, table = "my_table", credentials = None)
+      Jdbc(url = connUrl1, table = "my_table", credentials = None)
     )
     assertDatasetEquals(actual, expected)
   }
@@ -95,7 +95,7 @@ class JDBCDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
     val actual   = new JDBCDataSourceReader(spark).read(
-      JDBC(url = connUrl2, table = "my_table", credentials = Some(BasicCredentials("usr", "pwd")))
+      Jdbc(url = connUrl2, table = "my_table", credentials = Some(BasicCredentials("usr", "pwd")))
     )
     assertDatasetEquals(actual, expected)
   }
@@ -113,7 +113,7 @@ class JDBCDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
     val actual = new JDBCDataSourceReader(spark)
       .read(
-        JDBC(
+        Jdbc(
           url = "jdbc:h2:mem:db2",
           table = "(select ID from my_table where id=1) test",
           credentials = Some(BasicCredentials("usr", "pwd"))
