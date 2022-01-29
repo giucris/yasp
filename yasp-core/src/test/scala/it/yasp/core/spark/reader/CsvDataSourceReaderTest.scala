@@ -25,6 +25,10 @@ class CsvDataSourceReaderTest extends AnyFunSuite with BeforeAndAfterEach with S
     super.afterEach()
   }
 
+  override protected def beforeAll(): Unit = super.beforeAll()
+
+  override protected def afterAll(): Unit = super.afterAll()
+
   test("read single file without header") {
     TestUtils.createFile(s"$workspace/singleCsv/file1.csv", Seq("h1,h2,h3", "a,b,c"))
     val expected = spark.createDataset(Seq(Row("h1", "h2", "h3"), Row("a", "b", "c")))(
@@ -232,5 +236,4 @@ class CsvDataSourceReaderTest extends AnyFunSuite with BeforeAndAfterEach with S
     )
     assertDatasetEquals(actual, expected)
   }
-
 }

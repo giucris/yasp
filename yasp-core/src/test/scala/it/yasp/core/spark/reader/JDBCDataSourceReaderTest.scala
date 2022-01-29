@@ -7,37 +7,45 @@ import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
+import org.h2.Driver
 import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
+import java.sql.DriverManager._
 import java.sql.{Connection, DriverManager}
 
 @DoNotDiscover
 class JDBCDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
-  val driver: String             = "org.apache.derby.jdbc.EmbeddedDriver"
-  val connectionURL: String      = "jdbc:derby:memory:testDB;create=true"
-  val conn: Connection           = DriverManager.getConnection(connectionURL)
-  val credsConnectionURL: String = "jdbc:derby:memory:testCredsDB;create=true"
-  val credsConn: Connection      = DriverManager.getConnection(credsConnectionURL, "usr", "pwd")
+  val connUrl1: String  = "jdbc:h2:mem:db1"
+  val connUrl2: String  = "jdbc:h2:mem:db2"
+  registerDriver(new Driver)
+  val conn1: Connection = getConnection(connUrl1)
+  val conn2: Connection = getConnection(connUrl2, "usr", "pwd")
 
   override protected def beforeAll(): Unit = {
+    executeStatement(
+      conn1,
+      "CREATE TABLE table_1(id INT NOT NULL, name VARCHAR(20) NOT NULL,PRIMARY KEY(id)"
+    )
     val DDL = "CREATE TABLE test_table (" +
       "id INT NOT NULL, " +
       "name VARCHAR(20) NOT NULL, " +
       "PRIMARY KEY (id))"
     val DML = "INSERT INTO test_table VALUES (1, 'test_data'), (2,'t2'), (3,'t3'),(4,'t4')"
-    executeStatement(conn, DDL)
-    executeStatement(conn, DML)
-    executeStatement(credsConn, DDL)
-    executeStatement(credsConn, DML)
+    executeStatement(conn1, DDL)
+    executeStatement(conn1, DML)
+    executeStatement(conn2, DDL)
+    executeStatement(conn2, DML)
     super.beforeAll()
   }
 
   override def afterAll(): Unit = {
     super.afterAll()
-    val DT: String = "DROP TABLE test_table"
-    executeStatement(conn, DT)
+    executeStatement(conn1, "DROP TABLE test_table")
+    executeStatement(conn2, "DROP TABLE test_table")
+    executeStatement(conn1, "SHUTDOWN")
+    executeStatement(conn2, "SHUTDOWN")
   }
 
   test("read database table") {
@@ -59,7 +67,7 @@ class JDBCDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
     val actual   = new JDBCDataSourceReader(spark).read(
-      JDBC(url = "jdbc:derby:memory:testDB", table = "test_table", credentials = None)
+      JDBC(url = connUrl1, table = "test_table", credentials = None)
     )
     assertDatasetEquals(actual, expected)
   }
@@ -84,7 +92,7 @@ class JDBCDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
     )
     val actual   = new JDBCDataSourceReader(spark).read(
       JDBC(
-        url = "jdbc:derby:memory:testCredsDB",
+        url = connUrl2,
         table = "test_table",
         credentials = Some(BasicCredentials("usr", "pwd"))
       )
@@ -106,7 +114,7 @@ class JDBCDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
     val actual = new JDBCDataSourceReader(spark)
       .read(
         JDBC(
-          url = "jdbc:derby:memory:testCredsDB",
+          url = connUrl2,
           table = "(select ID from test_table where id=1) test",
           credentials = Some(BasicCredentials("usr", "pwd"))
         )

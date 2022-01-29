@@ -12,6 +12,6 @@ class YaspCoreSuites
     extends Stepwise(
       new SparkSessionFactoryTest,
       new CsvDataSourceReaderTest,
-      new ParquetDataSourceReaderTest,
-      new JDBCDataSourceReaderTest
+      new ParquetDataSourceReaderTest
+      //new JDBCDataSourceReaderTest
     )
