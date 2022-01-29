@@ -3,7 +3,7 @@ ThisBuild / version      := "0.0.1"
 ThisBuild / scalaVersion := "2.12.10"
 
 lazy val dependencies = new {
-  val sparkSqlV   = "2.4.4"
+  val sparkSqlV   = "2.4.7"
   val scalaTestV  = "3.2.10"
   val h2databaseV = "1.4.200"
 
