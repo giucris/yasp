@@ -2,8 +2,10 @@ package it.yasp.core.spark.session
 
 import it.yasp.core.spark.session.SessionType.{Distributed, Local}
 import org.apache.spark.sql.SparkSession
+import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
+@DoNotDiscover
 class SparkSessionFactoryTest extends AnyFunSuite {
 
   val sessionFactory = new SparkSessionFactory()
