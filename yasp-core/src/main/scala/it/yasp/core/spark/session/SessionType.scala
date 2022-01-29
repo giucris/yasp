@@ -8,11 +8,11 @@ sealed trait SessionType
 
 object SessionType {
 
-  /** Local session
+  /** Represent a Local Spark session, used to execute Spark Session in a local mode
     */
   case object Local extends SessionType
 
-  /** Distributed session
+  /** Represent a Distributed Spark session, used to execute Spark on a cluster
     */
   case object Distributed extends SessionType
 }

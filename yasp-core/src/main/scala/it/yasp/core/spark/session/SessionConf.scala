@@ -6,7 +6,7 @@ package it.yasp.core.spark.session
   * @param appName:
   *   Application name
   * @param config:
-  *   A [[Map]] of String for spark specific session configuration
+  *   A [[Map]] of spark specific session configuration
   */
 case class SessionConf(
     sessionType: SessionType,
