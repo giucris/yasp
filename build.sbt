@@ -10,10 +10,10 @@ lazy val dependencies = new {
 
   val sparkSql  = "org.apache.spark" %% "spark-sql"  % sparkV
   val sparkAvro = "org.apache.spark" %% "spark-avro" % sparkV
-  val sparkXml  = "com.databricks" %% "spark-xml" % sparkXmlV
-  val scalactic = "org.scalactic"  %% "scalactic" % scalaTestV
-  val scalatest = "org.scalatest"  %% "scalatest" % scalaTestV
-  val h2db      = "com.h2database"  % "h2"        % h2dbV
+  val sparkXml  = "com.databricks"   %% "spark-xml"  % sparkXmlV
+  val scalactic = "org.scalactic"    %% "scalactic"  % scalaTestV
+  val scalatest = "org.scalatest"    %% "scalatest"  % scalaTestV
+  val h2db      = "com.h2database"    % "h2"         % h2dbV
 
 }
 
