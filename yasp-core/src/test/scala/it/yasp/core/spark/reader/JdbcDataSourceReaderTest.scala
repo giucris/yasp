@@ -54,12 +54,7 @@ class JdbcDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
   test("read database table") {
     val expected = spark.createDataset(
-      Seq(
-        Row(1, "name1"),
-        Row(2, "name2"),
-        Row(3, "name3"),
-        Row(4, "name4")
-      )
+      Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4"))
     )(
       RowEncoder(
         StructType(
@@ -78,12 +73,7 @@ class JdbcDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
   test("read database table with BasicCredentials") {
     val expected = spark.createDataset(
-      Seq(
-        Row(1, "name1"),
-        Row(2, "name2"),
-        Row(3, "name3"),
-        Row(4, "name4")
-      )
+      Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4"))
     )(
       RowEncoder(
         StructType(
