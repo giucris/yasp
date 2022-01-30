@@ -11,5 +11,6 @@ class YaspCoreSuites
       new JsonDataSourceReaderTest,
       new ParquetDataSourceReaderTest,
       new JdbcDataSourceReaderTest,
+      new AvroDataSourceReaderTest,
       new XmlDataSourceReaderTest
     )
