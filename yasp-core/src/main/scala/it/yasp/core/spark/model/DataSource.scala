@@ -20,7 +20,7 @@ object DataSource {
   ) extends DataSource
 
   case class Avro(
-      paths:Seq[String]
+      paths: Seq[String]
   )
 
   case class Xml(

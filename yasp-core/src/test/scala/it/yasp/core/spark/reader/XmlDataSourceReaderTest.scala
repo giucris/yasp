@@ -91,4 +91,3 @@ class XmlDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
   }
 
 }
-

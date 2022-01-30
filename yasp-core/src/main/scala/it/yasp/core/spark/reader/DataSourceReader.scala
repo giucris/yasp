@@ -63,5 +63,4 @@ object DataSourceReader {
       spark.read.option("rowTag", source.rowTag).xml(source.paths.mkString(","))
   }
 
-
 }
