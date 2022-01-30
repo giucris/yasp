@@ -21,7 +21,7 @@ object DataSource {
 
   case class Avro(
       paths: Seq[String]
-  )
+  ) extends DataSource
 
   case class Xml(
       paths: Seq[String],
