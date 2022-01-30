@@ -6,10 +6,10 @@ lazy val dependencies = new {
   val sparkSqlV   = "2.4.7"
   val scalaTestV  = "3.2.10"
   val h2databaseV = "1.4.200"
-  val sparkXmlV = "0.8.0"
+  val sparkXmlV   = "0.8.0"
 
   val sparkSql   = "org.apache.spark" %% "spark-sql" % sparkSqlV
-  val sparkXml = "com.databricks" %% "spark-xml" % sparkXmlV
+  val sparkXml   = "com.databricks"   %% "spark-xml" % sparkXmlV
   val scalactic  = "org.scalactic"    %% "scalactic" % scalaTestV
   val scalatest  = "org.scalatest"    %% "scalatest" % scalaTestV
   val h2database = "com.h2database"    % "h2"        % h2databaseV
