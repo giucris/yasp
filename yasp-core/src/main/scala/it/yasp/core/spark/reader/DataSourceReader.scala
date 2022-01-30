@@ -1,7 +1,8 @@
 package it.yasp.core.spark.reader
 
+import com.databricks.spark.xml.XmlDataFrameReader
 import it.yasp.core.spark.model.DataSource
-import it.yasp.core.spark.model.DataSource.{Csv, Jdbc, Json, Parquet}
+import it.yasp.core.spark.model.DataSource.{Csv, Jdbc, Json, Parquet, Xml}
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 /** DataSourceReader
@@ -56,5 +57,11 @@ object DataSourceReader {
         .format("jdbc")
         .load()
   }
+
+  class XmlDataSourceReader(spark: SparkSession) extends DataSourceReader[Xml] {
+    override def read(source: Xml): Dataset[Row] =
+      spark.read.option("rowTag", source.rowTag).xml(source.paths.mkString(","))
+  }
+
 
 }

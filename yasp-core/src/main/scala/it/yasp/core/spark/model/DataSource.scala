@@ -19,6 +19,10 @@ object DataSource {
       paths: Seq[String]
   ) extends DataSource
 
+  case class Avro(
+      paths:Seq[String]
+  )
+
   case class Xml(
       paths: Seq[String],
       rowTag: String
