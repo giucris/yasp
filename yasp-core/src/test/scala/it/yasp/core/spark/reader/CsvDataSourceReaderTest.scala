@@ -7,7 +7,7 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes._
 import org.apache.spark.sql.types.{StructField, StructType}
-import org.scalatest.{BeforeAndAfterEach, DoNotDiscover}
+import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
 @DoNotDiscover
@@ -97,13 +97,7 @@ class CsvDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
   test("read multiple file with header") {
     TestUtils.createFile(s"$workspace/multipleCsv/file1.csv", Seq("h1,h2,h3", "a,b,c"))
     TestUtils.createFile(s"$workspace/multipleCsv/file2.csv", Seq("h1,h2,h3", "d,e,f"))
-
-    val expected = spark.createDataset(
-      Seq(
-        Row("a", "b", "c"),
-        Row("d", "e", "f")
-      )
-    )(
+    val expected = spark.createDataset(Seq(Row("a", "b", "c"), Row("d", "e", "f")))(
       RowEncoder(
         StructType(
           Seq(
@@ -127,12 +121,7 @@ class CsvDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
   test("read multiple file with header and custom separator") {
     TestUtils.createFile(s"$workspace/multipleCsvCustomSep/file1.csv", Seq("h1|h2|h3", "a|b|c"))
     TestUtils.createFile(s"$workspace/multipleCsvCustomSep/file2.csv", Seq("h1|h2|h3", "d|e|f"))
-    val expected = spark.createDataset(
-      Seq(
-        Row("a", "b", "c"),
-        Row("d", "e", "f")
-      )
-    )(
+    val expected = spark.createDataset(Seq(Row("a", "b", "c"), Row("d", "e", "f")))(
       RowEncoder(
         StructType(
           Seq(

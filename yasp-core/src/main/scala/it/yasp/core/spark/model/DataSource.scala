@@ -19,6 +19,15 @@ object DataSource {
       paths: Seq[String]
   ) extends DataSource
 
+  case class Avro(
+      paths: Seq[String]
+  ) extends DataSource
+
+  case class Xml(
+      paths: Seq[String],
+      rowTag: String
+  ) extends DataSource
+
   case class Jdbc(
       url: String,
       table: String,
