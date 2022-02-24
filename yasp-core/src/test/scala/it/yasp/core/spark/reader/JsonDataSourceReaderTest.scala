@@ -14,7 +14,7 @@ import org.scalatest.funsuite.AnyFunSuite
 class JsonDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
   private val workspace = "yasp-core/src/test/resources/JsonReaderTest"
-  val reader = new JsonDataSourceReader(spark)
+  val reader            = new JsonDataSourceReader(spark)
 
   override protected def beforeAll(): Unit = {
     TestUtils.cleanFolder(workspace)
