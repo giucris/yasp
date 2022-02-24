@@ -60,7 +60,7 @@ object DataSourceReader {
 
   class AvroDataSourceReader(spark: SparkSession) extends DataSourceReader[Avro] {
     override def read(source: Avro): Dataset[Row] =
-      spark.read.format("avro").load()
+      spark.read.format("avro").load(source.paths.mkString(","))
   }
 
   class XmlDataSourceReader(spark: SparkSession) extends DataSourceReader[Xml] {

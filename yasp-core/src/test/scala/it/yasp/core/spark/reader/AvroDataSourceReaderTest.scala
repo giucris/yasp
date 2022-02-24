@@ -13,7 +13,8 @@ import org.scalatest.funsuite.AnyFunSuite
 @DoNotDiscover
 class AvroDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
-  private val workspace = "yasp-core/src/test/resources/AvroReaderTest"
+  private val workspace            = "yasp-core/src/test/resources/AvroReaderTest"
+  val reader: AvroDataSourceReader = new AvroDataSourceReader(spark)
 
   override protected def beforeAll(): Unit = {
     TestUtils.cleanFolder(workspace)
@@ -43,67 +44,8 @@ class AvroDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    expected.write.format("avro").save(s"$workspace/avro/fileWithoutSchema.avro")
-    val actual   =
-      new AvroDataSourceReader(spark).read(Avro(Seq(s"$workspace/avro/fileWithoutSchema.avro")))
-
-    assertDatasetEquals(actual, expected)
-  }
-
-  test("DataReader read avro with schema") {
-    spark
-      .createDataset(Seq(Row("data2", "1", "2")))(
-        RowEncoder(
-          StructType(
-            Seq(
-              StructField("d", StringType, nullable = true),
-              StructField("a", StringType, nullable = true),
-              StructField("b", StringType, nullable = true)
-            )
-          )
-        )
-      )
-      .write
-      .mode(SaveMode.Append)
-      .format("avro")
-      .save(s"$workspace/avro/file1/")
-
-    spark
-      .createDataset(Seq(Row("data1", "1", null, "2")))(
-        RowEncoder(
-          StructType(
-            Seq(
-              StructField("d", StringType, nullable = true),
-              StructField("a", StringType, nullable = true),
-              StructField("b", StringType, nullable = true),
-              StructField("c", StringType, nullable = true)
-            )
-          )
-        )
-      )
-      .write
-      .mode(SaveMode.Append)
-      .format("avro")
-      .save(s"$workspace/avro/file1/")
-
-    val expected = spark.createDataset(
-      Seq(
-        Row("data2", "1", "2", null),
-        Row("data1", "1", null, "2")
-      )
-    )(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("d", StringType, nullable = true),
-            StructField("a", StringType, nullable = true),
-            StructField("b", StringType, nullable = true),
-            StructField("c", StringType, nullable = true)
-          )
-        )
-      )
-    )
-    val actual   = new AvroDataSourceReader(spark).read(Avro(Seq(s"$workspace/avro/file1/")))
+    expected.write.format("avro").save(s"$workspace/avro/fileWithoutSchema/")
+    val actual   = reader.read(Avro(Seq(s"$workspace/avro/fileWithoutSchema/")))
 
     assertDatasetEquals(actual, expected)
   }

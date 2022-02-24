@@ -14,6 +14,7 @@ import org.scalatest.funsuite.AnyFunSuite
 class JsonDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
   private val workspace = "yasp-core/src/test/resources/JsonReaderTest"
+  val reader = new JsonDataSourceReader(spark)
 
   override protected def beforeAll(): Unit = {
     TestUtils.cleanFolder(workspace)
@@ -45,7 +46,7 @@ class JsonDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = new JsonDataSourceReader(spark).read(Json(Seq(s"$workspace/json/json1.json")))
+    val actual = reader.read(Json(Seq(s"$workspace/json/json1.json")))
 
     assertDatasetEquals(actual, expected)
   }
@@ -84,7 +85,7 @@ class JsonDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new JsonDataSourceReader(spark).read(Json(Seq(s"$workspace/jsons/")))
+    val actual   = reader.read(Json(Seq(s"$workspace/jsons/")))
     assertDatasetEquals(actual, expected)
   }
 }
