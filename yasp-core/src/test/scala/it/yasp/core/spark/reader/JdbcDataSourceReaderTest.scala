@@ -24,8 +24,6 @@ class JdbcDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
   val conn1: Connection = getConnection(connUrl1)
   val conn2: Connection = getConnection(connUrl2, "usr", "pwd")
 
-  val reader = new JDBCDataSourceReader(spark)
-
   override protected def beforeAll(): Unit = {
     super.beforeAll()
     executeStatement(
@@ -67,7 +65,9 @@ class JdbcDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = reader.read(Jdbc(url = connUrl1, table = "my_table", credentials = None))
+    val actual   = new JDBCDataSourceReader(spark).read(
+      Jdbc(url = connUrl1, table = "my_table", credentials = None)
+    )
     assertDatasetEquals(actual, expected)
   }
 
@@ -84,7 +84,7 @@ class JdbcDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = reader.read(
+    val actual   = new JDBCDataSourceReader(spark).read(
       Jdbc(url = connUrl2, table = "my_table", credentials = Some(BasicCredentials("usr", "pwd")))
     )
     assertDatasetEquals(actual, expected)
@@ -101,7 +101,7 @@ class JdbcDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = reader.read(
+    val actual = new JDBCDataSourceReader(spark).read(
       Jdbc(
         url = "jdbc:h2:mem:db2",
         table = "(select ID from my_table where id=1) test",

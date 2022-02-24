@@ -14,7 +14,6 @@ import org.scalatest.funsuite.AnyFunSuite
 class CsvDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
   private val workspace = "yasp-core/src/test/resources/CsvReaderTest"
-  val reader            = new CsvDataSourceReader(spark)
 
   override protected def beforeAll(): Unit = {
     TestUtils.cleanFolder(workspace)
@@ -39,7 +38,7 @@ class CsvDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = reader.read(
+    val actual   = new CsvDataSourceReader(spark).read(
       Csv(
         Seq(s"$workspace/singleCsv/file1.csv"),
         header = false,
@@ -62,7 +61,7 @@ class CsvDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = reader.read(
+    val actual   = new CsvDataSourceReader(spark).read(
       Csv(
         Seq(s"$workspace/singleCsv/file2.csv"),
         header = true,
@@ -85,7 +84,7 @@ class CsvDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = reader.read(
+    val actual   = new CsvDataSourceReader(spark).read(
       Csv(
         Seq(s"$workspace/singleCsvCustomSep/file1.csv"),
         header = true,
@@ -109,7 +108,7 @@ class CsvDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = reader.read(
+    val actual   = new CsvDataSourceReader(spark).read(
       Csv(
         Seq(s"$workspace/multipleCsv/file1.csv", s"$workspace/multipleCsv/file2.csv"),
         header = true,
@@ -133,7 +132,7 @@ class CsvDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = reader.read(
+    val actual   = new CsvDataSourceReader(spark).read(
       Csv(
         paths = Seq(s"$workspace/multipleCsvCustomSep/"),
         header = true,

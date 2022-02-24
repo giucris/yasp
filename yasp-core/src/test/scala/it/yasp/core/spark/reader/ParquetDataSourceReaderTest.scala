@@ -25,8 +25,6 @@ class ParquetDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
     super.afterAll()
   }
 
-  val reader = new ParquetDataSourceReader(spark)
-
   test("read single file") {
     spark
       .createDataset(Seq(Row("a", "b", "c")))(
@@ -55,7 +53,7 @@ class ParquetDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
           )
         )
       )
-    val actual   = reader.read(
+    val actual   = new ParquetDataSourceReader(spark).read(
       Parquet(Seq(s"$workspace/parquet1/"), mergeSchema = false)
     )
     assertDatasetEquals(actual, expected)
@@ -105,7 +103,7 @@ class ParquetDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
           )
         )
       )
-    val actual   = reader.read(
+    val actual   = new ParquetDataSourceReader(spark).read(
       Parquet(Seq(s"$workspace/parquet2/"), mergeSchema = false)
     )
     assertDatasetEquals(actual, expected)
@@ -157,7 +155,7 @@ class ParquetDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
           )
         )
       )
-    val actual   = reader.read(
+    val actual   = new ParquetDataSourceReader(spark).read(
       Parquet(Seq(s"$workspace/parquet3/"), mergeSchema = true)
     )
     assertDatasetEquals(actual, expected)

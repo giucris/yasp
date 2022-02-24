@@ -13,8 +13,7 @@ import org.scalatest.funsuite.AnyFunSuite
 @DoNotDiscover
 class AvroDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
-  private val workspace            = "yasp-core/src/test/resources/AvroReaderTest"
-  val reader: AvroDataSourceReader = new AvroDataSourceReader(spark)
+  private val workspace = "yasp-core/src/test/resources/AvroReaderTest"
 
   override protected def beforeAll(): Unit = {
     TestUtils.cleanFolder(workspace)
@@ -45,7 +44,8 @@ class AvroDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
     expected.write.format("avro").save(s"$workspace/avro/fileWithoutSchema/")
-    val actual   = reader.read(Avro(Seq(s"$workspace/avro/fileWithoutSchema/")))
+    val actual   =
+      new AvroDataSourceReader(spark).read(Avro(Seq(s"$workspace/avro/fileWithoutSchema/")))
 
     assertDatasetEquals(actual, expected)
   }
