@@ -1,7 +1,7 @@
 package it.yasp.core.spark.reader
 
 import it.yasp.core.spark.model.BasicCredentials
-import it.yasp.core.spark.model.DataSource.Jdbc
+import it.yasp.core.spark.model.Source.Jdbc
 import it.yasp.core.spark.reader.DataSourceReader.JDBCDataSourceReader
 import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.Row
@@ -15,7 +15,7 @@ import java.sql.Connection
 import java.sql.DriverManager._
 
 @DoNotDiscover
-class JdbcDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
+class JdbcSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
   val connUrl1: String = "jdbc:h2:mem:db1"
   val connUrl2: String = "jdbc:h2:mem:db2"
