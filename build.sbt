@@ -3,14 +3,17 @@ ThisBuild / version      := "0.0.1"
 ThisBuild / scalaVersion := "2.12.10"
 
 lazy val dependencies = new {
-  val sparkSqlV   = "2.4.7"
-  val scalaTestV  = "3.2.10"
-  val h2databaseV = "1.4.200"
+  val sparkV     = "2.4.7"
+  val scalaTestV = "3.2.10"
+  val h2dbV      = "1.4.200"
+  val sparkXmlV  = "0.8.0"
 
-  val sparkSql   = "org.apache.spark" %% "spark-sql" % sparkSqlV
-  val scalactic  = "org.scalactic"    %% "scalactic" % scalaTestV
-  val scalatest  = "org.scalatest"    %% "scalatest" % scalaTestV
-  val h2database = "com.h2database"    % "h2"        % h2databaseV
+  val sparkSql  = "org.apache.spark" %% "spark-sql"  % sparkV
+  val sparkAvro = "org.apache.spark" %% "spark-avro" % sparkV
+  val sparkXml  = "com.databricks"   %% "spark-xml"  % sparkXmlV
+  val scalactic = "org.scalactic"    %% "scalactic"  % scalaTestV
+  val scalatest = "org.scalatest"    %% "scalatest"  % scalaTestV
+  val h2db      = "com.h2database"    % "h2"         % h2dbV
 
 }
 
@@ -32,9 +35,11 @@ lazy val core = (project in file("yasp-core"))
     name := "yasp-core",
     libraryDependencies ++= Seq(
       dependencies.sparkSql,
+      dependencies.sparkAvro,
+      dependencies.sparkXml,
       dependencies.scalactic,
-      dependencies.scalatest  % Test,
-      dependencies.h2database % Test
+      dependencies.scalatest % Test,
+      dependencies.h2db      % Test
     )
   )
   .dependsOn(testKit % Test)
