@@ -1,6 +1,6 @@
 package it.yasp.core.spark.reader
 
-import it.yasp.core.spark.model.DataSource.Json
+import it.yasp.core.spark.model.Source.Json
 import it.yasp.core.spark.reader.DataSourceReader.JsonDataSourceReader
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
@@ -11,7 +11,7 @@ import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
 @DoNotDiscover
-class JsonDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
+class JsonSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
   private val workspace = "yasp-core/src/test/resources/JsonReaderTest"
 

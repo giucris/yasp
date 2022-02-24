@@ -1,6 +1,6 @@
 package it.yasp.core.spark.reader
 
-import it.yasp.core.spark.model.DataSource.Avro
+import it.yasp.core.spark.model.Source.Avro
 import it.yasp.core.spark.reader.DataSourceReader.AvroDataSourceReader
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.{Row, SaveMode}
@@ -11,7 +11,7 @@ import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
 @DoNotDiscover
-class AvroDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
+class AvroSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
   private val workspace = "yasp-core/src/test/resources/AvroReaderTest"
 
