@@ -1,6 +1,6 @@
 package it.yasp.core.spark.reader
 
-import it.yasp.core.spark.model.DataSource.Csv
+import it.yasp.core.spark.model.Source.Csv
 import it.yasp.core.spark.reader.DataSourceReader.CsvDataSourceReader
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
@@ -11,7 +11,7 @@ import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
 @DoNotDiscover
-class CsvDataSourceReaderTest extends AnyFunSuite with SparkTestSuite {
+class CsvSourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
   private val workspace = "yasp-core/src/test/resources/CsvReaderTest"
 

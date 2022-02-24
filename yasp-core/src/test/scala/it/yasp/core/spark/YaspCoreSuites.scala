@@ -7,10 +7,10 @@ import org.scalatest.Stepwise
 class YaspCoreSuites
     extends Stepwise(
       new SparkSessionFactoryTest,
-      new CsvDataSourceReaderTest,
-      new JsonDataSourceReaderTest,
-      new ParquetDataSourceReaderTest,
-      new JdbcDataSourceReaderTest,
-      new AvroDataSourceReaderTest,
-      new XmlDataSourceReaderTest
+      new CsvSourceReaderTest,
+      new JsonSourceReaderTest,
+      new ParquetSourceReaderTest,
+      new JdbcSourceReaderTest,
+      new AvroSourceReaderTest,
+      new XmlSourceReaderTest
     )
