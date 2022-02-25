@@ -1,7 +1,7 @@
 package it.yasp.core.spark.reader
 
 import it.yasp.core.spark.model.Source.Csv
-import it.yasp.core.spark.reader.DataSourceReader.CsvDataSourceReader
+import it.yasp.core.spark.reader.Reader.CsvReader
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -11,7 +11,7 @@ import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
 @DoNotDiscover
-class CsvSourceReaderTest extends AnyFunSuite with SparkTestSuite {
+class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
 
   private val workspace = "yasp-core/src/test/resources/CsvReaderTest"
 
@@ -38,7 +38,7 @@ class CsvSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new CsvDataSourceReader(spark).read(
+    val actual   = new CsvReader(spark).read(
       Csv(
         Seq(s"$workspace/singleCsv/file1.csv"),
         header = false,
@@ -61,7 +61,7 @@ class CsvSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new CsvDataSourceReader(spark).read(
+    val actual   = new CsvReader(spark).read(
       Csv(
         Seq(s"$workspace/singleCsv/file2.csv"),
         header = true,
@@ -84,7 +84,7 @@ class CsvSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new CsvDataSourceReader(spark).read(
+    val actual   = new CsvReader(spark).read(
       Csv(
         Seq(s"$workspace/singleCsvCustomSep/file1.csv"),
         header = true,
@@ -108,7 +108,7 @@ class CsvSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new CsvDataSourceReader(spark).read(
+    val actual   = new CsvReader(spark).read(
       Csv(
         Seq(s"$workspace/multipleCsv/file1.csv", s"$workspace/multipleCsv/file2.csv"),
         header = true,
@@ -132,7 +132,7 @@ class CsvSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new CsvDataSourceReader(spark).read(
+    val actual   = new CsvReader(spark).read(
       Csv(
         paths = Seq(s"$workspace/multipleCsvCustomSep/"),
         header = true,
