@@ -1,7 +1,7 @@
 package it.yasp.core.spark.reader
 
 import it.yasp.core.spark.model.Source.Json
-import it.yasp.core.spark.reader.DataSourceReader.JsonDataSourceReader
+import it.yasp.core.spark.reader.Reader.JsonReader
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -11,7 +11,7 @@ import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
 @DoNotDiscover
-class JsonSourceReaderTest extends AnyFunSuite with SparkTestSuite {
+class JsonReaderTest extends AnyFunSuite with SparkTestSuite {
 
   private val workspace = "yasp-core/src/test/resources/JsonReaderTest"
 
@@ -45,7 +45,7 @@ class JsonSourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = new JsonDataSourceReader(spark).read(Json(Seq(s"$workspace/json/json1.json")))
+    val actual = new JsonReader(spark).read(Json(Seq(s"$workspace/json/json1.json")))
 
     assertDatasetEquals(actual, expected)
   }
@@ -84,7 +84,7 @@ class JsonSourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new JsonDataSourceReader(spark).read(Json(Seq(s"$workspace/jsons/")))
+    val actual   = new JsonReader(spark).read(Json(Seq(s"$workspace/jsons/")))
     assertDatasetEquals(actual, expected)
   }
 }

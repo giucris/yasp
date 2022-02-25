@@ -1,7 +1,7 @@
 package it.yasp.core.spark.reader
 
 import it.yasp.core.spark.model.Source.Parquet
-import it.yasp.core.spark.reader.DataSourceReader.ParquetDataSourceReader
+import it.yasp.core.spark.reader.Reader.ParquetReader
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.{Row, SaveMode}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -11,7 +11,7 @@ import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
 @DoNotDiscover
-class ParquetSourceReaderTest extends AnyFunSuite with SparkTestSuite {
+class ParquetReaderTest extends AnyFunSuite with SparkTestSuite {
 
   private val workspace = "yasp-core/src/test/resources/ParquetReaderTest"
 
@@ -53,7 +53,7 @@ class ParquetSourceReaderTest extends AnyFunSuite with SparkTestSuite {
           )
         )
       )
-    val actual   = new ParquetDataSourceReader(spark).read(
+    val actual   = new ParquetReader(spark).read(
       Parquet(Seq(s"$workspace/parquet1/"), mergeSchema = false)
     )
     assertDatasetEquals(actual, expected)
@@ -103,7 +103,7 @@ class ParquetSourceReaderTest extends AnyFunSuite with SparkTestSuite {
           )
         )
       )
-    val actual   = new ParquetDataSourceReader(spark).read(
+    val actual   = new ParquetReader(spark).read(
       Parquet(Seq(s"$workspace/parquet2/"), mergeSchema = false)
     )
     assertDatasetEquals(actual, expected)
@@ -155,7 +155,7 @@ class ParquetSourceReaderTest extends AnyFunSuite with SparkTestSuite {
           )
         )
       )
-    val actual   = new ParquetDataSourceReader(spark).read(
+    val actual   = new ParquetReader(spark).read(
       Parquet(Seq(s"$workspace/parquet3/"), mergeSchema = true)
     )
     assertDatasetEquals(actual, expected)

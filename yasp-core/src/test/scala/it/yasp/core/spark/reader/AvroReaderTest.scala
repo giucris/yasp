@@ -1,7 +1,7 @@
 package it.yasp.core.spark.reader
 
 import it.yasp.core.spark.model.Source.Avro
-import it.yasp.core.spark.reader.DataSourceReader.AvroDataSourceReader
+import it.yasp.core.spark.reader.Reader.AvroReader
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.{Row, SaveMode}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -11,7 +11,7 @@ import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
 @DoNotDiscover
-class AvroSourceReaderTest extends AnyFunSuite with SparkTestSuite {
+class AvroReaderTest extends AnyFunSuite with SparkTestSuite {
 
   private val workspace = "yasp-core/src/test/resources/AvroReaderTest"
 
@@ -45,7 +45,7 @@ class AvroSourceReaderTest extends AnyFunSuite with SparkTestSuite {
     )
     expected.write.format("avro").save(s"$workspace/avro/fileWithoutSchema/")
     val actual   =
-      new AvroDataSourceReader(spark).read(Avro(Seq(s"$workspace/avro/fileWithoutSchema/")))
+      new AvroReader(spark).read(Avro(Seq(s"$workspace/avro/fileWithoutSchema/")))
 
     assertDatasetEquals(actual, expected)
   }
