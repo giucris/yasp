@@ -1,7 +1,7 @@
 package it.yasp.core.spark.reader
 
 import it.yasp.core.spark.model.Source.Xml
-import it.yasp.core.spark.reader.DataSourceReader.XmlDataSourceReader
+import it.yasp.core.spark.reader.Reader.XmlReader
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -11,7 +11,7 @@ import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
 @DoNotDiscover
-class XmlSourceReaderTest extends AnyFunSuite with SparkTestSuite {
+class XmlReaderTest extends AnyFunSuite with SparkTestSuite {
 
   private val workspace = "yasp-core/src/test/resources/XmlReaderTest"
 
@@ -47,7 +47,7 @@ class XmlSourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = new XmlDataSourceReader(spark).read(Xml(Seq(s"$workspace/xml/file.xml"), "root"))
+    val actual = new XmlReader(spark).read(Xml(Seq(s"$workspace/xml/file.xml"), "root"))
     assertDatasetEquals(actual, expected)
   }
 
@@ -85,7 +85,7 @@ class XmlSourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = new XmlDataSourceReader(spark).read(
+    val actual = new XmlReader(spark).read(
       Xml(Seq(s"$workspace/xmls/file1.xml", s"$workspace/xmls/file2.xml"), "root")
     )
     assertDatasetEquals(actual, expected)
