@@ -14,9 +14,9 @@ import org.apache.spark.sql.{Dataset, Row, SparkSession}
 trait Reader[A <: Source] {
 
   /** Read a specific datasource with spark primitives
- *
-    * @param source :
-    *               an instance of [[Source]]
+    *
+    * @param source
+    *   : an instance of [[Source]]
     * @return
     *   a [[Dataset]] of [[Row]]
     */
