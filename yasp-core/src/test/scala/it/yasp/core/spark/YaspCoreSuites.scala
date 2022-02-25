@@ -1,5 +1,6 @@
 package it.yasp.core.spark
 
+import it.yasp.core.spark.processor.SqlProcessorTest
 import it.yasp.core.spark.reader._
 import it.yasp.core.spark.session.SparkSessionFactoryTest
 import org.scalatest.Stepwise
@@ -12,5 +13,6 @@ class YaspCoreSuites
       new ParquetReaderTest,
       new JdbcReaderTest,
       new AvroReaderTest,
-      new XmlReaderTest
+      new XmlReaderTest,
+      new SqlProcessorTest
     )
