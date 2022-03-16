@@ -14,7 +14,7 @@ class YaspCoreSuites
       new ParquetReaderTest,
       new JdbcReaderTest,
       new AvroReaderTest,
-      new XmlReaderTest
-      //new SqlProcessorTest,
-      //new ParquetWriterTest
+      new XmlReaderTest,
+      new SqlProcessorTest,
+      new ParquetWriterTest
     )
