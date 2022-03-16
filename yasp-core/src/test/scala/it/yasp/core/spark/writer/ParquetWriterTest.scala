@@ -2,7 +2,7 @@ package it.yasp.core.spark.writer
 
 import it.yasp.core.spark.model.Dest.Parquet
 import it.yasp.core.spark.writer.Writer.ParquetWriter
-import it.yasp.testkit.{SharedSparkSession, SparkTestSuite, TestUtils}
+import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes.StringType
@@ -37,9 +37,9 @@ class ParquetWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAf
         )
       )
     )
-    new ParquetWriter().write(expected,Parquet(s"$workspace/parquet1/"))
-    val actual = spark.read.parquet(s"$workspace/parquet1/")
+    new ParquetWriter().write(expected, Parquet(s"$workspace/parquet1/"))
+    val actual   = spark.read.parquet(s"$workspace/parquet1/")
 
-    assertDatasetEquals(actual,expected)
+    assertDatasetEquals(actual, expected)
   }
 }
