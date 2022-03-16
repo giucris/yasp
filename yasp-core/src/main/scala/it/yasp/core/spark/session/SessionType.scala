@@ -4,7 +4,7 @@ package it.yasp.core.spark.session
   *
   * Possible values are: [[SessionType.Local]] or [[SessionType.Distributed]]
   */
-sealed trait SessionType
+sealed trait SessionType extends Product with Serializable
 
 object SessionType {
 

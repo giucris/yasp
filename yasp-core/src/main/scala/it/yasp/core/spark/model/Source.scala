@@ -1,6 +1,6 @@
 package it.yasp.core.spark.model
 
-sealed trait Source
+sealed trait Source extends Product with Serializable
 
 object Source {
 
