@@ -1,6 +1,8 @@
 package it.yasp.core.spark.writer
 
-import it.yasp.testkit.{SharedSparkSession, TestUtils}
+import it.yasp.core.spark.model.Dest.Parquet
+import it.yasp.core.spark.writer.Writer.ParquetWriter
+import it.yasp.testkit.{SharedSparkSession, SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes.StringType
@@ -9,7 +11,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.{BeforeAndAfterAll, DoNotDiscover}
 
 @DoNotDiscover
-class ParquetWriterTest extends AnyFunSuite with SharedSparkSession with BeforeAndAfterAll {
+class ParquetWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
 
   private val workspace = "yasp-core/src/test/resources/ParquetWriterTest"
 
@@ -24,19 +26,20 @@ class ParquetWriterTest extends AnyFunSuite with SharedSparkSession with BeforeA
   }
 
   test("write") {
-    spark
-      .createDataset(Seq(Row("a", "b", "c")))(
-        RowEncoder(
-          StructType(
-            Seq(
-              StructField("h0", StringType, nullable = true),
-              StructField("h1", StringType, nullable = true),
-              StructField("h2", StringType, nullable = true)
-            )
+    val expected = spark.createDataset(Seq(Row("a", "b", "c")))(
+      RowEncoder(
+        StructType(
+          Seq(
+            StructField("h0", StringType, nullable = true),
+            StructField("h1", StringType, nullable = true),
+            StructField("h2", StringType, nullable = true)
           )
         )
       )
-      .write
-      .parquet(s"$workspace/parquet1/")
+    )
+    new ParquetWriter().write(expected,Parquet(s"$workspace/parquet1/"))
+    val actual = spark.read.parquet(s"$workspace/parquet1/")
+
+    assertDatasetEquals(actual,expected)
   }
 }
