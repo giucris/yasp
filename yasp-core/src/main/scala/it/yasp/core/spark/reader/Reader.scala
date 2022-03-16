@@ -2,16 +2,17 @@ package it.yasp.core.spark.reader
 
 import com.databricks.spark.xml.XmlDataFrameReader
 import it.yasp.core.spark.model.Source
-import it.yasp.core.spark.model.Source.{Avro, Csv, Jdbc, Json, Parquet, Xml}
+import it.yasp.core.spark.model.Source._
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 /** Reader
   *
   * Provide a read method to load a specific [[Source]]
   *
-  * @tparam A: Source
+  * @tparam A:
+  *   Source
   */
-trait Reader[A<:Source] {
+trait Reader[A <: Source] {
 
   /** Read a specific datasource with spark primitives
     *
