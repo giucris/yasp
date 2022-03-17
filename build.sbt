@@ -30,7 +30,7 @@ lazy val testKit = (project in file("yasp-testkit"))
     )
   )
 
-lazy val core = (project in file("yasp-core"))
+lazy val core    = (project in file("yasp-core"))
   .settings(
     name := "yasp-core",
     libraryDependencies ++= Seq(
