@@ -43,3 +43,9 @@ lazy val core = (project in file("yasp-core"))
     )
   )
   .dependsOn(testKit % Test)
+
+lazy val service = (project in file("yasp-service"))
+  .settings(
+    name := "yasp-service"
+  )
+  .dependsOn(core)
