@@ -55,4 +55,4 @@ lazy val service = (project in file("yasp-service"))
       dependencies.scalaMock % Test
     )
   )
-  .dependsOn(core,testKit % Test)
+  .dependsOn(core, testKit % Test)
