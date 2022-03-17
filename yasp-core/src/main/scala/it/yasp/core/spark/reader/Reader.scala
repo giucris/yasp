@@ -71,4 +71,17 @@ object Reader {
       spark.read.option("rowTag", source.rowTag).xml(source.paths.mkString(","))
   }
 
+  class SourceReader(spark: SparkSession) extends Reader[Source] {
+
+    override def read(source: Source): Dataset[Row] =
+      source match {
+        case s @ Source.Csv(_, _, _)  => new CsvReader(spark).read(s)
+        case s @ Source.Parquet(_, _) => new ParquetReader(spark).read(s)
+        case s @ Source.Json(_)       => new JsonReader(spark).read(s)
+        case s @ Source.Avro(_)       => new AvroReader(spark).read(s)
+        case s @ Source.Xml(_, _)     => new XmlReader(spark).read(s)
+        case s @ Source.Jdbc(_, _, _) => new JDBCReader(spark).read(s)
+      }
+  }
+
 }
