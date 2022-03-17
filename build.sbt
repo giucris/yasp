@@ -46,6 +46,10 @@ lazy val core    = (project in file("yasp-core"))
 
 lazy val service = (project in file("yasp-service"))
   .settings(
-    name := "yasp-service"
+    name := "yasp-service",
+    libraryDependencies ++= Seq(
+      dependencies.scalactic,
+      dependencies.scalatest % Test
+    )
   )
   .dependsOn(core)
