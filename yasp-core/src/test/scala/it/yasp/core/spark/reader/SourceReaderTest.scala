@@ -17,7 +17,7 @@ import java.sql.DriverManager.{getConnection, registerDriver}
 @DoNotDiscover
 class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
-  private val workspace = "yasp-core/src/test/resources/SourceReaderTest"
+  private val workspace        = "yasp-core/src/test/resources/SourceReaderTest"
   private val connUrl1: String = "jdbc:h2:mem:db3"
 
   registerDriver(new Driver)
@@ -175,7 +175,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
     assertDatasetEquals(actual, expected)
   }
 
-  test("read jdbc"){
+  test("read jdbc") {
     val expected = spark.createDataset(
       Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4"))
     )(
