@@ -30,8 +30,26 @@ class RegistryTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAl
         )
       )
     )
-    new DefaultRegistry().register(expected, "test_table")
+    new DefaultRegistry(spark).register(expected, "test_table")
     val actual   = spark.table("test_table")
+    assertDatasetEquals(actual, expected)
+  }
+
+  test("retrieve") {
+    val expected = spark.createDataset(Seq(Row("h1", "h2", "h3"), Row("a", "b", "c")))(
+      RowEncoder(
+        StructType(
+          Seq(
+            StructField("_c0", StringType, nullable = true),
+            StructField("_c1", StringType, nullable = true),
+            StructField("_c2", StringType, nullable = true)
+          )
+        )
+      )
+    )
+    expected.createTempView("test_table_2")
+
+    val actual = new DefaultRegistry(spark).retrieve("test_table_2")
     assertDatasetEquals(actual, expected)
   }
 
