@@ -3,7 +3,7 @@ package it.yasp.service
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.{Dest, Source}
 import it.yasp.loader.YaspLoader
-import it.yasp.model.{YaspProcess, YaspSink, YaspSource}
+import it.yasp.model.{YaspPlan, YaspProcess, YaspSink, YaspSource}
 import it.yasp.processor.YaspProcessor
 import it.yasp.service.YaspService.DefaultYaspService
 import it.yasp.writer.YaspWriter
@@ -29,9 +29,11 @@ class YaspServiceTest extends AnyFunSuite with MockFactory {
     )
 
     yaspService.exec(
-      sources = Seq(YaspSource("id1", Source.Json(Seq("sourcePath")))),
-      processes = Seq.empty,
-      sinks = Seq(YaspSink("id1", Dest.Parquet("destPath")))
+      YaspPlan(
+        sources = Seq(YaspSource("id1", Source.Json(Seq("sourcePath")))),
+        processes = Seq.empty,
+        sinks = Seq(YaspSink("id1", Dest.Parquet("destPath")))
+      )
     )
   }
 
@@ -49,9 +51,11 @@ class YaspServiceTest extends AnyFunSuite with MockFactory {
     )
 
     yaspService.exec(
-      sources = Seq(YaspSource("id1", Source.Json(Seq("sourcePath")))),
-      processes = Seq(YaspProcess("id2", Sql("my-sql"))),
-      sinks = Seq(YaspSink("id2", Dest.Parquet("destPath")))
+      YaspPlan(
+        sources = Seq(YaspSource("id1", Source.Json(Seq("sourcePath")))),
+        processes = Seq(YaspProcess("id2", Sql("my-sql"))),
+        sinks = Seq(YaspSink("id2", Dest.Parquet("destPath")))
+      )
     )
   }
 
@@ -78,17 +82,19 @@ class YaspServiceTest extends AnyFunSuite with MockFactory {
     )
 
     yaspService.exec(
-      sources = Seq(
-        YaspSource("id1", Source.Json(Seq("sourcePath1"))),
-        YaspSource("id2", Source.Parquet(Seq("sourcePath2"), mergeSchema = true))
-      ),
-      processes = Seq(
-        YaspProcess("id3", Sql("my-sql-1")),
-        YaspProcess("id4", Sql("my-sql-2"))
-      ),
-      sinks = Seq(
-        YaspSink("id4", Dest.Parquet("destPath1")),
-        YaspSink("id3", Dest.Parquet("destPath2"))
+      YaspPlan(
+        sources = Seq(
+          YaspSource("id1", Source.Json(Seq("sourcePath1"))),
+          YaspSource("id2", Source.Parquet(Seq("sourcePath2"), mergeSchema = true))
+        ),
+        processes = Seq(
+          YaspProcess("id3", Sql("my-sql-1")),
+          YaspProcess("id4", Sql("my-sql-2"))
+        ),
+        sinks = Seq(
+          YaspSink("id4", Dest.Parquet("destPath1")),
+          YaspSink("id3", Dest.Parquet("destPath2"))
+        )
       )
     )
   }

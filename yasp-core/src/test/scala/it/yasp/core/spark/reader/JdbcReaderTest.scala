@@ -7,7 +7,6 @@ import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
-import org.h2.Driver
 import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -20,7 +19,7 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite {
   val connUrl1: String = "jdbc:h2:mem:db1"
   val connUrl2: String = "jdbc:h2:mem:db2"
 
-  registerDriver(new Driver)
+  registerDriver(new org.h2.Driver)
   val conn1: Connection = getConnection(connUrl1)
   val conn2: Connection = getConnection(connUrl2, "usr", "pwd")
 
