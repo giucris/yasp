@@ -1,6 +1,6 @@
 package it.yasp.writer
 
-import it.yasp.core.spark.model.{Dest, Source}
+import it.yasp.core.spark.model.Dest
 import it.yasp.core.spark.model.Dest._
 import it.yasp.core.spark.registry.Registry
 import it.yasp.core.spark.writer.Writer
@@ -14,11 +14,11 @@ import org.apache.spark.sql.types.{StructField, StructType}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
 
-class YaspWriterTest extends AnyFunSuite with SparkTestSuite with MockFactory{
+class YaspWriterTest extends AnyFunSuite with SparkTestSuite with MockFactory {
 
   test("write") {
     val registry = mock[Registry]
-    val writer = mock[Writer[Dest]]
+    val writer   = mock[Writer[Dest]]
 
     inSequence(
       (registry.retrieve _)
@@ -30,10 +30,10 @@ class YaspWriterTest extends AnyFunSuite with SparkTestSuite with MockFactory{
           )
         ),
       (writer.write _)
-        .expects(*,Parquet("path"))
+        .expects(*, Parquet("path"))
         .once()
     )
-    new DefaultYaspWriter(registry,writer).write(YaspSink("id",Parquet("path")))
+    new DefaultYaspWriter(registry, writer).write(YaspSink("id", Parquet("path")))
   }
 
 }
