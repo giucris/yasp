@@ -15,4 +15,11 @@ object Processor {
       spark.sql(process.query)
   }
 
+  class ProcessProcessor(sparkSession: SparkSession) extends Processor[Process] {
+    override def execute(process: Process): DataFrame =
+      process match {
+        case s @ Sql(_) => new SqlProcessor(sparkSession).execute(s)
+      }
+  }
+
 }
