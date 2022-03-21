@@ -14,10 +14,10 @@ object Writer {
       dataFrame.write.parquet(dest.path)
   }
 
-  class DestWriter extends Writer[Dest]{
+  class DestWriter extends Writer[Dest] {
     override def write(dataFrame: DataFrame, dest: Dest): Unit =
       dest match {
-        case d@ Parquet(_) => new ParquetWriter().write(dataFrame,d)
+        case d @ Parquet(_) => new ParquetWriter().write(dataFrame, d)
       }
   }
 }

@@ -10,7 +10,7 @@ import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
 @DoNotDiscover
-class ProcessProcessorTest  extends AnyFunSuite with SparkTestSuite {
+class ProcessProcessorTest extends AnyFunSuite with SparkTestSuite {
 
   test("process") {
     spark
