@@ -6,7 +6,7 @@ import it.yasp.processor.YaspProcessor
 import it.yasp.writer.YaspWriter
 
 trait YaspService {
-  def exec(yaspPlan: YaspPlan)
+  def run(yaspPlan: YaspPlan)
 }
 
 object YaspService {
@@ -17,7 +17,7 @@ object YaspService {
       writer: YaspWriter
   ) extends YaspService {
 
-    override def exec(yaspPlan: YaspPlan): Unit = {
+    override def run(yaspPlan: YaspPlan): Unit = {
       yaspPlan.sources.foreach(loader.load)
       yaspPlan.processes.foreach(processor.process)
       yaspPlan.sinks.foreach(writer.write)
