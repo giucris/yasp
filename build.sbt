@@ -58,8 +58,7 @@ lazy val service = (project in file("yasp-service"))
   )
   .dependsOn(core, testKit % Test)
 
-
-lazy val app = (project in file("yasp-app"))
+lazy val app     = (project in file("yasp-app"))
   .settings(
     name := "yasp-app",
     libraryDependencies ++= Seq(
