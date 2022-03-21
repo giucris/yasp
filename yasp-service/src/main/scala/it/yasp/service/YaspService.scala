@@ -1,7 +1,7 @@
 package it.yasp.service
 
 import it.yasp.loader.YaspLoader
-import it.yasp.model.{YaspPlan, YaspProcess, YaspSink, YaspSource}
+import it.yasp.model.YaspPlan
 import it.yasp.processor.YaspProcessor
 import it.yasp.writer.YaspWriter
 

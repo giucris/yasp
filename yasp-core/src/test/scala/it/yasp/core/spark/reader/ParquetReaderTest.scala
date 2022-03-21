@@ -3,10 +3,10 @@ package it.yasp.core.spark.reader
 import it.yasp.core.spark.model.Source.Parquet
 import it.yasp.core.spark.reader.Reader.ParquetReader
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
-import org.apache.spark.sql.{Row, SaveMode}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes.StringType
 import org.apache.spark.sql.types.{StructField, StructType}
+import org.apache.spark.sql.{Row, SaveMode}
 import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
