@@ -64,7 +64,7 @@ class YaspExecutorTest
       .exec(
         YaspExecution(
           sessionConf = SessionConf(Local, "my-app-name", Map.empty),
-          yaspPlan = YaspPlan(
+          plan = YaspPlan(
             sources = Seq(
               YaspSource(
                 "data_1",

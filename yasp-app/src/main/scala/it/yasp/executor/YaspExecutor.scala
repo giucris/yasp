@@ -17,7 +17,7 @@ object YaspExecutor {
 
     override def exec(yaspExecution: YaspExecution): Unit = {
       val session = sessionFactory.create(yaspExecution.sessionConf)
-      yaspServiceFactory.create(session).run(yaspExecution.yaspPlan)
+      yaspServiceFactory.create(session).run(yaspExecution.plan)
     }
 
   }
