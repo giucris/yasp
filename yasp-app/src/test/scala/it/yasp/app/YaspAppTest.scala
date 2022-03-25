@@ -11,13 +11,11 @@ import org.scalatest.funsuite.AnyFunSuite
 class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
   private val workspace = "yasp-app/src/test/resources/YaspApp"
 
-  override protected def afterAll(): Unit = {
+  override protected def afterAll(): Unit =
     cleanFolder(workspace)
-  }
 
-  override protected def beforeAll(): Unit = {
+  override protected def beforeAll(): Unit =
     cleanFolder(workspace)
-  }
 
   test("n source n transformation 1 write") {
     createFile(

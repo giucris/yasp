@@ -28,9 +28,8 @@ class YaspExecutorTest
     super.beforeAll()
   }
 
-  override protected def afterAll(): Unit = {
+  override protected def afterAll(): Unit =
     TestUtils.cleanFolder(workspace)
-  }
 
   test("exec") {
     TestUtils.createFile(

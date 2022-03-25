@@ -1,7 +1,7 @@
 package it.yasp.app.conf
 
-import io.circe.Decoder
 import cats.implicits._
+import io.circe.Decoder
 
 trait ParserSupport {
 

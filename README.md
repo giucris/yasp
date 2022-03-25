@@ -8,7 +8,8 @@ An easy and lightweight tool for data engineering process built on top of Apache
 
 ## Introduction
 
-Yasp was created to help data engineers (I am one of them) working with Apache Spark to reduce their pipeline development time by using a no-code approach.
+Yasp was created to help data engineers (I am one of them) working with Apache Spark to reduce their pipeline
+development time by using a no-code approach.
 
 It is written in **Scala** on top of **Apache Spark** and managed as an **SBT** multi module project.
 
