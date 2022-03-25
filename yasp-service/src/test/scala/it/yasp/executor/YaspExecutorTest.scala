@@ -63,7 +63,7 @@ class YaspExecutorTest
     new DefaultYaspExecutor(sparkSessionFactory, new YaspServiceFactory())
       .exec(
         YaspExecution(
-          sessionConf = SessionConf(Local, "my-app-name", Map.empty),
+          conf = SessionConf(Local, "my-app-name", Map.empty),
           plan = YaspPlan(
             sources = Seq(
               YaspSource(
@@ -116,7 +116,7 @@ class YaspExecutorTest
       )
     )
 
-    assertDatasetEquals(actual,expected)
+    assertDatasetEquals(actual, expected)
   }
 
 }

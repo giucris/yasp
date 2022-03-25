@@ -16,7 +16,7 @@ object YaspExecutor {
   ) extends YaspExecutor {
 
     override def exec(yaspExecution: YaspExecution): Unit = {
-      val session = sessionFactory.create(yaspExecution.sessionConf)
+      val session = sessionFactory.create(yaspExecution.conf)
       yaspServiceFactory.create(session).run(yaspExecution.plan)
     }
 

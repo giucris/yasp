@@ -1,4 +1,4 @@
-package it.yasp.args
+package it.yasp.app.args
 
 import org.scalatest.funsuite.AnyFunSuite
 
