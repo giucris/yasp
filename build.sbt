@@ -29,7 +29,7 @@ lazy val dependencies = new {
 }
 
 lazy val root = (project in file("."))
-  .aggregate(testKit, core, service,app)
+  .aggregate(testKit, core, service, app)
 
 lazy val testKit = (project in file("yasp-testkit"))
   .settings(
