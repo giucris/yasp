@@ -1,9 +1,9 @@
-package it.yasp.loader
+package it.yasp.service.loader
 
 import it.yasp.core.spark.model.Source
 import it.yasp.core.spark.reader.Reader
 import it.yasp.core.spark.registry.Registry
-import it.yasp.model.YaspSource
+import it.yasp.service.model.YaspSource
 
 trait YaspLoader {
   def load(source: YaspSource): Unit

@@ -1,5 +1,5 @@
 ThisBuild / organization := "it.yasp"
-ThisBuild / version      := "0.0.2"
+ThisBuild / version      := "0.0.1"
 ThisBuild / scalaVersion := "2.12.10"
 
 lazy val dependencies = new {
@@ -29,7 +29,7 @@ lazy val dependencies = new {
 }
 
 lazy val root = (project in file("."))
-  .aggregate(testKit, core, service)
+  .aggregate(testKit, core, service,app)
 
 lazy val testKit = (project in file("yasp-testkit"))
   .settings(
@@ -83,4 +83,4 @@ lazy val app     = (project in file("yasp-app"))
       dependencies.h2db      % Test
     )
   )
-  .dependsOn(service)
+  .dependsOn(service, testKit % Test)

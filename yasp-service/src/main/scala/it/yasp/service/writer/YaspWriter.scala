@@ -1,9 +1,9 @@
-package it.yasp.writer
+package it.yasp.service.writer
 
 import it.yasp.core.spark.model.Dest
 import it.yasp.core.spark.registry.Registry
 import it.yasp.core.spark.writer.Writer
-import it.yasp.model.YaspSink
+import it.yasp.service.model.YaspSink
 
 trait YaspWriter {
   def write(yaspSink: YaspSink): Unit

@@ -1,12 +1,11 @@
-package it.yasp.executor
+package it.yasp.service
 
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.{Dest, Source}
 import it.yasp.core.spark.session.SessionType.Local
 import it.yasp.core.spark.session.{SessionConf, SparkSessionFactory}
-import it.yasp.executor.YaspExecutor.DefaultYaspExecutor
-import it.yasp.model._
-import it.yasp.service.YaspServiceFactory
+import it.yasp.service.YaspExecutor.DefaultYaspExecutor
+import it.yasp.service.model._
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -31,7 +30,6 @@ class YaspExecutorTest
 
   override protected def afterAll(): Unit = {
     TestUtils.cleanFolder(workspace)
-    super.afterAll()
   }
 
   test("exec") {

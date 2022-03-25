@@ -1,8 +1,7 @@
-package it.yasp.executor
+package it.yasp.service
 
 import it.yasp.core.spark.session.SparkSessionFactory
-import it.yasp.model.YaspExecution
-import it.yasp.service.YaspServiceFactory
+import it.yasp.service.model.YaspExecution
 
 trait YaspExecutor {
   def exec(yaspExecution: YaspExecution)

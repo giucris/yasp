@@ -1,7 +1,7 @@
 package it.yasp.app.conf
 
 import io.circe.generic.auto._
-import it.yasp.model.YaspExecution
+import it.yasp.service.model.YaspExecution
 
 object YaspExecutionLoader extends FileSupport with ParserSupport with VariablesSupport {
 

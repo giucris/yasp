@@ -1,11 +1,11 @@
-package it.yasp.loader
+package it.yasp.service.loader
 
 import it.yasp.core.spark.model.Source
 import it.yasp.core.spark.model.Source.Parquet
 import it.yasp.core.spark.reader.Reader
 import it.yasp.core.spark.registry.Registry
-import it.yasp.loader.YaspLoader.DefaultYaspLoader
-import it.yasp.model.YaspSource
+import it.yasp.service.loader.YaspLoader.DefaultYaspLoader
+import it.yasp.service.model.YaspSource
 import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder

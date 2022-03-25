@@ -6,7 +6,7 @@ import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.{BasicCredentials, Dest, Source}
 import it.yasp.core.spark.session.SessionConf
 import it.yasp.core.spark.session.SessionType.Local
-import it.yasp.model._
+import it.yasp.service.model._
 import org.scalatest.funsuite.AnyFunSuite
 
 class ParserSupportTest extends AnyFunSuite with ParserSupport {

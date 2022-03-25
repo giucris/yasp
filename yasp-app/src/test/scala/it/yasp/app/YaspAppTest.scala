@@ -13,11 +13,9 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
 
   override protected def afterAll(): Unit = {
     cleanFolder(workspace)
-    super.afterAll()
   }
 
   override protected def beforeAll(): Unit = {
-    super.beforeAll()
     cleanFolder(workspace)
   }
 
@@ -76,11 +74,10 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
     YaspApp.main(Array("-f", s"$workspace/test1/execution/example.yml"))
 
     val actual   = spark.read.parquet(s"$workspace/test1/output/")
-    actual.show()
     val expected = spark.createDataset(
       Seq(
-        Row("coder", "spark", "street1"),
-        Row("tester", "scala", "street2")
+        Row("coder", "spark", "street2"),
+        Row("tester", "scala", "street1")
       )
     )(
       RowEncoder(
