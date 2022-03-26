@@ -1,9 +1,9 @@
 package it.yasp.service
 
-import it.yasp.loader.YaspLoader
-import it.yasp.model.{YaspPlan, YaspProcess, YaspSink, YaspSource}
-import it.yasp.processor.YaspProcessor
-import it.yasp.writer.YaspWriter
+import it.yasp.service.loader.YaspLoader
+import it.yasp.service.model.YaspPlan
+import it.yasp.service.processor.YaspProcessor
+import it.yasp.service.writer.YaspWriter
 
 trait YaspService {
   def run(yaspPlan: YaspPlan)

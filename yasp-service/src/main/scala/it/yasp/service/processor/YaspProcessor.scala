@@ -1,9 +1,9 @@
-package it.yasp.processor
+package it.yasp.service.processor
 
 import it.yasp.core.spark.model.Process
 import it.yasp.core.spark.processor.Processor
 import it.yasp.core.spark.registry.Registry
-import it.yasp.model.YaspProcess
+import it.yasp.service.model.YaspProcess
 
 trait YaspProcessor {
   def process(process: YaspProcess)

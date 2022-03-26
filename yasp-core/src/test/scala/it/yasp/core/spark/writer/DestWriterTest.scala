@@ -1,13 +1,13 @@
 package it.yasp.core.spark.writer
 
 import it.yasp.core.spark.model.Dest.Parquet
-import it.yasp.core.spark.writer.Writer.{DestWriter, ParquetWriter}
+import it.yasp.core.spark.writer.Writer.DestWriter
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
-import org.scalatest.{BeforeAndAfterAll, DoNotDiscover}
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.{BeforeAndAfterAll, DoNotDiscover}
 
 @DoNotDiscover
 class DestWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {

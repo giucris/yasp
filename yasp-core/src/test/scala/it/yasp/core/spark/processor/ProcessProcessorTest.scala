@@ -24,9 +24,9 @@ class ProcessProcessorTest extends AnyFunSuite with SparkTestSuite {
           )
         )
       )
-      .createTempView("ds")
+      .createTempView("ds1")
 
-    val actual   = new ProcessProcessor(spark).execute(Sql("select ID from ds"))
+    val actual   = new ProcessProcessor(spark).execute(Sql("select ID from ds1"))
     val expected = spark.createDataset(Seq(Row(1), Row(2), Row(3), Row(4)))(
       RowEncoder(StructType(Seq(StructField("ID", IntegerType, nullable = true))))
     )
