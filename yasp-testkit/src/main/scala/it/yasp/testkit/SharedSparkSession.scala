@@ -23,7 +23,6 @@ trait SharedSparkSession extends BeforeAndAfterAll {
     super.beforeAll()
   }
 
-  override protected def afterAll(): Unit = {
+  override protected def afterAll(): Unit =
     super.afterAll()
-  }
 }

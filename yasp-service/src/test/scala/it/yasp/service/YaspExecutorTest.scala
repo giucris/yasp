@@ -50,7 +50,6 @@ class YaspExecutorTest
       )
     )
 
-
     new DefaultYaspExecutor(new SparkSessionFactory, new YaspServiceFactory)
       .exec(
         YaspExecution(
