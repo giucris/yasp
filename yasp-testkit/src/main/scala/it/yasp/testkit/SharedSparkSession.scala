@@ -24,7 +24,6 @@ trait SharedSparkSession extends BeforeAndAfterAll {
   }
 
   override protected def afterAll(): Unit = {
-    spark.stop()
     super.afterAll()
   }
 }

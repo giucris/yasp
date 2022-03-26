@@ -50,14 +50,8 @@ class YaspExecutorTest
       )
     )
 
-    val sparkSessionFactory = mock[SparkSessionFactory]
 
-    (sparkSessionFactory.create _)
-      .expects(SessionConf(Local, "my-app-name", Map.empty))
-      .once()
-      .returns(spark)
-
-    new DefaultYaspExecutor(sparkSessionFactory, new YaspServiceFactory())
+    new DefaultYaspExecutor(new SparkSessionFactory, new YaspServiceFactory)
       .exec(
         YaspExecution(
           conf = SessionConf(Local, "my-app-name", Map.empty),
