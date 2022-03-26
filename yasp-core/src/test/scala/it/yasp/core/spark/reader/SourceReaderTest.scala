@@ -36,11 +36,10 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
     super.beforeAll()
   }
 
-  override protected def afterAll(): Unit = {
-    TestUtils.cleanFolder(workspace)
-    executeStatement(conn1, "DROP TABLE my_table")
-    executeStatement(conn1, "SHUTDOWN")
-    super.afterAll()
+  private def executeStatement(conn: Connection, stmt: String): Unit = {
+    val statement = conn.createStatement
+    statement.execute(stmt)
+    statement.close()
   }
 
   test("read csv") {
@@ -194,9 +193,10 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
     assertDatasetEquals(actual, expected)
   }
 
-  private def executeStatement(conn: Connection, stmt: String): Unit = {
-    val statement = conn.createStatement
-    statement.execute(stmt)
-    statement.close()
+  override protected def afterAll(): Unit = {
+    TestUtils.cleanFolder(workspace)
+    executeStatement(conn1, "DROP TABLE my_table")
+    executeStatement(conn1, "SHUTDOWN")
+    super.afterAll()
   }
 }

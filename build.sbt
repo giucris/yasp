@@ -1,26 +1,35 @@
 ThisBuild / organization := "it.yasp"
-ThisBuild / version      := "0.0.2"
+ThisBuild / version      := "0.0.1"
 ThisBuild / scalaVersion := "2.12.10"
 
 lazy val dependencies = new {
-  val sparkV     = "2.4.7"
-  val sparkXmlV  = "0.8.0"
-  val scalaTestV = "3.2.10"
-  val scalaMockV = "5.1.0"
-  val h2dbV      = "1.4.200"
+  val scoptV      = "4.0.1"
+  val apacheTextV = "1.9"
+  val circeV      = "0.14.1"
+  val sparkV      = "2.4.7"
+  val sparkXmlV   = "0.8.0"
+  val scalaTestV  = "3.2.10"
+  val scalaMockV  = "5.1.0"
+  val h2dbV       = "1.4.200"
 
-  val sparkSql  = "org.apache.spark" %% "spark-sql"  % sparkV
-  val sparkAvro = "org.apache.spark" %% "spark-avro" % sparkV
-  val sparkXml  = "com.databricks"   %% "spark-xml"  % sparkXmlV
-  val scalactic = "org.scalactic"    %% "scalactic"  % scalaTestV
-  val scalaTest = "org.scalatest"    %% "scalatest"  % scalaTestV
-  val scalaMock = "org.scalamock"    %% "scalamock"  % scalaMockV
-  val h2db      = "com.h2database"    % "h2"         % h2dbV
+  val apacheText     = "org.apache.commons" % "commons-text"  % apacheTextV
+  val scopt          = "com.github.scopt"  %% "scopt"         % scoptV
+  val circeCore      = "io.circe"          %% "circe-core"    % circeV
+  val circeGeneric   = "io.circe"          %% "circe-generic" % circeV
+  val circeParser    = "io.circe"          %% "circe-parser"  % circeV
+  val circeParserYml = "io.circe"          %% "circe-yaml"    % circeV
+  val sparkSql       = "org.apache.spark"  %% "spark-sql"     % sparkV
+  val sparkAvro      = "org.apache.spark"  %% "spark-avro"    % sparkV
+  val sparkXml       = "com.databricks"    %% "spark-xml"     % sparkXmlV
+  val scalactic      = "org.scalactic"     %% "scalactic"     % scalaTestV
+  val scalaTest      = "org.scalatest"     %% "scalatest"     % scalaTestV
+  val scalaMock      = "org.scalamock"     %% "scalamock"     % scalaMockV
+  val h2db           = "com.h2database"     % "h2"            % h2dbV
 
 }
 
 lazy val root = (project in file("."))
-  .aggregate(testKit, core, service)
+  .aggregate(testKit, core, service, app)
 
 lazy val testKit = (project in file("yasp-testkit"))
   .settings(
@@ -57,3 +66,21 @@ lazy val service = (project in file("yasp-service"))
     )
   )
   .dependsOn(core, testKit % Test)
+
+lazy val app     = (project in file("yasp-app"))
+  .settings(
+    name := "yasp-app",
+    libraryDependencies ++= Seq(
+      dependencies.scopt,
+      dependencies.apacheText,
+      dependencies.circeCore,
+      dependencies.circeGeneric,
+      dependencies.circeParser,
+      dependencies.circeParserYml,
+      dependencies.scalactic,
+      dependencies.scalaTest % Test,
+      dependencies.scalaMock % Test,
+      dependencies.h2db      % Test
+    )
+  )
+  .dependsOn(service, testKit % Test)

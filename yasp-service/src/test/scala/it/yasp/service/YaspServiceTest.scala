@@ -2,11 +2,11 @@ package it.yasp.service
 
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.{Dest, Source}
-import it.yasp.loader.YaspLoader
-import it.yasp.model.{YaspPlan, YaspProcess, YaspSink, YaspSource}
-import it.yasp.processor.YaspProcessor
+import it.yasp.service.loader.YaspLoader
+import it.yasp.service.model.{YaspPlan, YaspProcess, YaspSink, YaspSource}
+import it.yasp.service.processor.YaspProcessor
 import it.yasp.service.YaspService.DefaultYaspService
-import it.yasp.writer.YaspWriter
+import it.yasp.service.writer.YaspWriter
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
 

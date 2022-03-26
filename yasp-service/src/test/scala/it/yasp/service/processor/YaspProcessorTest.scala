@@ -1,11 +1,11 @@
-package it.yasp.processor
+package it.yasp.service.processor
 
 import it.yasp.core.spark.model.Process
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.processor.Processor
 import it.yasp.core.spark.registry.Registry
-import it.yasp.model.YaspProcess
-import it.yasp.processor.YaspProcessor.DefaultYaspProcessor
+import it.yasp.service.model.YaspProcess
+import it.yasp.service.processor.YaspProcessor.DefaultYaspProcessor
 import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
