@@ -1,15 +1,25 @@
 package it.yasp.app
 
-//TODO Fix YaspAppTest
-/*
+import it.yasp.testkit.SparkTestSuite
+import it.yasp.testkit.TestUtils.{cleanFolder, createFile}
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.catalyst.encoders.RowEncoder
+import org.apache.spark.sql.types.{StringType, StructField, StructType}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.funsuite.AnyFunSuite
+
 class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
   private val workspace = "yasp-app/src/test/resources/YaspApp"
 
-  override protected def afterAll(): Unit =
+  override protected def beforeAll(): Unit = {
+    super.beforeAll()
     cleanFolder(workspace)
+  }
 
-  override protected def beforeAll(): Unit =
+  override protected def afterAll(): Unit = {
+    super.afterAll()
     cleanFolder(workspace)
+  }
 
   test("n source n transformation 1 write") {
     createFile(
@@ -87,4 +97,3 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
   }
 
 }
- */
