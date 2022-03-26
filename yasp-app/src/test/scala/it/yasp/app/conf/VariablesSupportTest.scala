@@ -1,6 +1,5 @@
-package it.yasp.app.vars
+package it.yasp.app.conf
 
-import it.yasp.app.conf.VariablesSupport
 import org.scalatest.funsuite.AnyFunSuite
 
 class VariablesSupportTest extends AnyFunSuite with VariablesSupport {

@@ -21,15 +21,17 @@ class YaspExecutorTest
     with BeforeAndAfterAll
     with SparkTestSuite {
 
-  private val workspace = "yasp-app/src/test/resources/YaspExecutorTest"
+  private val workspace = "yasp-service/src/test/resources/YaspExecutorTest"
 
   override protected def beforeAll(): Unit = {
     TestUtils.cleanFolder(workspace)
     super.beforeAll()
   }
 
-  override protected def afterAll(): Unit =
+  override protected def afterAll(): Unit = {
     TestUtils.cleanFolder(workspace)
+    super.afterAll()
+  }
 
   test("exec") {
     TestUtils.createFile(

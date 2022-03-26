@@ -1,7 +1,6 @@
-package it.yasp.app.parser
+package it.yasp.app.conf
 
 import io.circe.generic.auto._
-import it.yasp.app.conf.ParserSupport
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.{BasicCredentials, Dest, Source}
 import it.yasp.core.spark.session.SessionConf
