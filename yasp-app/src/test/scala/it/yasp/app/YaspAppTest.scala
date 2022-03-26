@@ -1,13 +1,5 @@
 package it.yasp.app
 
-import it.yasp.testkit.SparkTestSuite
-import it.yasp.testkit.TestUtils._
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.catalyst.encoders.RowEncoder
-import org.apache.spark.sql.types.{StringType, StructField, StructType}
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.funsuite.AnyFunSuite
-
 //TODO Fix YaspAppTest
 /*
 class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
@@ -95,4 +87,4 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
   }
 
 }
-*/
+ */
