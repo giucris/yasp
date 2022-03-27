@@ -25,9 +25,10 @@ class YaspServiceFactory {
     */
   def create(spark: SparkSession): YaspService = {
     val registry = new DefaultRegistry(spark)
+    val cache    = new DefaultCache()
     new DefaultYaspService(
-      new DefaultYaspLoader(new SourceReader(spark), registry, new DefaultCache()),
-      new DefaultYaspProcessor(new ProcessProcessor(spark), registry),
+      new DefaultYaspLoader(new SourceReader(spark), registry, cache),
+      new DefaultYaspProcessor(new ProcessProcessor(spark), registry, cache),
       new DefaultYaspWriter(registry, new DestWriter())
     )
   }

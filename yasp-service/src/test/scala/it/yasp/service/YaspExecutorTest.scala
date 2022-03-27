@@ -80,7 +80,8 @@ class YaspExecutorTest
             processes = Seq(
               YaspProcess(
                 "data_3",
-                Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id")
+                Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id"),
+                None
               )
             ),
             sinks = Seq(

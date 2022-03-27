@@ -1,8 +1,6 @@
 package it.yasp.app.conf
 
 import io.circe.generic.auto._
-import io.circe.syntax.EncoderOps
-import io.circe.yaml.syntax.AsYaml
 import it.yasp.core.spark.model.CacheLayer.{Memory, MemoryAndDisk}
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.{BasicCredentials, Dest, Source}
@@ -13,31 +11,6 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class ParserSupportTest extends AnyFunSuite with ParserSupport {
 
-  test("to") {
-    val x = YaspExecution(
-      SessionConf(Local, "my-app-name", Map("key-1" -> "value", "key-2" -> "value")),
-      YaspPlan(
-        Seq(
-          YaspSource("id1", Source.Csv(Seq("x", "y"), header = false, ","), Some(Memory)),
-          YaspSource(
-            "id2",
-            Source.Parquet(Seq("x", "y"), mergeSchema = false),
-            Some(MemoryAndDisk)
-          ),
-          YaspSource("id3", Source.Jdbc("url", "table", Some(BasicCredentials("x", "y"))), None)
-        ),
-        Seq(
-          YaspProcess("p1", Sql("my-query")),
-          YaspProcess("p2", Sql("my-query"))
-        ),
-        Seq(
-          YaspSink("p1", Dest.Parquet("out-path-1")),
-          YaspSink("p3", Dest.Parquet("out-path-2"))
-        )
-      )
-    ).asJson.asYaml.spaces2
-    print(x)
-  }
   test("parse") {
     val expected = YaspExecution(
       SessionConf(Local, "my-app-name", Map("key-1" -> "value", "key-2" -> "value")),
@@ -52,8 +25,8 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
           YaspSource("id3", Source.Jdbc("url", "table", Some(BasicCredentials("x", "y"))), None)
         ),
         Seq(
-          YaspProcess("p1", Sql("my-query")),
-          YaspProcess("p2", Sql("my-query"))
+          YaspProcess("p1", Sql("my-query"), None),
+          YaspProcess("p2", Sql("my-query"), None)
         ),
         Seq(
           YaspSink("p1", Dest.Parquet("out-path-1")),

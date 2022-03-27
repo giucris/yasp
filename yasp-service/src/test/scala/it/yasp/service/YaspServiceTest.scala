@@ -43,7 +43,7 @@ class YaspServiceTest extends AnyFunSuite with MockFactory {
         .expects(YaspSource("id1", Source.Json(Seq("sourcePath")), None))
         .once(),
       (processor.process _)
-        .expects(YaspProcess("id2", Sql("my-sql")))
+        .expects(YaspProcess("id2", Sql("my-sql"), None))
         .once(),
       (writer.write _)
         .expects(YaspSink("id2", Dest.Parquet("destPath")))
@@ -53,7 +53,7 @@ class YaspServiceTest extends AnyFunSuite with MockFactory {
     yaspService.run(
       YaspPlan(
         sources = Seq(YaspSource("id1", Source.Json(Seq("sourcePath")), None)),
-        processes = Seq(YaspProcess("id2", Sql("my-sql"))),
+        processes = Seq(YaspProcess("id2", Sql("my-sql"), None)),
         sinks = Seq(YaspSink("id2", Dest.Parquet("destPath")))
       )
     )
@@ -68,10 +68,10 @@ class YaspServiceTest extends AnyFunSuite with MockFactory {
         .expects(YaspSource("id2", Source.Parquet(Seq("sourcePath2"), mergeSchema = true), None))
         .once(),
       (processor.process _)
-        .expects(YaspProcess("id3", Sql("my-sql-1")))
+        .expects(YaspProcess("id3", Sql("my-sql-1"), None))
         .once(),
       (processor.process _)
-        .expects(YaspProcess("id4", Sql("my-sql-2")))
+        .expects(YaspProcess("id4", Sql("my-sql-2"), None))
         .once(),
       (writer.write _)
         .expects(YaspSink("id4", Dest.Parquet("destPath1")))
@@ -88,8 +88,8 @@ class YaspServiceTest extends AnyFunSuite with MockFactory {
           YaspSource("id2", Source.Parquet(Seq("sourcePath2"), mergeSchema = true), None)
         ),
         processes = Seq(
-          YaspProcess("id3", Sql("my-sql-1")),
-          YaspProcess("id4", Sql("my-sql-2"))
+          YaspProcess("id3", Sql("my-sql-1"), None),
+          YaspProcess("id4", Sql("my-sql-2"), None)
         ),
         sinks = Seq(
           YaspSink("id4", Dest.Parquet("destPath1")),

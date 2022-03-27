@@ -24,11 +24,11 @@ object YaspLoader {
 
   /** DefaultYaspLoader Implementation
     * @param reader:
-    *   An instance [[Reader]]
+    *   A [[Reader]] instance
     * @param registry:
-    *   An instance of Registry
+    *   A [[Registry]] instance
     * @param cache:
-    *   An instance of Cache
+    *   A [[Cache]] instance
     */
   class DefaultYaspLoader(reader: Reader[Source], registry: Registry, cache: Cache)
       extends YaspLoader {
