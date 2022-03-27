@@ -8,8 +8,8 @@ import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes.StringType
 import org.apache.spark.sql.types.{StructField, StructType}
 import org.apache.spark.storage.StorageLevel
-import org.scalatest.{BeforeAndAfterAll, DoNotDiscover}
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.{BeforeAndAfterAll, DoNotDiscover}
 
 @DoNotDiscover
 class DefaultCacheTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
@@ -37,7 +37,7 @@ class DefaultCacheTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         )
       )
     )
-    assert(new DefaultCache().cache(ds1,Memory).storageLevel == StorageLevel.MEMORY_ONLY)
+    assert(new DefaultCache().cache(ds1, Memory).storageLevel == StorageLevel.MEMORY_ONLY)
   }
 
   test("cache with Disk") {
@@ -52,7 +52,7 @@ class DefaultCacheTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         )
       )
     )
-    assert(new DefaultCache().cache(ds2,Disk).storageLevel == StorageLevel.DISK_ONLY)
+    assert(new DefaultCache().cache(ds2, Disk).storageLevel == StorageLevel.DISK_ONLY)
   }
 
   test("cache with MemoryAndDisk") {
@@ -67,7 +67,9 @@ class DefaultCacheTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         )
       )
     )
-    assert(new DefaultCache().cache(ds2,MemoryAndDisk).storageLevel == StorageLevel.MEMORY_AND_DISK)
+    assert(
+      new DefaultCache().cache(ds2, MemoryAndDisk).storageLevel == StorageLevel.MEMORY_AND_DISK
+    )
   }
 
   test("cache with MemorySer") {
@@ -82,7 +84,7 @@ class DefaultCacheTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         )
       )
     )
-    assert(new DefaultCache().cache(ds2,MemorySer).storageLevel == StorageLevel.MEMORY_ONLY_SER)
+    assert(new DefaultCache().cache(ds2, MemorySer).storageLevel == StorageLevel.MEMORY_ONLY_SER)
   }
 
   test("cache with MemoryAndDiskSer") {
@@ -97,7 +99,11 @@ class DefaultCacheTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         )
       )
     )
-    assert(new DefaultCache().cache(ds2,MemoryAndDiskSer).storageLevel == StorageLevel.MEMORY_AND_DISK_SER)
+    assert(
+      new DefaultCache()
+        .cache(ds2, MemoryAndDiskSer)
+        .storageLevel == StorageLevel.MEMORY_AND_DISK_SER
+    )
   }
 
 }

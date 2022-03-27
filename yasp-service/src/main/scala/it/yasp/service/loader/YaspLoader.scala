@@ -14,7 +14,8 @@ trait YaspLoader {
 
   /** Read the specified YaspSource, cache the result if some cache specification exists on the
     * source and then register the table
-    * @param source: A [[YaspSource]] instance
+    * @param source:
+    *   A [[YaspSource]] instance
     */
   def load(source: YaspSource): Unit
 }
