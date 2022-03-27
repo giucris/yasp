@@ -1,6 +1,7 @@
 package it.yasp.app.conf
 
 import io.circe.generic.auto._
+import it.yasp.core.spark.model.CacheLayer.{Memory, MemoryAndDisk}
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.{BasicCredentials, Dest, Source}
 import it.yasp.core.spark.session.SessionConf
@@ -15,13 +16,17 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
       SessionConf(Local, "my-app-name", Map("key-1" -> "value", "key-2" -> "value")),
       YaspPlan(
         Seq(
-          YaspSource("id1", Source.Csv(Seq("x", "y"), header = false, ",")),
-          YaspSource("id2", Source.Parquet(Seq("x", "y"), mergeSchema = false)),
-          YaspSource("id3", Source.Jdbc("url", "table", Some(BasicCredentials("x", "y"))))
+          YaspSource("id1", Source.Csv(Seq("x", "y"), header = false, ","), Some(Memory)),
+          YaspSource(
+            "id2",
+            Source.Parquet(Seq("x", "y"), mergeSchema = false),
+            Some(MemoryAndDisk)
+          ),
+          YaspSource("id3", Source.Jdbc("url", "table", Some(BasicCredentials("x", "y"))), None)
         ),
         Seq(
-          YaspProcess("p1", Sql("my-query")),
-          YaspProcess("p2", Sql("my-query"))
+          YaspProcess("p1", Sql("my-query"), None),
+          YaspProcess("p2", Sql("my-query"), None)
         ),
         Seq(
           YaspSink("p1", Dest.Parquet("out-path-1")),
@@ -48,6 +53,8 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        - y
         |        header: false
         |        separator: ','
+        |    cache:
+        |      Memory: {}
         |  - id: id2
         |    source:
         |      Parquet:
@@ -55,6 +62,8 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        - x
         |        - y
         |        mergeSchema: false
+        |    cache:
+        |      MemoryAndDisk: {}
         |  - id: id3
         |    source:
         |      Jdbc:

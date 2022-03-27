@@ -1,5 +1,6 @@
 package it.yasp.core.spark
 
+import it.yasp.core.spark.cache.DefaultCacheTest
 import it.yasp.core.spark.processor.{ProcessProcessorTest, SqlProcessorTest}
 import it.yasp.core.spark.reader._
 import it.yasp.core.spark.registry.RegistryTest
@@ -21,5 +22,6 @@ class YaspCoreSuites
       new ProcessProcessorTest,
       new ParquetWriterTest,
       new DestWriterTest,
-      new RegistryTest
+      new RegistryTest,
+      new DefaultCacheTest
     )

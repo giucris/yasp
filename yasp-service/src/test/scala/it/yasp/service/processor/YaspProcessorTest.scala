@@ -1,5 +1,7 @@
 package it.yasp.service.processor
 
+import it.yasp.core.spark.cache.Cache
+import it.yasp.core.spark.model.CacheLayer.Memory
 import it.yasp.core.spark.model.Process
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.processor.Processor
@@ -15,10 +17,38 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
 
 class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory {
+  val processor: Processor[Process] = mock[Processor[Process]]
+  val registry: Registry            = mock[Registry]
+  val cache: Cache                  = mock[Cache]
 
-  test("process") {
-    val processor: Processor[Process] = mock[Processor[Process]]
-    val registry: Registry            = mock[Registry]
+  val yaspProcessor = new DefaultYaspProcessor(processor, registry, cache)
+
+  test("process will exec sql proc and cache") {
+    inSequence(
+      (processor.execute _)
+        .expects(Sql("select * from test_table"))
+        .once()
+        .returns(
+          spark.createDataset(Seq(Row("a")))(
+            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+          )
+        ),
+      (cache.cache _)
+        .expects(*, Memory)
+        .once()
+        .returns(
+          spark.createDataset(Seq(Row("a")))(
+            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+          )
+        ),
+      (registry.register _)
+        .expects(*, "tbl")
+        .once()
+    )
+    yaspProcessor.process(YaspProcess("tbl", Sql("select * from test_table"), Some(Memory)))
+  }
+
+  test("process will exec sql proc and no cache") {
     inSequence(
       (processor.execute _)
         .expects(Sql("select * from test_table"))
@@ -29,12 +59,10 @@ class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory
           )
         ),
       (registry.register _)
-        .expects(*, "my_processed_table")
+        .expects(*, "tbl")
         .once()
     )
-    new DefaultYaspProcessor(processor, registry).process(
-      YaspProcess("my_processed_table", Sql("select * from test_table"))
-    )
+    yaspProcessor.process(YaspProcess("tbl", Sql("select * from test_table"), None))
   }
 
 }

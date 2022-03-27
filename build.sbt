@@ -1,11 +1,11 @@
 ThisBuild / organization := "it.yasp"
 ThisBuild / version      := "0.0.1"
-ThisBuild / scalaVersion := "2.12.10"
+ThisBuild / scalaVersion := "2.11.12"
 
 lazy val dependencies = new {
   val scoptV      = "4.0.1"
   val apacheTextV = "1.9"
-  val circeV      = "0.14.1"
+  val circeV      = "0.10.1"
   val sparkV      = "2.4.7"
   val sparkXmlV   = "0.8.0"
   val scalaTestV  = "3.2.10"
