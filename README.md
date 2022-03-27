@@ -11,7 +11,7 @@ An easy and lightweight tool for data engineering process built on top of Apache
 Yasp was originally created just for fun and to help data engineers (I am one of them) working with Apache Spark to
 reduce their pipeline development time by using a no-code/less-code approach.
 
-It is written in **Scala (2.11.19)** on top of **Apache Spark (2.4.7)** and managed as an **SBT (1.4.9)** multi module project.
+It is written in **Scala (2.11.12)** on top of **Apache Spark (2.4.7)** and managed as an **SBT (1.4.9)** multi module project.
 
 ## Getting Started
 
