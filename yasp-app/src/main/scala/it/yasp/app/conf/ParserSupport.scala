@@ -3,7 +3,9 @@ package it.yasp.app.conf
 import cats.implicits._
 import io.circe.Decoder
 
-trait ParserSupport {
+/** Provide a method to parse from yml content
+  */
+trait ParserSupport extends EncodersSupport {
 
   def parseYaml[A](content: String)(implicit ev: Decoder[A]): A =
     io.circe.yaml.parser

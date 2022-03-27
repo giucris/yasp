@@ -23,6 +23,8 @@ trait Cache {
 
 object Cache {
 
+  /** DefaultCache implementation
+    */
   class DefaultCache() extends Cache {
     override def cache(ds: Dataset[Row], layer: CacheLayer): Dataset[Row] =
       layer match {
@@ -31,7 +33,7 @@ object Cache {
         case MemoryAndDisk    => ds.persist(StorageLevel.MEMORY_AND_DISK)
         case MemorySer        => ds.persist(StorageLevel.MEMORY_ONLY_SER)
         case MemoryAndDiskSer => ds.persist(StorageLevel.MEMORY_AND_DISK_SER)
-        case CheckPoint       => ds.checkpoint()
+        case Checkpoint       => ds.checkpoint()
       }
   }
 

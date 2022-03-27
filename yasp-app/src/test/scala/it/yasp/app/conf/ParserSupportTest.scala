@@ -37,8 +37,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
     val actual   = parseYaml[YaspExecution](
       """
         |conf:
-        |  sessionType:
-        |    Local: {}
+        |  sessionType: Local
         |  appName: my-app-name
         |  config:
         |    key-1: value
@@ -53,8 +52,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        - y
         |        header: false
         |        separator: ','
-        |    cache:
-        |      Memory: {}
+        |    cache: Memory
         |  - id: id2
         |    source:
         |      Parquet:
@@ -62,8 +60,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        - x
         |        - y
         |        mergeSchema: false
-        |    cache:
-        |      MemoryAndDisk: {}
+        |    cache: MemoryAndDisk
         |  - id: id3
         |    source:
         |      Jdbc:

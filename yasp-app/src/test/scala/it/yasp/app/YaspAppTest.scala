@@ -41,8 +41,7 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
       filePath = s"$workspace/test1/execution/example.yml",
       rows = Seq(
         """conf:
-          |  sessionType:
-          |    Local: {}
+          |  sessionType: Local
           |  appName: example-app
           |  config: {}
           |plan:
@@ -54,8 +53,7 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
           |            - yasp-app/src/test/resources/YaspApp/test1/source/user.csv
           |          header: true
           |          separator: ','
-          |      cache:
-          |        Memory: {}
+          |      cache: Memory
           |    - id: addresses
           |      source:
           |        Json:
