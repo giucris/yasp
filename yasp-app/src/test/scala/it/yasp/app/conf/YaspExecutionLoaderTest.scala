@@ -64,8 +64,8 @@ class YaspExecutionLoaderTest extends AnyFunSuite with BeforeAndAfterAll {
       SessionConf(Local, "my-app", Map.empty),
       YaspPlan(
         sources = Seq(
-          YaspSource("id1", Source.Csv(Seq("path1"), header = true, ",")),
-          YaspSource("id2", Source.Json(Seq("path2")))
+          YaspSource("id1", Source.Csv(Seq("path1"), header = true, ","), None),
+          YaspSource("id2", Source.Json(Seq("path2")), None)
         ),
         processes = Seq(
           YaspProcess("r1", Sql("my query"))

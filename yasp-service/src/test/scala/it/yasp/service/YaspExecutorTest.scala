@@ -64,7 +64,8 @@ class YaspExecutorTest
                   paths = Seq(s"$workspace/csv-data-source-1/file1.csv"),
                   header = true,
                   separator = ","
-                )
+                ),
+                cache = None
               ),
               YaspSource(
                 "data_2",
@@ -72,7 +73,8 @@ class YaspExecutorTest
                   paths = Seq(s"$workspace/csv-data-source-2/file1.csv"),
                   header = true,
                   separator = ","
-                )
+                ),
+                cache = None
               )
             ),
             processes = Seq(

@@ -1,5 +1,7 @@
 package it.yasp.core.spark.model
 
+/** CacheLayer
+  */
 sealed trait CacheLayer
 
 object CacheLayer {

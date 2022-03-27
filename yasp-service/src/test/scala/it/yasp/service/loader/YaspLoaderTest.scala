@@ -1,5 +1,7 @@
 package it.yasp.service.loader
 
+import it.yasp.core.spark.cache.Cache
+import it.yasp.core.spark.model.CacheLayer.Memory
 import it.yasp.core.spark.model.Source
 import it.yasp.core.spark.model.Source.Parquet
 import it.yasp.core.spark.reader.Reader
@@ -16,10 +18,13 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
 
-  test("load register source") {
-    val reader   = mock[Reader[Source]]
-    val registry = mock[Registry]
+  val reader: Reader[Source] = mock[Reader[Source]]
+  val cache: Cache           = mock[Cache]
+  val registry: Registry     = mock[Registry]
 
+  val yaspLoader: YaspLoader = new DefaultYaspLoader(reader, registry, cache)
+
+  test("load will read cache and register source") {
     inSequence(
       (reader.read _)
         .expects(Parquet(Seq("x", "y"), mergeSchema = false))
@@ -29,13 +34,37 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
             RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
           )
         ),
+      (cache.cache _)
+        .expects(*, Memory)
+        .once()
+        .returns(
+          spark.createDataset(Seq(Row("a")))(
+            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+          )
+        ),
       (registry.register _)
-        .expects(*, "my_table")
+        .expects(*, "tbl")
         .once()
     )
 
-    new DefaultYaspLoader(reader, registry).load(
-      YaspSource("my_table", Parquet(Seq("x", "y"), mergeSchema = false))
+    yaspLoader.load(YaspSource("tbl", Parquet(Seq("x", "y"), mergeSchema = false), Some(Memory)))
+  }
+
+  test("load will read no cache and register source") {
+    inSequence(
+      (reader.read _)
+        .expects(Parquet(Seq("x", "y"), mergeSchema = false))
+        .once()
+        .returns(
+          spark.createDataset(Seq(Row("b")))(
+            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+          )
+        ),
+      (registry.register _)
+        .expects(*, "tbl")
+        .once()
     )
+
+    yaspLoader.load(YaspSource("tbl", Parquet(Seq("x", "y"), mergeSchema = false), None))
   }
 }
