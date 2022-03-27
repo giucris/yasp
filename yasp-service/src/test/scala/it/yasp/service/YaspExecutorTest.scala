@@ -64,7 +64,8 @@ class YaspExecutorTest
                   paths = Seq(s"$workspace/csv-data-source-1/file1.csv"),
                   header = true,
                   separator = ","
-                )
+                ),
+                cache = None
               ),
               YaspSource(
                 "data_2",
@@ -72,13 +73,15 @@ class YaspExecutorTest
                   paths = Seq(s"$workspace/csv-data-source-2/file1.csv"),
                   header = true,
                   separator = ","
-                )
+                ),
+                cache = None
               )
             ),
             processes = Seq(
               YaspProcess(
                 "data_3",
-                Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id")
+                Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id"),
+                None
               )
             ),
             sinks = Seq(

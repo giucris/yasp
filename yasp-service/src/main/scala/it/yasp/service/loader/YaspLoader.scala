@@ -1,20 +1,41 @@
 package it.yasp.service.loader
 
+import it.yasp.core.spark.cache.Cache
 import it.yasp.core.spark.model.Source
 import it.yasp.core.spark.reader.Reader
 import it.yasp.core.spark.registry.Registry
 import it.yasp.service.model.YaspSource
 
+/** YaspLoader
+  *
+  * Provide a unified way to load a [[YaspSource]]
+  */
 trait YaspLoader {
+
+  /** Read the specified YaspSource, cache the result if some cache specification exists on the
+    * source and then register the table
+    * @param source:
+    *   A [[YaspSource]] instance
+    */
   def load(source: YaspSource): Unit
 }
 
 object YaspLoader {
 
-  class DefaultYaspLoader(reader: Reader[Source], registry: Registry) extends YaspLoader {
+  /** DefaultYaspLoader Implementation
+    * @param reader:
+    *   A [[Reader]] instance
+    * @param registry:
+    *   A [[Registry]] instance
+    * @param cache:
+    *   A [[Cache]] instance
+    */
+  class DefaultYaspLoader(reader: Reader[Source], registry: Registry, cache: Cache)
+      extends YaspLoader {
     override def load(source: YaspSource): Unit = {
       val src = reader.read(source.source)
-      registry.register(src, source.id)
+      val ds  = source.cache.map(cache.cache(src, _)).getOrElse(src)
+      registry.register(ds, source.id)
     }
   }
 }
