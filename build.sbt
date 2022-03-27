@@ -1,6 +1,6 @@
 ThisBuild / organization := "it.yasp"
 ThisBuild / version      := "0.0.1"
-ThisBuild / scalaVersion := "2.11.10"
+ThisBuild / scalaVersion := "2.11.12"
 
 lazy val dependencies = new {
   val scoptV      = "4.0.1"
