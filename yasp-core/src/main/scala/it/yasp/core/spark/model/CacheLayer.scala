@@ -2,7 +2,7 @@ package it.yasp.core.spark.model
 
 /** CacheLayer
   */
-sealed trait CacheLayer
+sealed trait CacheLayer extends Product with Serializable
 
 object CacheLayer {
   final case object Memory           extends CacheLayer
