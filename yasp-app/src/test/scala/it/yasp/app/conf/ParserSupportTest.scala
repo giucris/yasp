@@ -26,7 +26,11 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
             Source.Parquet("x", mergeSchema = false),
             Some(MemoryAndDisk)
           ),
-          YaspSource("id3", Source.Jdbc("url", "table", Some(BasicCredentials("x", "y"))), None),
+          YaspSource(
+            "id3",
+            Source.Jdbc("url", Some(BasicCredentials("x", "y")), Some(Map("dbTable" -> "table"))),
+            None
+          ),
           YaspSource("id4", Source.Csv("z", None), Some(Memory))
         ),
         Seq(
@@ -67,10 +71,11 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |    source:
         |      Jdbc:
         |        url: url
-        |        table: table
         |        credentials:
         |          username: x
         |          password: y
+        |        options:
+        |          dbTable: table
         |  - id: id4
         |    source:
         |      Csv:

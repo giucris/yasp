@@ -10,8 +10,8 @@ object Source {
     * @param path:
     *   path of the Csv files
     * @param options:
-    *   An optional map of Csv read configuration. For a complete list of valid configuration you
-    *   can check at the official spark documentation
+    *   An optional map of Csv read configuration. For a complete list of valid configuration check
+    *   the official spark documentation
     *   (https://spark.apache.org/docs/2.4.7/api/java/org/apache/spark/sql/DataFrameReader.html#csv-java.lang.String...-).
     */
   case class Csv(
@@ -23,8 +23,8 @@ object Source {
     * @param path:
     *   path of the json files
     * @param options:
-    *   An optional map of Json read configuration. For a complete list of valid configuration you
-    *   can check at the official spark documentation
+    *   An optional map of Json read configuration. For a complete list of valid configuration check
+    *   the official spark documentation
     *   (https://spark.apache.org/docs/2.4.7/api/java/org/apache/spark/sql/DataFrameReader.html#json-java.lang.String...-).
     */
   case class Json(
@@ -55,8 +55,8 @@ object Source {
     * @param path:
     *   path of the avro files
     * @param options:
-    *   An optional map of Avro read configuration. For a complete list of valid configuration you
-    *   can check at the official spark documentation
+    *   An optional map of Avro read configuration. For a complete list of valid configuration check
+    *   the official spark documentation
     *   (https://spark.apache.org/docs/2.4.7/sql-data-sources-avro.html)
     */
   case class Avro(
@@ -68,8 +68,8 @@ object Source {
     * @param path:
     *   path of the xml files
     * @param options:
-    *   An optional map of Xml read configuration. For a complete list of valid configuration you
-    *   can check at the official databricks spark-xml github repository.
+    *   An optional map of Xml read configuration. For a complete list of valid configuration check
+    *   the official databricks spark-xml github repository.
     *   (https://github.com/databricks/spark-xml)
     */
   case class Xml(
@@ -80,14 +80,16 @@ object Source {
   /** A Jdbc Source Model
     * @param url:
     *   the url of the database
-    * @param table:
-    *   the table to read
     * @param credentials:
     *   an Optional BasicCredential configuration
+    * @param options:
+    *   An optional map of Jdbc read configuration. For a complete list of valid configuration check
+    *   the official spark documentation
+    *   (https://spark.apache.org/docs/2.4.7/sql-data-sources-jdbc.html)
     */
   case class Jdbc(
       url: String,
-      table: String,
-      credentials: Option[BasicCredentials]
+      credentials: Option[BasicCredentials],
+      options: Option[Map[String, String]]
   ) extends Source
 }

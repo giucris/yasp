@@ -193,7 +193,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
     val actual   = new SourceReader(spark).read(
-      Jdbc(url = connUrl1, table = "my_table", credentials = None)
+      Jdbc(url = connUrl1, credentials = None, Some(Map("dbTable" -> "my_table")))
     )
     assertDatasetEquals(actual, expected)
   }

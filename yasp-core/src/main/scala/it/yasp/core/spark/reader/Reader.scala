@@ -62,15 +62,14 @@ object Reader {
   class JdbcReader(spark: SparkSession) extends Reader[Jdbc] {
     override def read(source: Jdbc): Dataset[Row] =
       spark.read
+        .format("jdbc")
         .options(
           Map(
             "url"      -> source.url,
-            "dbtable"  -> source.table,
             "user"     -> source.credentials.map(_.username).getOrElse(""),
             "password" -> source.credentials.map(_.password).getOrElse("")
-          )
+          ) ++ source.options.getOrElse(Map.empty)
         )
-        .format("jdbc")
         .load()
   }
 
@@ -80,7 +79,7 @@ object Reader {
     */
   class AvroReader(spark: SparkSession) extends Reader[Avro] {
     override def read(source: Avro): Dataset[Row] =
-      spark.read.format("avro").load(source.path)
+      spark.read.format("avro").options(source.options.getOrElse(Map.empty)).load(source.path)
   }
 
   /** XmlReader an instance of Reader[Xml]
@@ -92,15 +91,11 @@ object Reader {
       spark.read.format("xml").options(source.options.getOrElse(Map.empty)).load(source.path)
   }
 
+  /** OrcReader an instance of Reader[Orc]
+    * @param spark
+    *   A [[SparkSession]] instance
+    */
   class OrcReader(spark: SparkSession) extends Reader[Orc] {
-
-    /** Read a specific datasource with spark primitives
-      *
-      * @param source
-      *   : an instance of [[Source]]
-      * @return
-      *   a [[Dataset]] of [[Row]]
-      */
     override def read(source: Orc): Dataset[Row] =
       spark.read.format("orc").load(source.path)
   }
