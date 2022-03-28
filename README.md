@@ -34,17 +34,48 @@ project.
 
 Yasp provide 3 layer of abstraction over spark framework.
 
-* **YaspCore** the layer most nearest to spark.
-* **YaspService** that provide some utilities and some functionalities able to abstract your works from spark framework
-  and to work in a most generic way.
-* **YaspApp** that provide an executable binary to manage your complex etl job with a simple yml
+* **YaspCore** provide some spark primitives usefull for yasp process.
+* **YaspService** provide an high level of abraction for your ETL job.
+* **YaspApp** provide an executable binary to manage your complex etl job with a simple yml file
 
 ### YaspService
 
 You can use YaspService just as a library. Add the yasp-service reference to your dependencies into your `build.sbt`
 or `pom.xml` file and then start using it.
 
-There are different component on the YaspService that can help you to concentrate only in your etl job.
-
 The two main component are `YaspExecution` and `YaspPlan`.
 
+A YaspExecution is a model that describe an ETL job in all their lifecycle. Contains a `SessionConf` that is a model to
+define a how the `SparkSession` will be created and a `YaspPlan` definition, that describe your etl ops.
+
+To run a YaspExecution there are a `YaspExecutor` that take a `YaspExecution` definition, initialize the session and run
+the `YaspPlan` via a `YaspService`
+
+```scala
+case class SessionConf(
+  sessionType: SessionType, // A SumType with two possible value Local (for local session) Distributed (for cluster session)
+  appName: String, // Spark application name
+  config: Map[String, String] // Spark session configuration
+)
+
+case class YaspPlan(
+  sources: Seq[YaspSource], // A Sequence of YaspSource
+  processes: Seq[YaspProcess], // A Sequence of YaspProcess
+  sinks: Seq[YaspSink] // A Sequence of YaspSink
+)
+
+case class YaspExecution(
+  conf: SessionConf, // A SessionConf instance
+  plan: YaspPlan // A YaspPlan Instance
+)
+
+trait YaspExecutor {
+  //Generate the SparkSession as described on SessionConf and execute the YaspPlan using a YaspService
+  def exec(yaspExecution: YaspExecution)
+}
+
+trait YaspService {
+  //Load all YaspSource, execute all the YaspProcess and Write all the YaspSink
+  def run(yaspPlan: YaspPlan)
+}
+```
