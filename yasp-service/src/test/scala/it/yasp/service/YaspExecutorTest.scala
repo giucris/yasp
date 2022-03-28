@@ -2,7 +2,7 @@ package it.yasp.service
 
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.{Dest, Source}
-import it.yasp.service.YaspExecutor.DefaultYaspExecutor
+import it.yasp.service.executor.YaspExecutor.DefaultYaspExecutor
 import it.yasp.service.loader.YaspLoader
 import it.yasp.service.model.{YaspPlan, YaspProcess, YaspSink, YaspSource}
 import it.yasp.service.processor.YaspProcessor
