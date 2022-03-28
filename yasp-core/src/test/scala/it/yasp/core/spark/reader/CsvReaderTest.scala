@@ -151,11 +151,13 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     val actual   = new CsvReader(spark).read(
       Csv(
         path = s"$workspace/multipleCsvCustomSep/",
-        options = Some(Map(
-          "header" -> "true",
-          "sep"    -> "|"
+        options = Some(
+          Map(
+            "header" -> "true",
+            "sep"    -> "|"
+          )
         )
-      ))
+      )
     )
     assertDatasetEquals(actual, expected)
   }

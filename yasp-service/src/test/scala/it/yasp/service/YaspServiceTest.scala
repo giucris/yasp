@@ -2,9 +2,8 @@ package it.yasp.service
 
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.{Dest, Source}
+import it.yasp.core.spark.session.SessionConf
 import it.yasp.core.spark.session.SessionType.Local
-import it.yasp.core.spark.session.{SessionConf, SparkSessionFactory}
-import it.yasp.service.YaspService.DefaultYaspService
 import it.yasp.service.model._
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
@@ -52,52 +51,51 @@ class YaspServiceTest
       )
     )
 
-    new DefaultYaspService(new SparkSessionFactory, new YaspExecutorFactory)
-      .run(
-        YaspExecution(
-          conf = SessionConf(Local, "my-app-name", Map.empty),
-          plan = YaspPlan(
-            sources = Seq(
-              YaspSource(
-                "data_1",
-                Source.Csv(
-                  path = s"$workspace/csv-data-source-1/file1.csv",
-                  Some(
-                    Map(
-                      "header" -> "true",
-                      "sep"    -> ","
-                    )
+    YaspService().run(
+      YaspExecution(
+        conf = SessionConf(Local, "my-app-name", Map.empty),
+        plan = YaspPlan(
+          sources = Seq(
+            YaspSource(
+              "data_1",
+              Source.Csv(
+                path = s"$workspace/csv-data-source-1/file1.csv",
+                Some(
+                  Map(
+                    "header" -> "true",
+                    "sep"    -> ","
                   )
-                ),
-                cache = None
+                )
               ),
-              YaspSource(
-                "data_2",
-                Source.Csv(
-                  path = s"$workspace/csv-data-source-2/file1.csv",
-                  Some(
-                    Map(
-                      "header" -> "true",
-                      "sep"    -> ","
-                    )
+              cache = None
+            ),
+            YaspSource(
+              "data_2",
+              Source.Csv(
+                path = s"$workspace/csv-data-source-2/file1.csv",
+                Some(
+                  Map(
+                    "header" -> "true",
+                    "sep"    -> ","
                   )
-                ),
-                cache = None
-              )
-            ),
-            processes = Seq(
-              YaspProcess(
-                "data_3",
-                Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id"),
-                None
-              )
-            ),
-            sinks = Seq(
-              YaspSink("data_3", Dest.Parquet(s"$workspace/parquet-out/"))
+                )
+              ),
+              cache = None
             )
+          ),
+          processes = Seq(
+            YaspProcess(
+              "data_3",
+              Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id"),
+              None
+            )
+          ),
+          sinks = Seq(
+            YaspSink("data_3", Dest.Parquet(s"$workspace/parquet-out/"))
           )
         )
       )
+    )
 
     val actual   = spark.read.parquet(s"$workspace/parquet-out/")
     val expected = spark.createDataset(

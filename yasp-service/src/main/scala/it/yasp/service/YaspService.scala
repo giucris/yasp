@@ -1,6 +1,7 @@
 package it.yasp.service
 
 import it.yasp.core.spark.session.SparkSessionFactory
+import it.yasp.service.executor.YaspExecutorFactory
 import it.yasp.service.model.YaspExecution
 
 trait YaspService {
@@ -10,7 +11,7 @@ trait YaspService {
 object YaspService {
 
   def apply(): YaspService =
-    new DefaultYaspService(new SparkSessionFactory,new YaspExecutorFactory)
+    new DefaultYaspService(new SparkSessionFactory, new YaspExecutorFactory)
 
   class DefaultYaspService(
       sessionFactory: SparkSessionFactory,

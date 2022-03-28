@@ -1,4 +1,4 @@
-package it.yasp.service
+package it.yasp.service.executor
 
 import it.yasp.service.loader.YaspLoader
 import it.yasp.service.model.YaspPlan
@@ -10,6 +10,9 @@ trait YaspExecutor {
 }
 
 object YaspExecutor {
+
+  def apply(loader: YaspLoader, processor: YaspProcessor, writer: YaspWriter): YaspExecutor =
+    new DefaultYaspExecutor(loader, processor, writer)
 
   class DefaultYaspExecutor(
       loader: YaspLoader,

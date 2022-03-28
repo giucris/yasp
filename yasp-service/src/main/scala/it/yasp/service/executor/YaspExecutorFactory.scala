@@ -1,11 +1,11 @@
-package it.yasp.service
+package it.yasp.service.executor
 
 import it.yasp.core.spark.cache.Cache.DefaultCache
 import it.yasp.core.spark.processor.Processor.ProcessProcessor
 import it.yasp.core.spark.reader.Reader.SourceReader
 import it.yasp.core.spark.registry.Registry.DefaultRegistry
 import it.yasp.core.spark.writer.Writer.DestWriter
-import it.yasp.service.YaspExecutor.DefaultYaspExecutor
+import it.yasp.service.executor.YaspExecutor.DefaultYaspExecutor
 import it.yasp.service.loader.YaspLoader.DefaultYaspLoader
 import it.yasp.service.processor.YaspProcessor.DefaultYaspProcessor
 import it.yasp.service.writer.YaspWriter.DefaultYaspWriter
@@ -18,11 +18,11 @@ import org.apache.spark.sql.SparkSession
 class YaspExecutorFactory {
 
   /** Create a YaspService
- *
+    *
     * @param spark:
     *   A SparkSession instance
     * @return
-    * A [[YaspExecutor]]
+    *   A [[YaspExecutor]]
     */
   def create(spark: SparkSession): YaspExecutor = {
     val registry = new DefaultRegistry(spark)
