@@ -50,8 +50,9 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
           |      source:
           |        Csv:
           |          path: yasp-app/src/test/resources/YaspApp/test1/source/user.csv
-          |          header: true
-          |          separator: ','
+          |          options:
+          |            header: 'true'
+          |            sep: ','
           |      cache: Memory
           |    - id: addresses
           |      source:

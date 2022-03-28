@@ -1,6 +1,5 @@
 package it.yasp.core.spark.reader
 
-import com.databricks.spark.xml.XmlDataFrameReader
 import it.yasp.core.spark.model.Source
 import it.yasp.core.spark.model.Source._
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
@@ -33,9 +32,7 @@ object Reader {
     */
   class CsvReader(spark: SparkSession) extends Reader[Csv] {
     override def read(source: Csv): Dataset[Row] =
-      spark.read
-        .options(Map("header" -> source.header.toString, "sep" -> source.separator))
-        .csv(source.path)
+      spark.read.format("csv").options(source.options.getOrElse(Map.empty)).load(source.path)
   }
 
   /** ParquetReader an instance of Reader[Parquet]
@@ -55,7 +52,7 @@ object Reader {
     */
   class JsonReader(spark: SparkSession) extends Reader[Json] {
     override def read(source: Json): Dataset[Row] =
-      spark.read.json(source.path)
+      spark.read.format("json").options(source.options.getOrElse(Map.empty)).load(source.path)
   }
 
   /** JdbcReader an instance of Reader[Jdbc]
@@ -92,7 +89,20 @@ object Reader {
     */
   class XmlReader(spark: SparkSession) extends Reader[Xml] {
     override def read(source: Xml): Dataset[Row] =
-      spark.read.option("rowTag", source.rowTag).xml(source.path)
+      spark.read.format("xml").options(source.options.getOrElse(Map.empty)).load(source.path)
+  }
+
+  class OrcReader(spark: SparkSession) extends Reader[Orc] {
+
+    /** Read a specific datasource with spark primitives
+      *
+      * @param source
+      *   : an instance of [[Source]]
+      * @return
+      *   a [[Dataset]] of [[Row]]
+      */
+    override def read(source: Orc): Dataset[Row] =
+      spark.read.format("orc").load(source.path)
   }
 
   //TODO Something that retrieve automatically the relative Reader[A] should be implemented. Instead of doing it with an exhaustive pattern matching. probably shapeless could help on this
@@ -104,12 +114,13 @@ object Reader {
   class SourceReader(spark: SparkSession) extends Reader[Source] {
     override def read(source: Source): Dataset[Row] =
       source match {
-        case s @ Source.Csv(_, _, _)  => new CsvReader(spark).read(s)
-        case s @ Source.Parquet(_, _) => new ParquetReader(spark).read(s)
-        case s @ Source.Json(_)       => new JsonReader(spark).read(s)
-        case s @ Source.Avro(_)       => new AvroReader(spark).read(s)
-        case s @ Source.Xml(_, _)     => new XmlReader(spark).read(s)
-        case s @ Source.Jdbc(_, _, _) => new JdbcReader(spark).read(s)
+        case s @ Csv(_, _)     => new CsvReader(spark).read(s)
+        case s @ Parquet(_, _) => new ParquetReader(spark).read(s)
+        case s @ Json(_, _)    => new JsonReader(spark).read(s)
+        case s @ Avro(_, _)    => new AvroReader(spark).read(s)
+        case s @ Xml(_, _)     => new XmlReader(spark).read(s)
+        case s @ Jdbc(_, _, _) => new JdbcReader(spark).read(s)
+        case s @ Orc(_)        => new OrcReader(spark).read(s)
       }
   }
 

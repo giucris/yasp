@@ -62,8 +62,12 @@ class YaspExecutorTest
                 "data_1",
                 Source.Csv(
                   path = s"$workspace/csv-data-source-1/file1.csv",
-                  header = true,
-                  separator = ","
+                  Some(
+                    Map(
+                      "header" -> "true",
+                      "sep"    -> ","
+                    )
+                  )
                 ),
                 cache = None
               ),
@@ -71,8 +75,12 @@ class YaspExecutorTest
                 "data_2",
                 Source.Csv(
                   path = s"$workspace/csv-data-source-2/file1.csv",
-                  header = true,
-                  separator = ","
+                  Some(
+                    Map(
+                      "header" -> "true",
+                      "sep"    -> ","
+                    )
+                  )
                 ),
                 cache = None
               )

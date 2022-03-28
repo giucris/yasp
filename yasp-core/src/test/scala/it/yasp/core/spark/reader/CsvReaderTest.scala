@@ -41,8 +41,12 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     val actual   = new CsvReader(spark).read(
       Csv(
         path = s"$workspace/singleCsv/file1.csv",
-        header = false,
-        separator = ","
+        options = Some(
+          Map(
+            "header" -> "false",
+            "sep"    -> ","
+          )
+        )
       )
     )
     assertDatasetEquals(actual, expected)
@@ -64,8 +68,12 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     val actual   = new CsvReader(spark).read(
       Csv(
         path = s"$workspace/singleCsv/file2.csv",
-        header = true,
-        separator = ","
+        options = Some(
+          Map(
+            "header" -> "true",
+            "sep"    -> ","
+          )
+        )
       )
     )
     assertDatasetEquals(actual, expected)
@@ -87,8 +95,12 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     val actual   = new CsvReader(spark).read(
       Csv(
         path = s"$workspace/singleCsvCustomSep/file1.csv",
-        header = true,
-        separator = "|"
+        options = Some(
+          Map(
+            "header" -> "true",
+            "sep"    -> "|"
+          )
+        )
       )
     )
     assertDatasetEquals(actual, expected)
@@ -111,8 +123,12 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     val actual   = new CsvReader(spark).read(
       Csv(
         path = s"$workspace/multipleCsv/",
-        header = true,
-        separator = ","
+        options = Some(
+          Map(
+            "header" -> "true",
+            "sep"    -> ","
+          )
+        )
       )
     )
     assertDatasetEquals(actual, expected)
@@ -135,9 +151,11 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     val actual   = new CsvReader(spark).read(
       Csv(
         path = s"$workspace/multipleCsvCustomSep/",
-        header = true,
-        separator = "|"
-      )
+        options = Some(Map(
+          "header" -> "true",
+          "sep"    -> "|"
+        )
+      ))
     )
     assertDatasetEquals(actual, expected)
   }

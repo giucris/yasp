@@ -30,4 +30,21 @@ project.
 * build yasp : `sbt assembly`
 * all in one: `bash ci.sh`
 
+## Usage
+
+Yasp provide 3 layer of abstraction over spark framework.
+
+* **YaspCore** the layer most nearest to spark.
+* **YaspService** that provide some utilities and some functionalities able to abstract your works from spark framework
+  and to work in a most generic way.
+* **YaspApp** that provide an executable binary to manage your complex etl job with a simple yml
+
+### YaspService
+
+You can use YaspService just as a library. Add the yasp-service reference to your dependencies into your `build.sbt`
+or `pom.xml` file and then start using it.
+
+There are different component on the YaspService that can help you to concentrate only in your etl job.
+
+The two main component are `YaspExecution` and `YaspPlan`.
 

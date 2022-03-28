@@ -9,15 +9,27 @@ object Source {
   /** A Csv Source Model
     * @param path:
     *   path of the Csv files
-    * @param header:
-    *   option that enable the file header on read
-    * @param separator:
-    *   option that enable different kind of separator on read
+    * @param options:
+    *   An optional map of Csv read configuration. For a complete list of valid configuration you
+    *   can check at the official spark documentation
+    *   (https://spark.apache.org/docs/2.4.7/api/java/org/apache/spark/sql/DataFrameReader.html#csv-java.lang.String...-).
     */
   case class Csv(
       path: String,
-      header: Boolean,
-      separator: String
+      options: Option[Map[String, String]]
+  ) extends Source
+
+  /** A Json Source Model
+    * @param path:
+    *   path of the json files
+    * @param options:
+    *   An optional map of Json read configuration. For a complete list of valid configuration you
+    *   can check at the official spark documentation
+    *   (https://spark.apache.org/docs/2.4.7/api/java/org/apache/spark/sql/DataFrameReader.html#json-java.lang.String...-).
+    */
+  case class Json(
+      path: String,
+      options: Option[Map[String, String]]
   ) extends Source
 
   /** A Parquet Source Model
@@ -31,31 +43,38 @@ object Source {
       mergeSchema: Boolean
   ) extends Source
 
-  /** A Json Source Model
+  /** An Orc Source Model
     * @param path:
-    *   path of the json files
+    *   path of the Orc files
     */
-  case class Json(
+  case class Orc(
       path: String
   ) extends Source
 
   /** An Avro Source Model
     * @param path:
     *   path of the avro files
+    * @param options:
+    *   An optional map of Avro read configuration. For a complete list of valid configuration you
+    *   can check at the official spark documentation
+    *   (https://spark.apache.org/docs/2.4.7/sql-data-sources-avro.html)
     */
   case class Avro(
-      path: String
+      path: String,
+      options: Option[Map[String, String]]
   ) extends Source
 
   /** An Xml Source Model
     * @param path:
     *   path of the xml files
-    * @param rowTag:
-    *   the xml tag that should be consider as a row on read
+    * @param options:
+    *   An optional map of Xml read configuration. For a complete list of valid configuration you
+    *   can check at the official databricks spark-xml github repository.
+    *   (https://github.com/databricks/spark-xml)
     */
   case class Xml(
       path: String,
-      rowTag: String
+      options: Option[Map[String, String]]
   ) extends Source
 
   /** A Jdbc Source Model

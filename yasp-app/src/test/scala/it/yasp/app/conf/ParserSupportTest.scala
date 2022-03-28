@@ -16,13 +16,14 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
       SessionConf(Local, "my-app-name", Map("key-1" -> "value", "key-2" -> "value")),
       YaspPlan(
         Seq(
-          YaspSource("id1", Source.Csv("x", header = false, ","), Some(Memory)),
+          YaspSource("id1", Source.Csv("x", Some(Map("header" -> "false", "sep" -> ","))), Some(Memory)),
           YaspSource(
             "id2",
             Source.Parquet("x", mergeSchema = false),
             Some(MemoryAndDisk)
           ),
-          YaspSource("id3", Source.Jdbc("url", "table", Some(BasicCredentials("x", "y"))), None)
+          YaspSource("id3", Source.Jdbc("url", "table", Some(BasicCredentials("x", "y"))), None),
+          YaspSource("id4", Source.Csv("z", None), Some(Memory))
         ),
         Seq(
           YaspProcess("p1", Sql("my-query"), None),
@@ -48,8 +49,9 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |    source:
         |      Csv:
         |        path: x
-        |        header: false
-        |        separator: ','
+        |        options:
+        |          header: 'false'
+        |          sep: ','
         |    cache: Memory
         |  - id: id2
         |    source:
@@ -65,6 +67,11 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        credentials:
         |          username: x
         |          password: y
+        |  - id: id4
+        |    source:
+        |      Csv:
+        |        path: z
+        |    cache: Memory
         |  processes:
         |  - id: p1
         |    process:

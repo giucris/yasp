@@ -36,8 +36,9 @@ class YaspExecutionLoaderTest extends AnyFunSuite with BeforeAndAfterAll {
           |      source:
           |        Csv:
           |          path: path1
-          |          header: true
-          |          separator: ','
+          |          options:
+          |            header: 'true'
+          |            sep: ','
           |    - id: id2
           |      source:
           |        Json:
@@ -61,8 +62,8 @@ class YaspExecutionLoaderTest extends AnyFunSuite with BeforeAndAfterAll {
       SessionConf(Local, "my-app", Map.empty),
       YaspPlan(
         sources = Seq(
-          YaspSource("id1", Source.Csv("path1", header = true, ","), None),
-          YaspSource("id2", Source.Json("path2"), None)
+          YaspSource("id1", Source.Csv("path1", Some(Map("header" -> "true", "sep" -> ","))), None),
+          YaspSource("id2", Source.Json("path2",None), None)
         ),
         processes = Seq(
           YaspProcess("r1", Sql("my query"), None)

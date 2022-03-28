@@ -21,7 +21,7 @@ class YaspServiceTest extends AnyFunSuite with MockFactory {
   test("run with 1 source and 1 sink") {
     inSequence(
       (loader.load _)
-        .expects(YaspSource("id1", Source.Json("sourcePath"), None))
+        .expects(YaspSource("id1", Source.Json("sourcePath",None), None))
         .once(),
       (writer.write _)
         .expects(YaspSink("id1", Dest.Parquet("destPath")))
@@ -30,7 +30,7 @@ class YaspServiceTest extends AnyFunSuite with MockFactory {
 
     yaspService.run(
       YaspPlan(
-        sources = Seq(YaspSource("id1", Source.Json("sourcePath"), None)),
+        sources = Seq(YaspSource("id1", Source.Json("sourcePath",None), None)),
         processes = Seq.empty,
         sinks = Seq(YaspSink("id1", Dest.Parquet("destPath")))
       )
@@ -40,7 +40,7 @@ class YaspServiceTest extends AnyFunSuite with MockFactory {
   test("run with 1 source 1 process 1 sink") {
     inSequence(
       (loader.load _)
-        .expects(YaspSource("id1", Source.Json("sourcePath"), None))
+        .expects(YaspSource("id1", Source.Json("sourcePath",None), None))
         .once(),
       (processor.process _)
         .expects(YaspProcess("id2", Sql("my-sql"), None))
@@ -52,7 +52,7 @@ class YaspServiceTest extends AnyFunSuite with MockFactory {
 
     yaspService.run(
       YaspPlan(
-        sources = Seq(YaspSource("id1", Source.Json("sourcePath"), None)),
+        sources = Seq(YaspSource("id1", Source.Json("sourcePath",None), None)),
         processes = Seq(YaspProcess("id2", Sql("my-sql"), None)),
         sinks = Seq(YaspSink("id2", Dest.Parquet("destPath")))
       )
@@ -62,7 +62,7 @@ class YaspServiceTest extends AnyFunSuite with MockFactory {
   test("run with n source n process n sink") {
     inSequence(
       (loader.load _)
-        .expects(YaspSource("id1", Source.Json("sourcePath1"), None))
+        .expects(YaspSource("id1", Source.Json("sourcePath1",None), None))
         .once(),
       (loader.load _)
         .expects(YaspSource("id2", Source.Parquet("sourcePath2", mergeSchema = true), None))
@@ -84,7 +84,7 @@ class YaspServiceTest extends AnyFunSuite with MockFactory {
     yaspService.run(
       YaspPlan(
         sources = Seq(
-          YaspSource("id1", Source.Json("sourcePath1"), None),
+          YaspSource("id1", Source.Json("sourcePath1",None), None),
           YaspSource("id2", Source.Parquet("sourcePath2", mergeSchema = true), None)
         ),
         processes = Seq(
