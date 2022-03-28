@@ -57,7 +57,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
     )
     val actual   = new SourceReader(spark).read(
       Csv(
-        Seq(s"$workspace/singleCsv/file1.csv"),
+        path=s"$workspace/singleCsv/file1.csv",
         header = false,
         separator = ","
       )
@@ -85,7 +85,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = new SourceReader(spark).read(Json(Seq(s"$workspace/json/json1.json")))
+    val actual = new SourceReader(spark).read(Json(s"$workspace/json/json1.json"))
 
     assertDatasetEquals(actual, expected)
   }
@@ -119,7 +119,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     val actual   = new SourceReader(spark).read(
-      Parquet(Seq(s"$workspace/parquet1/"), mergeSchema = false)
+      Parquet(s"$workspace/parquet1/", mergeSchema = false)
     )
     assertDatasetEquals(actual, expected)
   }
@@ -146,7 +146,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = new SourceReader(spark).read(Xml(Seq(s"$workspace/xml/file.xml"), "root"))
+    val actual = new SourceReader(spark).read(Xml(s"$workspace/xml/file.xml", "root"))
     assertDatasetEquals(actual, expected)
   }
 
@@ -169,7 +169,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
     expected.write.format("avro").save(s"$workspace/avro/fileWithoutSchema/")
-    val actual   = new SourceReader(spark).read(Avro(Seq(s"$workspace/avro/fileWithoutSchema/")))
+    val actual   = new SourceReader(spark).read(Avro(s"$workspace/avro/fileWithoutSchema/"))
 
     assertDatasetEquals(actual, expected)
   }

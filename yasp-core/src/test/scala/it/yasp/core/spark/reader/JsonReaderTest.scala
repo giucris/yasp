@@ -45,7 +45,7 @@ class JsonReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = new JsonReader(spark).read(Json(Seq(s"$workspace/json/json1.json")))
+    val actual = new JsonReader(spark).read(Json(s"$workspace/json/json1.json"))
 
     assertDatasetEquals(actual, expected)
   }
@@ -84,7 +84,7 @@ class JsonReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new JsonReader(spark).read(Json(Seq(s"$workspace/jsons/")))
+    val actual   = new JsonReader(spark).read(Json(s"$workspace/jsons/"))
     assertDatasetEquals(actual, expected)
   }
 }

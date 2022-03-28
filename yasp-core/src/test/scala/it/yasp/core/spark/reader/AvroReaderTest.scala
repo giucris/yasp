@@ -44,7 +44,7 @@ class AvroReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
     expected.write.format("avro").save(s"$workspace/avro/fileWithoutSchema/")
-    val actual   = new AvroReader(spark).read(Avro(Seq(s"$workspace/avro/fileWithoutSchema/")))
+    val actual   = new AvroReader(spark).read(Avro(s"$workspace/avro/fileWithoutSchema/"))
 
     assertDatasetEquals(actual, expected)
   }

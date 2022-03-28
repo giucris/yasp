@@ -61,7 +61,7 @@ class YaspExecutorTest
               YaspSource(
                 "data_1",
                 Source.Csv(
-                  paths = Seq(s"$workspace/csv-data-source-1/file1.csv"),
+                  path = s"$workspace/csv-data-source-1/file1.csv",
                   header = true,
                   separator = ","
                 ),
@@ -70,7 +70,7 @@ class YaspExecutorTest
               YaspSource(
                 "data_2",
                 Source.Csv(
-                  paths = Seq(s"$workspace/csv-data-source-2/file1.csv"),
+                  path = s"$workspace/csv-data-source-2/file1.csv",
                   header = true,
                   separator = ","
                 ),

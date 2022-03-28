@@ -49,16 +49,14 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
           |    - id: users
           |      source:
           |        Csv:
-          |          paths:
-          |            - yasp-app/src/test/resources/YaspApp/test1/source/user.csv
+          |          path: yasp-app/src/test/resources/YaspApp/test1/source/user.csv
           |          header: true
           |          separator: ','
           |      cache: Memory
           |    - id: addresses
           |      source:
           |        Json:
-          |          paths:
-          |            - yasp-app/src/test/resources/YaspApp/test1/source/addresses.jsonl
+          |          path: yasp-app/src/test/resources/YaspApp/test1/source/addresses.jsonl
           |  processes:
           |    - id: user_with_address
           |      process:

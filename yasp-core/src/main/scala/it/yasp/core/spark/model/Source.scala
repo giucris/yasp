@@ -1,33 +1,71 @@
 package it.yasp.core.spark.model
 
+/** Source Sumtype
+  */
 sealed trait Source extends Product with Serializable
 
 object Source {
 
+  /** A Csv Source Model
+    * @param path:
+    *   path of the Csv files
+    * @param header:
+    *   option that enable the file header on read
+    * @param separator:
+    *   option that enable different kind of separator on read
+    */
   case class Csv(
-      paths: Seq[String],
+      path: String,
       header: Boolean,
       separator: String
   ) extends Source
 
+  /** A Parquet Source Model
+    * @param path:
+    *   path of the Parquet files
+    * @param mergeSchema:
+    *   option that enable the merge schema operation on read
+    */
   case class Parquet(
-      paths: Seq[String],
+      path: String,
       mergeSchema: Boolean
   ) extends Source
 
+  /** A Json Source Model
+    * @param path:
+    *   path of the json files
+    */
   case class Json(
-      paths: Seq[String]
+      path: String
   ) extends Source
 
+  /** An Avro Source Model
+    * @param path:
+    *   path of the avro files
+    */
   case class Avro(
-      paths: Seq[String]
+      path: String
   ) extends Source
 
+  /** An Xml Source Model
+    * @param path:
+    *   path of the xml files
+    * @param rowTag:
+    *   the xml tag that should be consider as a row on read
+    */
   case class Xml(
-      paths: Seq[String],
+      path: String,
       rowTag: String
   ) extends Source
 
+  /** A Jdbc Source Model
+    * @param url:
+    *   the url of the database
+    * @param table:
+    *   the table to read
+    * @param credentials:
+    *   an Optional BasicCredential configuration
+    */
   case class Jdbc(
       url: String,
       table: String,

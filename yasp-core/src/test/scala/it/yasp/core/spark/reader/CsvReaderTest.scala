@@ -40,7 +40,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     )
     val actual   = new CsvReader(spark).read(
       Csv(
-        Seq(s"$workspace/singleCsv/file1.csv"),
+        path = s"$workspace/singleCsv/file1.csv",
         header = false,
         separator = ","
       )
@@ -63,7 +63,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     )
     val actual   = new CsvReader(spark).read(
       Csv(
-        Seq(s"$workspace/singleCsv/file2.csv"),
+        path = s"$workspace/singleCsv/file2.csv",
         header = true,
         separator = ","
       )
@@ -86,7 +86,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     )
     val actual   = new CsvReader(spark).read(
       Csv(
-        Seq(s"$workspace/singleCsvCustomSep/file1.csv"),
+        path = s"$workspace/singleCsvCustomSep/file1.csv",
         header = true,
         separator = "|"
       )
@@ -110,7 +110,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     )
     val actual   = new CsvReader(spark).read(
       Csv(
-        Seq(s"$workspace/multipleCsv/file1.csv", s"$workspace/multipleCsv/file2.csv"),
+        path = s"$workspace/multipleCsv/",
         header = true,
         separator = ","
       )
@@ -134,7 +134,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     )
     val actual   = new CsvReader(spark).read(
       Csv(
-        paths = Seq(s"$workspace/multipleCsvCustomSep/"),
+        path = s"$workspace/multipleCsvCustomSep/",
         header = true,
         separator = "|"
       )

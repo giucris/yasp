@@ -47,7 +47,7 @@ class XmlReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = new XmlReader(spark).read(Xml(Seq(s"$workspace/xml/file.xml"), "root"))
+    val actual = new XmlReader(spark).read(Xml(s"$workspace/xml/file.xml", "root"))
     assertDatasetEquals(actual, expected)
   }
 
@@ -86,7 +86,7 @@ class XmlReaderTest extends AnyFunSuite with SparkTestSuite {
     )
 
     val actual = new XmlReader(spark).read(
-      Xml(Seq(s"$workspace/xmls/file1.xml", s"$workspace/xmls/file2.xml"), "root")
+      Xml(s"$workspace/xmls/file1.xml,$workspace/xmls/file2.xml", "root")
     )
     assertDatasetEquals(actual, expected)
   }

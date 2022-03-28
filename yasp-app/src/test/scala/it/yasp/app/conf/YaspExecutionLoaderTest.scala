@@ -27,8 +27,7 @@ class YaspExecutionLoaderTest extends AnyFunSuite with BeforeAndAfterAll {
       filePath = s"$workspace/example.yml",
       rows = Seq(
         """conf:
-          |  sessionType:
-          |    Local: {}
+          |  sessionType: Local
           |  appName: my-app
           |  config: {}
           |plan:
@@ -36,15 +35,13 @@ class YaspExecutionLoaderTest extends AnyFunSuite with BeforeAndAfterAll {
           |    - id: id1
           |      source:
           |        Csv:
-          |          paths:
-          |            - path1
+          |          path: path1
           |          header: true
           |          separator: ','
           |    - id: id2
           |      source:
           |        Json:
-          |          paths:
-          |            - path2
+          |          path: path2
           |  processes:
           |    - id: r1
           |      process:
@@ -64,8 +61,8 @@ class YaspExecutionLoaderTest extends AnyFunSuite with BeforeAndAfterAll {
       SessionConf(Local, "my-app", Map.empty),
       YaspPlan(
         sources = Seq(
-          YaspSource("id1", Source.Csv(Seq("path1"), header = true, ","), None),
-          YaspSource("id2", Source.Json(Seq("path2")), None)
+          YaspSource("id1", Source.Csv("path1", header = true, ","), None),
+          YaspSource("id2", Source.Json("path2"), None)
         ),
         processes = Seq(
           YaspProcess("r1", Sql("my query"), None)
