@@ -2,101 +2,124 @@ package it.yasp.service
 
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.{Dest, Source}
+import it.yasp.core.spark.session.SessionType.Local
+import it.yasp.core.spark.session.{SessionConf, SparkSessionFactory}
 import it.yasp.service.YaspService.DefaultYaspService
-import it.yasp.service.loader.YaspLoader
-import it.yasp.service.model.{YaspPlan, YaspProcess, YaspSink, YaspSource}
-import it.yasp.service.processor.YaspProcessor
-import it.yasp.service.writer.YaspWriter
+import it.yasp.service.model._
+import it.yasp.testkit.{SparkTestSuite, TestUtils}
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.catalyst.encoders.RowEncoder
+import org.apache.spark.sql.types.DataTypes.StringType
+import org.apache.spark.sql.types.{StructField, StructType}
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 
-class YaspServiceTest extends AnyFunSuite with MockFactory {
+class YaspServiceTest
+    extends AnyFunSuite
+    with MockFactory
+    with BeforeAndAfterAll
+    with SparkTestSuite {
 
-  val loader: YaspLoader       = mock[YaspLoader]
-  val processor: YaspProcessor = mock[YaspProcessor]
-  val writer: YaspWriter       = mock[YaspWriter]
+  private val workspace = "yasp-service/src/test/resources/YaspExecutorTest"
 
-  val yaspService = new DefaultYaspService(loader, processor, writer)
-
-  test("run with 1 source and 1 sink") {
-    inSequence(
-      (loader.load _)
-        .expects(YaspSource("id1", Source.Json("sourcePath",None), None))
-        .once(),
-      (writer.write _)
-        .expects(YaspSink("id1", Dest.Parquet("destPath")))
-        .once()
-    )
-
-    yaspService.run(
-      YaspPlan(
-        sources = Seq(YaspSource("id1", Source.Json("sourcePath",None), None)),
-        processes = Seq.empty,
-        sinks = Seq(YaspSink("id1", Dest.Parquet("destPath")))
-      )
-    )
+  override protected def beforeAll(): Unit = {
+    TestUtils.cleanFolder(workspace)
+    super.beforeAll()
   }
 
-  test("run with 1 source 1 process 1 sink") {
-    inSequence(
-      (loader.load _)
-        .expects(YaspSource("id1", Source.Json("sourcePath",None), None))
-        .once(),
-      (processor.process _)
-        .expects(YaspProcess("id2", Sql("my-sql"), None))
-        .once(),
-      (writer.write _)
-        .expects(YaspSink("id2", Dest.Parquet("destPath")))
-        .once()
-    )
-
-    yaspService.run(
-      YaspPlan(
-        sources = Seq(YaspSource("id1", Source.Json("sourcePath",None), None)),
-        processes = Seq(YaspProcess("id2", Sql("my-sql"), None)),
-        sinks = Seq(YaspSink("id2", Dest.Parquet("destPath")))
-      )
-    )
+  override protected def afterAll(): Unit = {
+    TestUtils.cleanFolder(workspace)
+    super.afterAll()
   }
 
-  test("run with n source n process n sink") {
-    inSequence(
-      (loader.load _)
-        .expects(YaspSource("id1", Source.Json("sourcePath1",None), None))
-        .once(),
-      (loader.load _)
-        .expects(YaspSource("id2", Source.Parquet("sourcePath2", mergeSchema = true), None))
-        .once(),
-      (processor.process _)
-        .expects(YaspProcess("id3", Sql("my-sql-1"), None))
-        .once(),
-      (processor.process _)
-        .expects(YaspProcess("id4", Sql("my-sql-2"), None))
-        .once(),
-      (writer.write _)
-        .expects(YaspSink("id4", Dest.Parquet("destPath1")))
-        .once(),
-      (writer.write _)
-        .expects(YaspSink("id3", Dest.Parquet("destPath2")))
-        .once()
+  test("exec") {
+    TestUtils.createFile(
+      s"$workspace/csv-data-source-1/file1.csv",
+      Seq(
+        "id,name,surname",
+        "1,name-1,surname-1",
+        "2,name-2,surname-2"
+      )
     )
 
-    yaspService.run(
-      YaspPlan(
-        sources = Seq(
-          YaspSource("id1", Source.Json("sourcePath1",None), None),
-          YaspSource("id2", Source.Parquet("sourcePath2", mergeSchema = true), None)
-        ),
-        processes = Seq(
-          YaspProcess("id3", Sql("my-sql-1"), None),
-          YaspProcess("id4", Sql("my-sql-2"), None)
-        ),
-        sinks = Seq(
-          YaspSink("id4", Dest.Parquet("destPath1")),
-          YaspSink("id3", Dest.Parquet("destPath2"))
+    TestUtils.createFile(
+      s"$workspace/csv-data-source-2/file1.csv",
+      Seq(
+        "id,city,address",
+        "1,city-1,address-1",
+        "2,city-2,address-2"
+      )
+    )
+
+    new DefaultYaspService(new SparkSessionFactory, new YaspExecutorFactory)
+      .run(
+        YaspExecution(
+          conf = SessionConf(Local, "my-app-name", Map.empty),
+          plan = YaspPlan(
+            sources = Seq(
+              YaspSource(
+                "data_1",
+                Source.Csv(
+                  path = s"$workspace/csv-data-source-1/file1.csv",
+                  Some(
+                    Map(
+                      "header" -> "true",
+                      "sep"    -> ","
+                    )
+                  )
+                ),
+                cache = None
+              ),
+              YaspSource(
+                "data_2",
+                Source.Csv(
+                  path = s"$workspace/csv-data-source-2/file1.csv",
+                  Some(
+                    Map(
+                      "header" -> "true",
+                      "sep"    -> ","
+                    )
+                  )
+                ),
+                cache = None
+              )
+            ),
+            processes = Seq(
+              YaspProcess(
+                "data_3",
+                Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id"),
+                None
+              )
+            ),
+            sinks = Seq(
+              YaspSink("data_3", Dest.Parquet(s"$workspace/parquet-out/"))
+            )
+          )
+        )
+      )
+
+    val actual   = spark.read.parquet(s"$workspace/parquet-out/")
+    val expected = spark.createDataset(
+      Seq(
+        Row("1", "name-1", "surname-1", "city-1", "address-1"),
+        Row("2", "name-2", "surname-2", "city-2", "address-2")
+      )
+    )(
+      RowEncoder(
+        StructType(
+          Seq(
+            StructField("id", StringType, nullable = true),
+            StructField("name", StringType, nullable = true),
+            StructField("surname", StringType, nullable = true),
+            StructField("city", StringType, nullable = true),
+            StructField("address", StringType, nullable = true)
+          )
         )
       )
     )
+
+    assertDatasetEquals(actual, expected)
   }
 
 }

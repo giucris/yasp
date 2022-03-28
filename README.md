@@ -43,13 +43,14 @@ Yasp provide 3 layer of abstraction over spark framework.
 You can use YaspService just as a library. Add the yasp-service reference to your dependencies into your `build.sbt`
 or `pom.xml` file and then start using it.
 
-The two main component are `YaspExecution` and `YaspPlan`.
+#### YaspExecution and YaspPlan
 
-A YaspExecution is a model that describe an ETL job in all their lifecycle. Contains a `SessionConf` that is a model to
-define a how the `SparkSession` will be created and a `YaspPlan` definition, that describe your etl ops.
+The two main component of the YaspService module are `YaspExecution` and `YaspPlan`.
 
-To run a YaspExecution there are a `YaspExecutor` that take a `YaspExecution` definition, initialize the session and run
-the `YaspPlan` via a `YaspService`
+A YaspExecution is a model that define an e2e ETL job executed by the `YaspService`.
+
+A YaspExecution define a `SessionConf` that describe how the `SparkSession` will be created and a `YaspPlan` that
+describe all data operations within ETL job as a List of `YaspSource`, a List of `YaspProcess` and a List of `YaspSink`.
 
 ```scala
 case class SessionConf(
@@ -69,13 +70,8 @@ case class YaspExecution(
   plan: YaspPlan // A YaspPlan Instance
 )
 
-trait YaspExecutor {
-  //Generate the SparkSession as described on SessionConf and execute the YaspPlan using a YaspService
-  def exec(yaspExecution: YaspExecution)
-}
-
 trait YaspService {
-  //Load all YaspSource, execute all the YaspProcess and Write all the YaspSink
-  def run(yaspPlan: YaspPlan)
+  def run(yaspExecution: YaspExecution)
 }
 ```
+
