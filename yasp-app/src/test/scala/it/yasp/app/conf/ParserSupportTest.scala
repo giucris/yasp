@@ -16,7 +16,11 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
       SessionConf(Local, "my-app-name", Map("key-1" -> "value", "key-2" -> "value")),
       YaspPlan(
         Seq(
-          YaspSource("id1", Source.Csv("x", Some(Map("header" -> "false", "sep" -> ","))), Some(Memory)),
+          YaspSource(
+            "id1",
+            Source.Csv("x", Some(Map("header" -> "false", "sep" -> ","))),
+            Some(Memory)
+          ),
           YaspSource(
             "id2",
             Source.Parquet("x", mergeSchema = false),
