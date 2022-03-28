@@ -45,12 +45,12 @@ or `pom.xml` file and then start using it.
 
 #### YaspExecution and YaspPlan
 
-The two main component of the YaspService module are `YaspExecution` and `YaspPlan`.
+The main component of the YaspService module are `YaspExecution` and `YaspPlan` and of course the `YaspService`.
 
 A YaspExecution is a model that define an e2e ETL job executed by the `YaspService`.
 
 A YaspExecution define a `SessionConf` that describe how the `SparkSession` will be created and a `YaspPlan` that
-describe all data operations within ETL job as a List of `YaspSource`, a List of `YaspProcess` and a List of `YaspSink`.
+describe all data operations within an ETL job as a List of `YaspSource`, a List of `YaspProcess` and a List of `YaspSink`.
 
 ```scala
 case class SessionConf(
