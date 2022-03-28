@@ -5,11 +5,13 @@ import it.yasp.core.spark.model.CacheLayer._
 import org.apache.spark.sql.{Dataset, Row}
 import org.apache.spark.storage.StorageLevel
 
-/** Cache Provide a method to manage cache of a dataframe based on a specified [[CacheLayer]]
+/** Cache
+  *
+  * Provide a method to manage dataframe cache layer
   */
 trait Cache {
 
-  /** Cache the provided dataset at the provided CacheLayer
+  /** Cache the provided dataset into a specific [[CacheLayer]]
     *
     * @param ds:
     *   input [[Dataset]]

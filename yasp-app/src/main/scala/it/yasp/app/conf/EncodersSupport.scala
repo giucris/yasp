@@ -11,6 +11,13 @@ import it.yasp.core.spark.session.SessionType.{Distributed, Local}
   */
 trait EncodersSupport {
 
+  /** A SessionType circe Encoder.
+    *
+    * Provide a better way to encode the SessionType ADT.
+    *
+    * @return
+    *   Encoder[SessionType]
+    */
   implicit def sessionTypeEncoder: Encoder[SessionType] = new Encoder[SessionType] {
     override def apply(a: SessionType): Json =
       a match {
@@ -19,6 +26,13 @@ trait EncodersSupport {
       }
   }
 
+  /** A CacheLayer circe Encoder
+    *
+    * Provide a better way to encode the CacheLayer ADT.
+    *
+    * @return
+    *   Encoder[CacheLayer]
+    */
   implicit def cacheLayerEncoder: Encoder[CacheLayer] = new Encoder[CacheLayer] {
     override def apply(a: CacheLayer): Json =
       a match {
@@ -31,6 +45,13 @@ trait EncodersSupport {
       }
   }
 
+  /** A SessionType circe Decoder
+    *
+    * Provide a better way to decode the SessionType ADT.
+    *
+    * @return
+    *   Decoder[SessionType]
+    */
   implicit def sessionTypeDecoder: Decoder[SessionType] = new Decoder[SessionType] {
     override def apply(c: HCursor): Result[SessionType] =
       for {
@@ -41,6 +62,13 @@ trait EncodersSupport {
       }
   }
 
+  /** A CacheLayer circe Decoder
+    *
+    * Provide a better way to decode the CacheLayer
+    *
+    * @return
+    *   Decoder[CacheLayer]
+    */
   implicit def cacheLayerDecoder: Decoder[CacheLayer] = new Decoder[CacheLayer] {
     override def apply(c: HCursor): Result[CacheLayer] =
       for {
