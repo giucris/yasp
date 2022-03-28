@@ -32,7 +32,7 @@ object YaspExecutor {
     * @param processor:
     *   A [[YaspProcessor]] instance that will load the [[it.yasp.service.model.YaspProcess]]
     * @param writer:
-    *   A [[YaspWriter]] instance that will wriet the [[it.yasp.service.model.YaspSink]]
+    *   A [[YaspWriter]] instance that will write the [[it.yasp.service.model.YaspSink]]
     */
   class DefaultYaspExecutor(
       loader: YaspLoader,
