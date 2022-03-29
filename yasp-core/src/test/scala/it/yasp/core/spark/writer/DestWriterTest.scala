@@ -35,7 +35,7 @@ class DestWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfter
         )
       )
     )
-    new DestWriter().write(expected, Parquet(s"$workspace/parquet1/",None))
+    new DestWriter().write(expected, Parquet(s"$workspace/parquet1/", None))
     val actual   = spark.read.parquet(s"$workspace/parquet1/")
 
     assertDatasetEquals(actual, expected)
