@@ -215,7 +215,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
 
     expected.write.orc(s"$workspace/orc/")
 
-    val actual = new OrcReader(spark).read(Orc(s"$workspace/orc/"))
+    val actual = new SourceReader(spark).read(Orc(s"$workspace/orc/"))
     assertDatasetEquals(actual, expected)
   }
 
