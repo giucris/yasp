@@ -50,7 +50,8 @@ The main component of the YaspService module are `YaspExecution` and `YaspPlan` 
 A YaspExecution is a model that define an e2e ETL job executed by the `YaspService`.
 
 A YaspExecution define a `SessionConf` that describe how the `SparkSession` will be created and a `YaspPlan` that
-describe all data operations within an ETL job as a List of `YaspSource`, a List of `YaspProcess` and a List of `YaspSink`.
+describe all data operations within an ETL job as a List of `YaspSource`, a List of `YaspProcess` and a List
+of `YaspSink`.
 
 ```scala
 case class SessionConf(
@@ -71,7 +72,55 @@ case class YaspExecution(
 )
 
 trait YaspService {
+  // Generate the SparkSession and execute the YaspPlan
   def run(yaspExecution: YaspExecution)
 }
 ```
 
+#### YaspSource, YaspProcess and YaspSink
+
+A `YaspSource` define a data source as a model with a unique `id`, a `Source` configuration and an optional `CacheLayer`
+. Each `YaspSource` are loaded by the `YaspLoader` that basically read the data, cache the dataframe to the
+specific `CacheLayer` and create a temporary table with the unique id provided.
+
+A `YaspProcess` define a data process operation as a model with a unique `id`, a `Process` configuration and an
+optional `CacheLayer`. Each `YaspProcess` are executed by the `YaspProcessor` that basically execute the `Process`,
+cache the resulting dataframe to the specific `CacheLayer` and create a temporary table with the unique id provided.
+
+A `YaspSink` define a data output operation as a model with a unique `id` (id of the YaspEntity that you want to write
+out), and a `Dest` configuration. Each `YaspSink` are executed by the `YaspWriter` that basically will retrieve the
+specific dataframe with the provided unique `id` and write them as `Dest` configuration
+
+```scala
+case class YaspSource(
+  id: String, // Unique ID to internally identify the resulting dataframe
+  source: Source, // Source Sum Type
+  cache: Option[CacheLayer] // Optional cache layer that will be used to cache resulting dataframe
+)
+
+case class YaspProcess(
+  id: String, // Unique ID to internally identify the resulting dataframe
+  process: Process, // Source Sum Type
+  cache: Option[CacheLayer]  // Optional cache layer that will be used to cache resulting dataframe
+)
+
+case class YaspSink(
+  id: String,  // Unique ID of the dataframe that should be write out.
+  dest: Dest // Dest Sum Type
+)
+
+trait YaspLoader {
+  //Load the Source, Cache the resulting dataframe if CacheLayer is specified and register the dataframe as temporary view
+  def load(source: YaspSource): Unit
+}
+
+trait YaspProcessor {
+  //Execute the Process, Cache the resulting dataframe if CacheLayer is specified and register the dataframe as temporary view
+  def process(process: YaspProcess)
+}
+
+trait YaspWriter {
+  // Retrieve the dataframe and write out as Dest configuration describe.
+  def write(yaspSink: YaspSink): Unit
+}
+```

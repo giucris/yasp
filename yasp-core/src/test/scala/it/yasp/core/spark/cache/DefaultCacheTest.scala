@@ -25,6 +25,8 @@ class DefaultCacheTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
     super.afterAll()
   }
 
+  val cache = new DefaultCache()
+
   test("cache with Memory") {
     val ds1 = spark.createDataset(Seq(Row("a", "b", "c")))(
       RowEncoder(
@@ -37,7 +39,7 @@ class DefaultCacheTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         )
       )
     )
-    assert(new DefaultCache().cache(ds1, Memory).storageLevel == StorageLevel.MEMORY_ONLY)
+    assert(cache.cache(ds1, Memory).storageLevel == StorageLevel.MEMORY_ONLY)
   }
 
   test("cache with Disk") {
@@ -52,7 +54,7 @@ class DefaultCacheTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         )
       )
     )
-    assert(new DefaultCache().cache(ds2, Disk).storageLevel == StorageLevel.DISK_ONLY)
+    assert(cache.cache(ds2, Disk).storageLevel == StorageLevel.DISK_ONLY)
   }
 
   test("cache with MemoryAndDisk") {
@@ -67,9 +69,7 @@ class DefaultCacheTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         )
       )
     )
-    assert(
-      new DefaultCache().cache(ds2, MemoryAndDisk).storageLevel == StorageLevel.MEMORY_AND_DISK
-    )
+    assert(cache.cache(ds2, MemoryAndDisk).storageLevel == StorageLevel.MEMORY_AND_DISK)
   }
 
   test("cache with MemorySer") {

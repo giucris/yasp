@@ -5,7 +5,7 @@ import io.circe.Decoder
 
 /** Provide a method to parse a yml content
   */
-trait ParserSupport extends EncodersSupport {
+trait ParserSupport extends DecodersSupport {
 
   /** Parse a yml content into a specific case class
     * @param content:

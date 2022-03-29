@@ -31,8 +31,13 @@ object Reader {
     *   A [[SparkSession]] instance
     */
   class CsvReader(spark: SparkSession) extends Reader[Csv] {
-    override def read(source: Csv): Dataset[Row] =
-      spark.read.format("csv").options(source.options.getOrElse(Map.empty)).load(source.path)
+    override def read(source: Csv): Dataset[Row] = {
+      val options = source.options.getOrElse(Map.empty)
+      val reader  = spark.read
+        .format("csv")
+        .options(options.filterKeys(k => k != "path" && k != "schema"))
+      options.get("schema").map(s => reader.schema(s)).getOrElse(reader).load(source.path)
+    }
   }
 
   /** ParquetReader an instance of Reader[Parquet]
