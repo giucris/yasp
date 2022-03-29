@@ -5,7 +5,7 @@ import it.yasp.core.spark.reader.Reader._
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
-import org.apache.spark.sql.types.DataTypes.{LongType, StringType}
+import org.apache.spark.sql.types.DataTypes.LongType
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
 import org.h2.Driver
 import org.scalatest.DoNotDiscover
