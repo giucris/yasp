@@ -9,15 +9,18 @@ trait Writer[A <: Dest] {
 }
 
 object Writer {
+
   class ParquetWriter extends Writer[Parquet] {
-    override def write(dataFrame: DataFrame, dest: Parquet): Unit =
-      dataFrame.write.parquet(dest.path)
+    override def write(dataFrame: DataFrame, dest: Parquet): Unit = {
+      val writer = dataFrame.write
+      dest.partitionBy.map(writer.partitionBy(_: _*)).getOrElse(writer).parquet(dest.path)
+    }
   }
 
   class DestWriter extends Writer[Dest] {
     override def write(dataFrame: DataFrame, dest: Dest): Unit =
       dest match {
-        case d @ Parquet(_) => new ParquetWriter().write(dataFrame, d)
+        case d @ Parquet(_,_) => new ParquetWriter().write(dataFrame, d)
       }
   }
 }
