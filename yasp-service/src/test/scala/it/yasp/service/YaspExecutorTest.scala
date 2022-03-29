@@ -24,7 +24,7 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
         .expects(YaspSource("id1", Source.Json("sourcePath", None), None))
         .once(),
       (writer.write _)
-        .expects(YaspSink("id1", Dest.Parquet("destPath",None)))
+        .expects(YaspSink("id1", Dest.Parquet("destPath", None)))
         .once()
     )
 
@@ -32,7 +32,7 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
       YaspPlan(
         sources = Seq(YaspSource("id1", Source.Json("sourcePath", None), None)),
         processes = Seq.empty,
-        sinks = Seq(YaspSink("id1", Dest.Parquet("destPath",None)))
+        sinks = Seq(YaspSink("id1", Dest.Parquet("destPath", None)))
       )
     )
   }
@@ -46,7 +46,7 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
         .expects(YaspProcess("id2", Sql("my-sql"), None))
         .once(),
       (writer.write _)
-        .expects(YaspSink("id2", Dest.Parquet("destPath",None)))
+        .expects(YaspSink("id2", Dest.Parquet("destPath", None)))
         .once()
     )
 
@@ -54,7 +54,7 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
       YaspPlan(
         sources = Seq(YaspSource("id1", Source.Json("sourcePath", None), None)),
         processes = Seq(YaspProcess("id2", Sql("my-sql"), None)),
-        sinks = Seq(YaspSink("id2", Dest.Parquet("destPath",None)))
+        sinks = Seq(YaspSink("id2", Dest.Parquet("destPath", None)))
       )
     )
   }
@@ -74,10 +74,10 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
         .expects(YaspProcess("id4", Sql("my-sql-2"), None))
         .once(),
       (writer.write _)
-        .expects(YaspSink("id4", Dest.Parquet("destPath1",None)))
+        .expects(YaspSink("id4", Dest.Parquet("destPath1", None)))
         .once(),
       (writer.write _)
-        .expects(YaspSink("id3", Dest.Parquet("destPath2",None)))
+        .expects(YaspSink("id3", Dest.Parquet("destPath2", None)))
         .once()
     )
 
@@ -92,8 +92,8 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
           YaspProcess("id4", Sql("my-sql-2"), None)
         ),
         sinks = Seq(
-          YaspSink("id4", Dest.Parquet("destPath1",None)),
-          YaspSink("id3", Dest.Parquet("destPath2",None))
+          YaspSink("id4", Dest.Parquet("destPath1", None)),
+          YaspSink("id3", Dest.Parquet("destPath2", None))
         )
       )
     )
