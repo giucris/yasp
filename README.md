@@ -124,3 +124,43 @@ trait YaspWriter {
   def write(yaspSink: YaspSink): Unit
 }
 ```
+
+
+#### YaspService in action
+
+Suppose that you have 3 data source that you should read join and then extract a simple number of users by cities.
+
+```scala
+object MyUsersByCitiesReport{
+  
+  def main(args: Array[String]): Unit ={
+    YaspService().run(
+      YaspExecution(
+        conf = SessionConf(Local, "my-app-name", Map.empty),
+        plan = YaspPlan(
+          sources = Seq(
+            YaspSource("users", Source.Csv(path = "users/",Some(Map("header"->"true"))),cache = None),
+            YaspSource("addresses", Source.Json(path = "addresses/",None),cache = None),
+            YaspSource("cities", Source.Parquet(path = "cities/",mergeSchema=false),cache = None)
+          ),
+          processes = Seq(
+            YaspProcess("users_addresses", Sql("SELECT u.*,a.address,a.city_id FROM users u JOIN addresses a ON u.address_id=a.id"), None),
+            YaspProcess("users_addresses_cities", Sql("SELECT u.*,a.address,a.city_id FROM users_addresses u JOIN cities c ON u.city_id=c.id"), None),
+            YaspProcess("users_by_city", Sql("SELECT city,count(*) FROM users_addresses_cities GROUP BY city"), None)
+          ),
+          sinks = Seq(
+            YaspSink("users_by_city", Dest.Parquet(s"user-by-city"))
+          )
+        )
+      )
+    )
+  }
+}
+
+```
+
+That's it. just 20 line of code that is just configuration code.
+
+
+`Source`, `Process`, `Dest` and `CacheLayer` are all part of the `YaspCore` module. Take a look at the yasp core module 
+chapter on the README.md for more details about available source, process and dest.
