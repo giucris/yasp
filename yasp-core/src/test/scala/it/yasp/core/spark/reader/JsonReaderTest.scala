@@ -2,7 +2,8 @@ package it.yasp.core.spark.reader
 
 import it.yasp.core.spark.model.Source.Json
 import it.yasp.core.spark.reader.Reader.JsonReader
-import it.yasp.testkit.{SparkTestSuite, TestUtils}
+import it.yasp.testkit.SparkTestSuite
+import it.yasp.testkit.TestUtils._
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes._
@@ -16,50 +17,25 @@ class JsonReaderTest extends AnyFunSuite with SparkTestSuite {
   private val workspace = "yasp-core/src/test/resources/JsonReaderTest"
 
   override protected def beforeAll(): Unit = {
-    TestUtils.cleanFolder(workspace)
+    cleanFolder(workspace)
     super.beforeAll()
   }
 
   override protected def afterAll(): Unit = {
-    TestUtils.cleanFolder(workspace)
+    cleanFolder(workspace)
     super.afterAll()
   }
 
-  test("read single json file") {
-    TestUtils.createFile(
-      filePath = s"$workspace/json/json1.json",
-      rows = Seq(
-        "{\"a\":\"abc\",\"b\":1}",
-        "{\"a\":\"def\",\"c\":2}"
-      )
-    )
-    val expected = spark.createDataset(Seq(Row("abc", 1L, null), Row("def", null, 2L)))(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("a", StringType),
-            StructField("b", LongType),
-            StructField("c", LongType)
-          )
-        )
-      )
-    )
-
-    val actual = new JsonReader(spark).read(Json(s"$workspace/json/json1.json", None))
-
-    assertDatasetEquals(actual, expected)
-  }
-
-  test("read multiple json file") {
-    TestUtils.createFile(
-      filePath = s"$workspace/jsons/json1.json",
+  test("read") {
+    createFile(
+      filePath = s"$workspace/input1/file1.json",
       rows = Seq(
         "{\"a\":\"file1\",\"b\":1}",
         "{\"a\":\"file1\",\"c\":2}"
       )
     )
-    TestUtils.createFile(
-      filePath = s"$workspace/jsons/json2.json",
+    createFile(
+      filePath = s"$workspace/input1/file2.json",
       rows = Seq(
         "{\"a\":\"file2\",\"b\":3}",
         "{\"a\":\"file2\",\"c\":4}"
@@ -84,7 +60,47 @@ class JsonReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new JsonReader(spark).read(Json(s"$workspace/jsons/", None))
+    val actual   = new JsonReader(spark).read(Json(s"$workspace/input1/", None))
     assertDatasetEquals(actual, expected)
   }
+
+  test("read with schema") {
+    createFile(
+      filePath = s"$workspace/input2/file1.json",
+      rows = Seq(
+        "{\"a\":\"file1\",\"b\":1}"
+      )
+    )
+    createFile(
+      filePath = s"$workspace/input2/file2.json",
+      rows = Seq(
+        "{\"a\":\"file2\",\"b\":2}"
+      )
+    )
+    val expected = spark.createDataset(
+      Seq(
+        Row("file1", 1L, null, null),
+        Row("file2", 2L, null, null)
+      )
+    )(
+      RowEncoder(
+        StructType(
+          Seq(
+            StructField("a", StringType),
+            StructField("b", LongType),
+            StructField("c", LongType),
+            StructField("d", StringType)
+          )
+        )
+      )
+    )
+    val actual   = new JsonReader(spark).read(
+      Json(
+        path = s"$workspace/input2/",
+        options = Some(Map("schema" -> "a STRING, b LONG, c LONG, d STRING"))
+      )
+    )
+    assertDatasetEquals(actual, expected)
+  }
+
 }

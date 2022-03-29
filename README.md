@@ -40,14 +40,14 @@ Yasp provide 3 layer of abstraction over spark framework.
 
 ### YaspApp
 
-You can use the YaspApp module as an executable binary or just as a library. Add the yasp-app reference to your dependencies into your Add the yasp-service reference to your dependencies into your `build.sbt`
-or `pom.xml` file and then start using it.
-
+You can use the YaspApp module as an executable binary or just as a library. Add the yasp-app reference to your
+dependencies into your `build.sbt`or `pom.xml` file and then start using it.
 
 #### YaspApp as library
 
-YaspApp module provide an high level of abstraction around the yasp etl job. 
-The purpose of a YaspApp is to retrieve a YaspExcution defined in a yml file and run it. 
+YaspApp module provide an high level of abstraction around an etl job. 
+
+YaspApp provide a way to define your etl in a pure descriptive way with a simple yml file.
 
 For example:
 ```scala
@@ -87,7 +87,9 @@ object MyUsersByCitiesReport with ParserSupport{
 }
 ```
 
-Take a look at the YaspService and YaspCore for more detail
+Take a look at the YaspService and YaspCore section for more detail
+
+
 ### YaspService
 
 You can use YaspService just as a library. Add the yasp-service reference to your dependencies into your `build.sbt`
@@ -95,13 +97,12 @@ or `pom.xml` file and then start using it.
 
 #### YaspExecution and YaspPlan
 
-The main component of the YaspService module are `YaspExecution` and `YaspPlan` and of course the `YaspService`.
+The main component of the YaspService module are `YaspExecution`, `YaspPlan` and of course the `YaspService`.
 
 A YaspExecution is a model that define an e2e ETL job executed by the `YaspService`.
 
 A YaspExecution define a `SessionConf` that describe how the `SparkSession` will be created and a `YaspPlan` that
-describe all data operations within an ETL job as a List of `YaspSource`, a List of `YaspProcess` and a List
-of `YaspSink`.
+describe all data operations within the ETL job.
 
 ```scala
 case class SessionConf(
@@ -129,17 +130,15 @@ trait YaspService {
 
 #### YaspSource, YaspProcess and YaspSink
 
-A `YaspSource` define a data source as a model with a unique `id`, a `Source` configuration and an optional `CacheLayer`
-. Each `YaspSource` are loaded by the `YaspLoader` that basically read the data, cache the dataframe to the
-specific `CacheLayer` and create a temporary table with the unique id provided.
+A `YaspSource` define a data source. Each `YaspSource` are loaded via a `YaspLoader` that read the data, cache the
+dataframe to the specific `CacheLayer` and create a temporary table with the unique id provided.
 
-A `YaspProcess` define a data process operation as a model with a unique `id`, a `Process` configuration and an
-optional `CacheLayer`. Each `YaspProcess` are executed by the `YaspProcessor` that basically execute the `Process`,
-cache the resulting dataframe to the specific `CacheLayer` and create a temporary table with the unique id provided.
+A `YaspProcess` define a data process operation. Each `YaspProcess` are executed via a `YaspProcessor` that execute
+the `Process`, cache the resulting dataframe to the specific `CacheLayer` and create a temporary table with the unique
+id provided.
 
-A `YaspSink` define a data output operation as a model with a unique `id` (id of the YaspEntity that you want to write
-out), and a `Dest` configuration. Each `YaspSink` are executed by the `YaspWriter` that basically will retrieve the
-specific dataframe with the provided unique `id` and write them as `Dest` configuration
+A `YaspSink` define a data output operation. Each `YaspSink` are executed via a `YaspWriter` that retrieve the specific
+dataframe using the provided `id` and write them.
 
 ```scala
 case class YaspSource(
@@ -213,27 +212,24 @@ section for more details about available source, process and dest.
 
 ### YaspCore
 
-The YaspCore module is a wrapper of all the Apache Spark primitives that we want to use into our ETL. Contains
-definition fo Sources and Reader, Process and Processor, Dest and Writer.
+The YaspCore module is a wrapper of all the Apache Spark primitives. Containing definition of Sources, Process, Dest,
+Reader, Processor, Writer and Cache.
 
 #### Source
 
-There are a lot of `Source` that you can use with Yasp. Also some `Source` that are not directly provided or bundled with Spark SQL.
-
-```scala
-sealed trait Source extends Product with Serializable
-```
+There are a lot of `Source` that you can use with Yasp. Each `Source` define how Yasp will use spark to read it via the
+specific `Reader`
 
 ##### Csv
-A Csv model define a Csv source and is defined as path and an optional map of string.  
 ```scala
 case class Csv(
   path:String, 
   options:Option[Map[String,String]]
 ) extends Source
 ```
-In the optional map of string you can specify any kind of spark options for reading your csv files. 
-In addition to the standard spark options you can specify the `schema` field with your user provided schema.
+
+In the optional map of string you can specify any kind of spark options for reading your csv files. **In addition to the
+standard spark options you can specify the `schema` of the source.**
 
 Examples:
 ```scala
@@ -250,3 +246,43 @@ Csv(path="my-csv-path",Some(Map("sep"->";")))
 Csv(path="my-csv-path",Some(Map("sep"->"\t","schema"->"field1 INT, field2 STRING")))
 ```
 
+##### Json
+```scala
+case class Json(
+  path:String, 
+  options:Option[Map[String,String]]
+) extends Source
+```
+
+In the optional map of string you can specify any kind of spark options for reading your json files. **In addition to the
+standard spark options you can specify the `schema` of the source.**
+
+Examples:
+```scala
+//Define a basic json
+Json(path="my-csv-path",None)
+
+//Define a json with primitives as string
+Json(path="my-csv-path",Some(Map("primitivesAsString"->"true")))
+
+//Define a json with a user provided schema
+Json(path="my-csv-path",Some(Map("sep"->"\t","schema"->"field1 INT, field2 STRING")))
+```
+
+##### Parquet
+
+```scala
+case class Parquet(
+  path: String,
+  mergeSchema: Boolean
+) extends Source
+```
+
+Examples:
+```scala
+//Define a basic parquet
+Parquet(path="my-csv-path",false)
+
+//Define a basic parquet source with merge schema
+Parquet(path="my-csv-path",true)
+```

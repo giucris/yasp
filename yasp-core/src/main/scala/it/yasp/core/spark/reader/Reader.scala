@@ -40,6 +40,20 @@ object Reader {
     }
   }
 
+  /** JsonReader an instance of Reader[Json]
+    * @param spark:
+    *   A [[SparkSession]] instance
+    */
+  class JsonReader(spark: SparkSession) extends Reader[Json] {
+    override def read(source: Json): Dataset[Row] = {
+      val options = source.options.getOrElse(Map.empty)
+      val reader  = spark.read
+        .format("json")
+        .options(options.filterKeys(k => k != "path" && k != "schema"))
+      options.get("schema").map(s => reader.schema(s)).getOrElse(reader).load(source.path)
+    }
+  }
+
   /** ParquetReader an instance of Reader[Parquet]
     * @param spark:
     *   A [[SparkSession]] instance
@@ -49,15 +63,6 @@ object Reader {
       spark.read
         .options(Map("mergeSchema" -> source.mergeSchema.toString))
         .parquet(source.path)
-  }
-
-  /** JsonReader an instance of Reader[Json]
-    * @param spark:
-    *   A [[SparkSession]] instance
-    */
-  class JsonReader(spark: SparkSession) extends Reader[Json] {
-    override def read(source: Json): Dataset[Row] =
-      spark.read.format("json").options(source.options.getOrElse(Map.empty)).load(source.path)
   }
 
   /** JdbcReader an instance of Reader[Jdbc]
