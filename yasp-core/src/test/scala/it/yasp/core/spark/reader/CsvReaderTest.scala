@@ -2,7 +2,8 @@ package it.yasp.core.spark.reader
 
 import it.yasp.core.spark.model.Source.Csv
 import it.yasp.core.spark.reader.Reader.CsvReader
-import it.yasp.testkit.{SparkTestSuite, TestUtils}
+import it.yasp.testkit.SparkTestSuite
+import it.yasp.testkit.TestUtils._
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes._
@@ -16,17 +17,17 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
   private val workspace = "yasp-core/src/test/resources/CsvReaderTest"
 
   override protected def beforeAll(): Unit = {
-    TestUtils.cleanFolder(workspace)
+    cleanFolder(workspace)
     super.beforeAll()
   }
 
   override protected def afterAll(): Unit = {
-    TestUtils.cleanFolder(workspace)
+    cleanFolder(workspace)
     super.afterAll()
   }
 
-  test("read single file without header") {
-    TestUtils.createFile(s"$workspace/singleCsv/file1.csv", Seq("h1,h2,h3", "a,b,c"))
+  test("read without header") {
+    createFile(s"$workspace/input1/file1.csv", Seq("h1,h2,h3", "a,b,c"))
     val expected = spark.createDataset(Seq(Row("h1", "h2", "h3"), Row("a", "b", "c")))(
       RowEncoder(
         StructType(
@@ -40,63 +41,16 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     )
     val actual   = new CsvReader(spark).read(
       Csv(
-        Seq(s"$workspace/singleCsv/file1.csv"),
-        header = false,
-        separator = ","
+        path = s"$workspace/input1/",
+        options = None
       )
     )
     assertDatasetEquals(actual, expected)
   }
 
-  test("read single file with header") {
-    TestUtils.createFile(s"$workspace/singleCsv/file2.csv", Seq("h1,h2,h3", "a,b,c"))
-    val expected = spark.createDataset(Seq(Row("a", "b", "c")))(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("h1", StringType, nullable = true),
-            StructField("h2", StringType, nullable = true),
-            StructField("h3", StringType, nullable = true)
-          )
-        )
-      )
-    )
-    val actual   = new CsvReader(spark).read(
-      Csv(
-        Seq(s"$workspace/singleCsv/file2.csv"),
-        header = true,
-        separator = ","
-      )
-    )
-    assertDatasetEquals(actual, expected)
-  }
-
-  test("read single file with header and custom separator") {
-    TestUtils.createFile(s"$workspace/singleCsvCustomSep/file1.csv", Seq("h1|h2|h3", "a|b|c"))
-    val expected = spark.createDataset(Seq(Row("a", "b", "c")))(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("h1", StringType, nullable = true),
-            StructField("h2", StringType, nullable = true),
-            StructField("h3", StringType, nullable = true)
-          )
-        )
-      )
-    )
-    val actual   = new CsvReader(spark).read(
-      Csv(
-        Seq(s"$workspace/singleCsvCustomSep/file1.csv"),
-        header = true,
-        separator = "|"
-      )
-    )
-    assertDatasetEquals(actual, expected)
-  }
-
-  test("read multiple file with header") {
-    TestUtils.createFile(s"$workspace/multipleCsv/file1.csv", Seq("h1,h2,h3", "a,b,c"))
-    TestUtils.createFile(s"$workspace/multipleCsv/file2.csv", Seq("h1,h2,h3", "d,e,f"))
+  test("read with header") {
+    createFile(s"$workspace/input2/file1.csv", Seq("h1,h2,h3", "a,b,c"))
+    createFile(s"$workspace/input2/file2.csv", Seq("h1,h2,h3", "d,e,f"))
     val expected = spark.createDataset(Seq(Row("a", "b", "c"), Row("d", "e", "f")))(
       RowEncoder(
         StructType(
@@ -110,17 +64,16 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     )
     val actual   = new CsvReader(spark).read(
       Csv(
-        Seq(s"$workspace/multipleCsv/file1.csv", s"$workspace/multipleCsv/file2.csv"),
-        header = true,
-        separator = ","
+        path = s"$workspace/input2/",
+        options = Some(Map("header" -> "true"))
       )
     )
     assertDatasetEquals(actual, expected)
   }
 
-  test("read multiple file with header and custom separator") {
-    TestUtils.createFile(s"$workspace/multipleCsvCustomSep/file1.csv", Seq("h1|h2|h3", "a|b|c"))
-    TestUtils.createFile(s"$workspace/multipleCsvCustomSep/file2.csv", Seq("h1|h2|h3", "d|e|f"))
+  test("read with header and custom sep") {
+    createFile(s"$workspace/input3/file1.csv", Seq("h1|h2|h3", "a|b|c"))
+    createFile(s"$workspace/input3/file2.csv", Seq("h1|h2|h3", "d|e|f"))
     val expected = spark.createDataset(Seq(Row("a", "b", "c"), Row("d", "e", "f")))(
       RowEncoder(
         StructType(
@@ -134,11 +87,67 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     )
     val actual   = new CsvReader(spark).read(
       Csv(
-        paths = Seq(s"$workspace/multipleCsvCustomSep/"),
-        header = true,
-        separator = "|"
+        path = s"$workspace/input3/",
+        options = Some(Map("header" -> "true", "sep" -> "|"))
       )
     )
     assertDatasetEquals(actual, expected)
   }
+
+  test("read with header custom sep and schema") {
+    createFile(s"$workspace/input4/file1.csv", Seq("h1|h2|h3", "1|b|c"))
+    createFile(s"$workspace/input4/file2.csv", Seq("h1|h2|h3", "2|e|f"))
+    val expected = spark.createDataset(Seq(Row(1, "b", "c"), Row(2, "e", "f")))(
+      RowEncoder(
+        StructType(
+          Seq(
+            StructField("h1", IntegerType, nullable = true),
+            StructField("h2", StringType, nullable = true),
+            StructField("h3", StringType, nullable = true)
+          )
+        )
+      )
+    )
+
+    val actual = new CsvReader(spark).read(
+      Csv(
+        path = s"$workspace/input4/",
+        options =
+          Some(Map("header" -> "true", "sep" -> "|", "schema" -> "h1 INT, h2 STRING, h3 STRING"))
+      )
+    )
+    assertDatasetEquals(actual, expected)
+  }
+
+  test("read with header custom sep schema and corrupt record") {
+    createFile(s"$workspace/input5/file1.csv", Seq("h1|h2|h3", "1|b|c"))
+    createFile(s"$workspace/input5/file2.csv", Seq("h1|h2|h3", "x|x|x"))
+    val expected = spark.createDataset(Seq(Row(1, "b", "c", null), Row(null, null, null, "x|x|x")))(
+      RowEncoder(
+        StructType(
+          Seq(
+            StructField("h1", IntegerType, nullable = true),
+            StructField("h2", StringType, nullable = true),
+            StructField("h3", StringType, nullable = true),
+            StructField("_corrupt_record", StringType, nullable = true)
+          )
+        )
+      )
+    )
+
+    val actual = new CsvReader(spark).read(
+      Csv(
+        path = s"$workspace/input5/",
+        options = Some(
+          Map(
+            "header" -> "true",
+            "sep"    -> "|",
+            "schema" -> "h1 INT, h2 STRING, h3 STRING,_corrupt_record STRING"
+          )
+        )
+      )
+    )
+    assertDatasetEquals(actual, expected)
+  }
+
 }

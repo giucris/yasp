@@ -1,18 +1,18 @@
 package it.yasp.app
 
 import it.yasp.app.args.YaspArgs
-import it.yasp.app.conf.{ParserSupport, VariablesSupport, YaspExecutionLoader}
-import it.yasp.core.spark.session.SparkSessionFactory
-import it.yasp.service.YaspExecutor.DefaultYaspExecutor
-import it.yasp.service.YaspServiceFactory
+import it.yasp.app.conf.YaspExecutionLoader._
+import it.yasp.service.YaspService
 
-object YaspApp extends App with ParserSupport with VariablesSupport {
+/** YaspApp
+  *
+  * An executable Yasp application. Process input args, that accept a yml file, parse the yml file,
+  * create the relative YaspExecution and execute it.
+  */
+object YaspApp extends App {
 
-  YaspArgs.parse(args).foreach { args =>
-    new DefaultYaspExecutor(
-      new SparkSessionFactory,
-      new YaspServiceFactory
-    ).exec(YaspExecutionLoader.load(args.filePath))
+  YaspArgs.parse(args).foreach { conf =>
+    YaspService().run(load(conf.filePath))
   }
 
 }

@@ -54,7 +54,7 @@ class ParquetReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     val actual   = new ParquetReader(spark).read(
-      Parquet(Seq(s"$workspace/parquet1/"), mergeSchema = false)
+      Parquet(s"$workspace/parquet1/", mergeSchema = false)
     )
     assertDatasetEquals(actual, expected)
   }
@@ -104,7 +104,7 @@ class ParquetReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     val actual   = new ParquetReader(spark).read(
-      Parquet(Seq(s"$workspace/parquet2/"), mergeSchema = false)
+      Parquet(s"$workspace/parquet2/", mergeSchema = false)
     )
     assertDatasetEquals(actual, expected)
   }
@@ -156,7 +156,7 @@ class ParquetReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     val actual   = new ParquetReader(spark).read(
-      Parquet(Seq(s"$workspace/parquet3/"), mergeSchema = true)
+      Parquet(s"$workspace/parquet3/", mergeSchema = true)
     )
     assertDatasetEquals(actual, expected)
   }
