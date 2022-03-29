@@ -5,8 +5,8 @@ import it.yasp.core.spark.model.Dest._
 import it.yasp.core.spark.registry.Registry
 import it.yasp.core.spark.writer.Writer
 import it.yasp.service.model.YaspSink
-import it.yasp.testkit.SparkTestSuite
 import it.yasp.service.writer.YaspWriter.DefaultYaspWriter
+import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes.StringType
@@ -30,10 +30,10 @@ class YaspWriterTest extends AnyFunSuite with SparkTestSuite with MockFactory {
           )
         ),
       (writer.write _)
-        .expects(*, Parquet("path"))
+        .expects(*, Parquet("path", None))
         .once()
     )
-    new DefaultYaspWriter(registry, writer).write(YaspSink("id", Parquet("path")))
+    new DefaultYaspWriter(registry, writer).write(YaspSink("id", Parquet("path", None)))
   }
 
 }
