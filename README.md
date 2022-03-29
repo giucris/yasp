@@ -286,3 +286,62 @@ Parquet(path="my-csv-path",false)
 //Define a basic parquet source with merge schema
 Parquet(path="my-csv-path",true)
 ```
+
+##### Orc
+
+```scala
+case class Orc(
+  path: String
+) extends Source
+```
+
+##### Avro
+```scala
+case class Avro(
+  path: String,
+  options: Option[Map[String, String]]
+) extends Source
+```
+
+##### Xml
+
+```scala
+case class Xml(
+  path: String,
+  options: Option[Map[String, String]]
+) extends Source
+```
+
+##### Jdbc
+
+```scala
+case class Jdbc(
+  url: String,
+  credentials: Option[BasicCredentials],
+  options: Option[Map[String, String]]
+) extends Source
+```
+
+
+#### Process
+Define a data operations
+
+
+##### Sql
+```scala
+case class Sql(
+  query: String
+) extends Process
+```
+
+#### Dest
+
+Define a destination
+
+##### Parquet
+
+```scala
+case class Parquet(
+  path: String
+) extends Dest
+```
