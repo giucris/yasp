@@ -228,8 +228,8 @@ case class Csv(
 ) extends Source
 ```
 
-In the optional map of string you can specify any kind of spark options for reading your csv files. **In addition to the
-standard spark options you can specify the `schema` of the source.**
+In the options field you can specify any spark csv options. **In addition to the standard spark options you can specify
+a user-defined `schema`**
 
 Examples:
 ```scala
@@ -254,8 +254,8 @@ case class Json(
 ) extends Source
 ```
 
-In the optional map of string you can specify any kind of spark options for reading your json files. **In addition to the
-standard spark options you can specify the `schema` of the source.**
+In the options field you can specify any spark csv options.  **In addition to the standard spark options you can specify
+the `schema` of the source.**
 
 Examples:
 ```scala
