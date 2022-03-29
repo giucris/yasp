@@ -342,6 +342,7 @@ Define a destination
 
 ```scala
 case class Parquet(
-  path: String
+  path: String, // path of the destination
+  partitionBy: Option[Seq[String]] // Optional Seq of column name to use for partition
 ) extends Dest
 ```
