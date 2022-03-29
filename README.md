@@ -34,10 +34,60 @@ project.
 
 Yasp provide 3 layer of abstraction over spark framework.
 
-* **YaspCore** provide some spark primitives usefull for yasp process.
-* **YaspService** provide an high level of abraction for your ETL job.
 * **YaspApp** provide an executable binary to manage your complex etl job with a simple yml file
+* **YaspService** provide an high level of abraction for your ETL job.
+* **YaspCore** provide some spark primitives usefull for yasp process.
 
+### YaspApp
+
+You can use the YaspApp module as an executable binary or just as a library. Add the yasp-app reference to your dependencies into your Add the yasp-service reference to your dependencies into your `build.sbt`
+or `pom.xml` file and then start using it.
+
+
+#### YaspApp as library
+
+YaspApp module provide an high level of abstraction around the yasp etl job. 
+The purpose of a YaspApp is to retrieve a YaspExcution defined in a yml file and run it. 
+
+For example:
+```scala
+object MyUsersByCitiesReport with ParserSupport{
+  
+  def main(args: Array[String]): Unit={
+      YaspService().run(
+        parseYaml[YaspExecution](
+          """conf:
+            |  sessionType: Local
+            |  appName: example-app
+            |  config: {}
+            |plan:
+            |  sources:
+            |    - id: users
+            |      source:
+            |        Csv:
+            |          path: users.csv
+            |    - id: addresses
+            |      source:
+            |        Json:
+            |          path: addresses.jsonl
+            |  processes:
+            |    - id: user_with_address
+            |      process:
+            |        Sql:
+            |          query: SELECT u.name,u.surname,a.address FROM users u JOIN addresses a ON u.id = a.user_id
+            |  sinks:
+            |    - id: user_with_address
+            |      dest:
+            |        Parquet:
+            |          path: user_with_address
+            |""".stripMargin    
+        )
+      )
+  }
+}
+```
+
+Take a look at the YaspService and YaspCore for more detail
 ### YaspService
 
 You can use YaspService just as a library. Add the yasp-service reference to your dependencies into your `build.sbt`
@@ -101,11 +151,11 @@ case class YaspSource(
 case class YaspProcess(
   id: String, // Unique ID to internally identify the resulting dataframe
   process: Process, // Source Sum Type
-  cache: Option[CacheLayer]  // Optional cache layer that will be used to cache resulting dataframe
+  cache: Option[CacheLayer] // Optional cache layer that will be used to cache resulting dataframe
 )
 
 case class YaspSink(
-  id: String,  // Unique ID of the dataframe that should be write out.
+  id: String, // Unique ID of the dataframe that should be write out.
   dest: Dest // Dest Sum Type
 )
 
@@ -125,23 +175,22 @@ trait YaspWriter {
 }
 ```
 
-
 #### YaspService in action
 
 Suppose that you have 3 data source that you should read join and then extract a simple number of users by cities.
 
 ```scala
-object MyUsersByCitiesReport{
-  
-  def main(args: Array[String]): Unit ={
+object MyUsersByCitiesReport {
+
+  def main(args: Array[String]): Unit = {
     YaspService().run(
       YaspExecution(
         conf = SessionConf(Local, "my-app-name", Map.empty),
         plan = YaspPlan(
           sources = Seq(
-            YaspSource("users", Source.Csv(path = "users/",Some(Map("header"->"true"))),cache = None),
-            YaspSource("addresses", Source.Json(path = "addresses/",None),cache = None),
-            YaspSource("cities", Source.Parquet(path = "cities/",mergeSchema=false),cache = None)
+            YaspSource("users", Source.Csv(path = "users/", Some(Map("header" -> "true"))), cache = None),
+            YaspSource("addresses", Source.Json(path = "addresses/", None), cache = None),
+            YaspSource("cities", Source.Parquet(path = "cities/", mergeSchema = false), cache = None)
           ),
           processes = Seq(
             YaspProcess("users_addresses", Sql("SELECT u.*,a.address,a.city_id FROM users u JOIN addresses a ON u.address_id=a.id"), None),
@@ -159,8 +208,45 @@ object MyUsersByCitiesReport{
 
 ```
 
-That's it. just 20 line of code that is just configuration code.
+`Source`, `Process`, `Dest` and `CacheLayer` are all part of the `YaspCore` module. Take a look at the yasp core module
+section for more details about available source, process and dest.
 
+### YaspCore
 
-`Source`, `Process`, `Dest` and `CacheLayer` are all part of the `YaspCore` module. Take a look at the yasp core module 
-chapter on the README.md for more details about available source, process and dest.
+The YaspCore module is a wrapper of all the Apache Spark primitives that we want to use into our ETL. Contains
+definition fo Sources and Reader, Process and Processor, Dest and Writer.
+
+#### Source
+
+There are a lot of `Source` that you can use with Yasp. Also some `Source` that are not directly provided or bundled with Spark SQL.
+
+```scala
+sealed trait Source extends Product with Serializable
+```
+
+##### Csv
+A Csv model define a Csv source and is defined as path and an optional map of string.  
+```scala
+case class Csv(
+  path:String, 
+  options:Option[Map[String,String]]
+) extends Source
+```
+In the optional map of string you can specify any kind of spark options for reading your csv files. 
+In addition to the standard spark options you can specify the `schema` field with your user provided schema.
+
+Examples:
+```scala
+//Define a basic csv
+Csv(path="my-csv-path",None)
+
+//Define a csv with header
+Csv(path="my-csv-path",Some(Map("header"->"true")))
+
+//Define a csv with custom separator
+Csv(path="my-csv-path",Some(Map("sep"->";")))
+
+//Define a csv with custom separator and user defined schema
+Csv(path="my-csv-path",Some(Map("sep"->"\t","schema"->"field1 INT, field2 STRING")))
+```
+
