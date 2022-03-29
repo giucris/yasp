@@ -5,7 +5,7 @@ import it.yasp.core.spark.reader.Reader._
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
-import org.apache.spark.sql.types.DataTypes.LongType
+import org.apache.spark.sql.types.DataTypes.{LongType, StringType}
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
 import org.h2.Driver
 import org.scalatest.DoNotDiscover
@@ -195,6 +195,27 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
     val actual   = new SourceReader(spark).read(
       Jdbc(url = connUrl1, credentials = None, Some(Map("dbTable" -> "my_table")))
     )
+    assertDatasetEquals(actual, expected)
+  }
+
+  test("read orc") {
+    val expected = spark
+      .createDataset(Seq(Row("d", "e", "f", "g")))(
+        RowEncoder(
+          StructType(
+            Seq(
+              StructField("h0", StringType, nullable = true),
+              StructField("h1", StringType, nullable = true),
+              StructField("h2", StringType, nullable = true),
+              StructField("h3", StringType, nullable = true)
+            )
+          )
+        )
+      )
+
+    expected.write.orc(s"$workspace/orc/")
+
+    val actual = new OrcReader(spark).read(Orc(s"$workspace/orc/"))
     assertDatasetEquals(actual, expected)
   }
 
