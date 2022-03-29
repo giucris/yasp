@@ -91,7 +91,7 @@ class YaspServiceTest
             )
           ),
           sinks = Seq(
-            YaspSink("data_3", Dest.Parquet(s"$workspace/parquet-out/"))
+            YaspSink("data_3", Dest.Parquet(s"$workspace/parquet-out/", None))
           )
         )
       )

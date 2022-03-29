@@ -38,8 +38,8 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
           YaspProcess("p2", Sql("my-query"), None)
         ),
         Seq(
-          YaspSink("p1", Dest.Parquet("out-path-1")),
-          YaspSink("p3", Dest.Parquet("out-path-2"))
+          YaspSink("p1", Dest.Parquet("out-path-1", None)),
+          YaspSink("p3", Dest.Parquet("out-path-2", None))
         )
       )
     )

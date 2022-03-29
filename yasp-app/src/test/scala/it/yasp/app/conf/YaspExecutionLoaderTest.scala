@@ -69,7 +69,7 @@ class YaspExecutionLoaderTest extends AnyFunSuite with BeforeAndAfterAll {
           YaspProcess("r1", Sql("my query"), None)
         ),
         sinks = Seq(
-          YaspSink("r1", Dest.Parquet("path3"))
+          YaspSink("r1", Dest.Parquet("path3", None))
         )
       )
     )
