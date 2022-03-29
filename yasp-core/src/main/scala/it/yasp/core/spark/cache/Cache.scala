@@ -5,11 +5,13 @@ import it.yasp.core.spark.model.CacheLayer._
 import org.apache.spark.sql.{Dataset, Row}
 import org.apache.spark.storage.StorageLevel
 
-/** Cache Provide a method to manage cache of a dataframe based on a specified [[CacheLayer]]
+/** Cache
+  *
+  * Provide a method to manage dataframe cache layer
   */
 trait Cache {
 
-  /** Cache the provided dataset at the provided CacheLayer
+  /** Cache the provided dataset into a specific [[CacheLayer]]
     *
     * @param ds:
     *   input [[Dataset]]
@@ -23,6 +25,8 @@ trait Cache {
 
 object Cache {
 
+  /** DefaultCache implementation
+    */
   class DefaultCache() extends Cache {
     override def cache(ds: Dataset[Row], layer: CacheLayer): Dataset[Row] =
       layer match {
@@ -31,7 +35,7 @@ object Cache {
         case MemoryAndDisk    => ds.persist(StorageLevel.MEMORY_AND_DISK)
         case MemorySer        => ds.persist(StorageLevel.MEMORY_ONLY_SER)
         case MemoryAndDiskSer => ds.persist(StorageLevel.MEMORY_AND_DISK_SER)
-        case CheckPoint       => ds.checkpoint()
+        case Checkpoint       => ds.checkpoint()
       }
   }
 

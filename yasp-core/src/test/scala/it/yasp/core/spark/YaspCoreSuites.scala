@@ -17,6 +17,7 @@ class YaspCoreSuites
       new JdbcReaderTest,
       new AvroReaderTest,
       new XmlReaderTest,
+      new OrcReaderTest,
       new SourceReaderTest,
       new SqlProcessorTest,
       new ProcessProcessorTest,

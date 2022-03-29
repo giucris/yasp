@@ -1,11 +1,11 @@
 package it.yasp.app.conf
 
 import io.circe.generic.auto._
-import it.yasp.core.spark.model.CacheLayer.{Memory, MemoryAndDisk}
+import it.yasp.core.spark.model.CacheLayer.{Checkpoint, Memory, MemoryAndDisk}
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.{BasicCredentials, Dest, Source}
 import it.yasp.core.spark.session.SessionConf
-import it.yasp.core.spark.session.SessionType.Local
+import it.yasp.core.spark.session.SessionType.Distributed
 import it.yasp.service.model._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -13,16 +13,25 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
 
   test("parse") {
     val expected = YaspExecution(
-      SessionConf(Local, "my-app-name", Map("key-1" -> "value", "key-2" -> "value")),
+      SessionConf(Distributed, "my-app-name", Map("key-1" -> "value", "key-2" -> "value")),
       YaspPlan(
         Seq(
-          YaspSource("id1", Source.Csv(Seq("x", "y"), header = false, ","), Some(Memory)),
+          YaspSource(
+            "id1",
+            Source.Csv("x", Some(Map("header" -> "false", "sep" -> ","))),
+            Some(Memory)
+          ),
           YaspSource(
             "id2",
-            Source.Parquet(Seq("x", "y"), mergeSchema = false),
+            Source.Parquet("x", mergeSchema = false),
             Some(MemoryAndDisk)
           ),
-          YaspSource("id3", Source.Jdbc("url", "table", Some(BasicCredentials("x", "y"))), None)
+          YaspSource(
+            "id3",
+            Source.Jdbc("url", Some(BasicCredentials("x", "y")), Some(Map("dbTable" -> "table"))),
+            None
+          ),
+          YaspSource("id4", Source.Csv("z", None), Some(Checkpoint))
         ),
         Seq(
           YaspProcess("p1", Sql("my-query"), None),
@@ -37,8 +46,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
     val actual   = parseYaml[YaspExecution](
       """
         |conf:
-        |  sessionType:
-        |    Local: {}
+        |  sessionType: Distributed
         |  appName: my-app-name
         |  config:
         |    key-1: value
@@ -48,30 +56,31 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |  - id: id1
         |    source:
         |      Csv:
-        |        paths:
-        |        - x
-        |        - y
-        |        header: false
-        |        separator: ','
-        |    cache:
-        |      Memory: {}
+        |        path: x
+        |        options:
+        |          header: 'false'
+        |          sep: ','
+        |    cache: Memory
         |  - id: id2
         |    source:
         |      Parquet:
-        |        paths:
-        |        - x
-        |        - y
+        |        path: x
         |        mergeSchema: false
-        |    cache:
-        |      MemoryAndDisk: {}
+        |    cache: MemoryAndDisk
         |  - id: id3
         |    source:
         |      Jdbc:
         |        url: url
-        |        table: table
         |        credentials:
         |          username: x
         |          password: y
+        |        options:
+        |          dbTable: table
+        |  - id: id4
+        |    source:
+        |      Csv:
+        |        path: z
+        |    cache: Checkpoint
         |  processes:
         |  - id: p1
         |    process:
