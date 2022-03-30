@@ -33,9 +33,10 @@ object YaspLoader {
   class DefaultYaspLoader(reader: Reader[Source], registry: Registry, cache: Cache)
       extends YaspLoader {
     override def load(source: YaspSource): Unit = {
-      val src = reader.read(source.source)
-      val ds  = source.cache.map(cache.cache(src, _)).getOrElse(src)
-      registry.register(ds, source.id)
+      val ds1 = reader.read(source.source)
+      val ds2 = source.partitions.map(ds1.repartition).getOrElse(ds1)
+      val ds3 = source.cache.map(cache.cache(ds2, _)).getOrElse(ds1)
+      registry.register(ds3, source.id)
     }
   }
 }
