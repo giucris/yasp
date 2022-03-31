@@ -1,7 +1,7 @@
 package it.yasp.service.loader
 
-import it.yasp.core.spark.cache.Cache
 import it.yasp.core.spark.model.Source
+import it.yasp.core.spark.operators.Operators
 import it.yasp.core.spark.reader.Reader
 import it.yasp.core.spark.registry.Registry
 import it.yasp.service.model.YaspSource
@@ -23,19 +23,23 @@ trait YaspLoader {
 object YaspLoader {
 
   /** DefaultYaspLoader Implementation
-    * @param reader:
-    *   A [[Reader]] instance
-    * @param registry:
-    *   A [[Registry]] instance
-    * @param cache:
-    *   A [[Cache]] instance
+    *
+    * @param reader
+    *   : A [[Reader]] instance
+    * @param registry
+    *   : A [[Registry]] instance
+    * @param operators
+    *   : A [[Operators]] instance
     */
-  class DefaultYaspLoader(reader: Reader[Source], registry: Registry, cache: Cache)
-      extends YaspLoader {
+  class DefaultYaspLoader(
+      reader: Reader[Source],
+      operators: Operators,
+      registry: Registry
+  ) extends YaspLoader {
     override def load(source: YaspSource): Unit = {
       val ds1 = reader.read(source.source)
-      val ds2 = source.partitions.map(ds1.repartition).getOrElse(ds1)
-      val ds3 = source.cache.map(cache.cache(ds2, _)).getOrElse(ds1)
+      val ds2 = source.partitions.map(operators.repartition(ds1, _)).getOrElse(ds1)
+      val ds3 = source.cache.map(operators.cache(ds2, _)).getOrElse(ds2)
       registry.register(ds3, source.id)
     }
   }

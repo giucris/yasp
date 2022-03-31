@@ -1,5 +1,5 @@
 package it.yasp.service.model
 
-import it.yasp.core.spark.session.SessionConf
+import it.yasp.core.spark.model.Session
 
-case class YaspExecution(conf: SessionConf, plan: YaspPlan)
+case class YaspExecution(session: Session, plan: YaspPlan)

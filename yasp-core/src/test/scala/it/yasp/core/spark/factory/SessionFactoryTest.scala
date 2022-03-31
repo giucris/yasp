@@ -1,21 +1,23 @@
-package it.yasp.core.spark.session
+package it.yasp.core.spark.factory
 
-import it.yasp.core.spark.session.SessionType.{Distributed, Local}
+import it.yasp.core.spark.model
+import it.yasp.core.spark.model.Session
+import it.yasp.core.spark.model.SessionType.{Distributed, Local}
 import org.apache.spark.sql.SparkSession
 import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
 @DoNotDiscover
-class SparkSessionFactoryTest extends AnyFunSuite {
+class SessionFactoryTest extends AnyFunSuite {
 
-  val sessionFactory = new SparkSessionFactory()
+  val sessionFactory = new SessionFactory()
 
   test("create local session") {
     val session = sessionFactory.create(
-      SessionConf(
-        sessionType = Local,
-        appName = "test-app-1",
-        config = Map.empty
+      Session(
+        kind = Local,
+        name = "test-app-1",
+        conf = Map.empty
       )
     )
 
@@ -28,10 +30,10 @@ class SparkSessionFactoryTest extends AnyFunSuite {
 
   test("create local session with config") {
     val session = sessionFactory.create(
-      SessionConf(
-        sessionType = Local,
-        appName = "test-app-2",
-        config = Map("myConf1" -> "myConfValue1", "myConf2" -> "myConfValue2")
+      model.Session(
+        kind = Local,
+        name = "test-app-2",
+        conf = Map("myConf1" -> "myConfValue1", "myConf2" -> "myConfValue2")
       )
     )
 
@@ -47,10 +49,10 @@ class SparkSessionFactoryTest extends AnyFunSuite {
   test("create distributed session raise a 'master must be set...' exception") {
     val exception = intercept[Exception] {
       val spark = sessionFactory.create(
-        SessionConf(
-          sessionType = Distributed,
-          appName = "test-app-1",
-          config = Map("myConf1" -> "myConfValue1", "myConf2" -> "myConfValue2")
+        model.Session(
+          kind = Distributed,
+          name = "test-app-1",
+          conf = Map("myConf1" -> "myConfValue1", "myConf2" -> "myConfValue2")
         )
       )
       spark.stop()

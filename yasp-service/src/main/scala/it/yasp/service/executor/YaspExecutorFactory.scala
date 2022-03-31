@@ -1,6 +1,6 @@
 package it.yasp.service.executor
 
-import it.yasp.core.spark.cache.Cache.DefaultCache
+import it.yasp.core.spark.operators.Operators.DefaultOperators
 import it.yasp.core.spark.processor.Processor.ProcessProcessor
 import it.yasp.core.spark.reader.Reader.SourceReader
 import it.yasp.core.spark.registry.Registry.DefaultRegistry
@@ -25,11 +25,11 @@ class YaspExecutorFactory {
     *   A [[YaspExecutor]]
     */
   def create(spark: SparkSession): YaspExecutor = {
-    val registry = new DefaultRegistry(spark)
-    val cache    = new DefaultCache()
+    val registry    = new DefaultRegistry(spark)
+    val dataHandler = new DefaultOperators()
     new DefaultYaspExecutor(
-      new DefaultYaspLoader(new SourceReader(spark), registry, cache),
-      new DefaultYaspProcessor(new ProcessProcessor(spark), registry, cache),
+      new DefaultYaspLoader(new SourceReader(spark), dataHandler, registry),
+      new DefaultYaspProcessor(new ProcessProcessor(spark), dataHandler, registry),
       new DefaultYaspWriter(registry, new DestWriter())
     )
   }
