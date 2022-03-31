@@ -1,7 +1,6 @@
-package it.yasp.service
+package it.yasp.service.executor
 
 import it.yasp.service.executor.YaspExecutor.DefaultYaspExecutor
-import it.yasp.service.executor.YaspExecutorFactory
 import it.yasp.testkit.SparkTestSuite
 import org.scalatest.funsuite.AnyFunSuite
 

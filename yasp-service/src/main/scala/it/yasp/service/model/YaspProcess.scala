@@ -7,12 +7,14 @@ import it.yasp.core.spark.model.{CacheLayer, Process}
   *   The unique ID of the process result
   * @param process:
   *   An instance of [[Process]]
+  * @param partitions:
+  *   An Optional number of partition that will be used to reshuffle the dataset
   * @param cache:
   *   An Optional [[CacheLayer]]
   */
 case class YaspProcess(
     id: String,
     process: Process,
-    cache: Option[CacheLayer],
-    partitions: Option[Int] = None
+    partitions: Option[Int] = None,
+    cache: Option[CacheLayer]
 )

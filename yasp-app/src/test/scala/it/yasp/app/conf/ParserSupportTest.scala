@@ -18,27 +18,23 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
           YaspSource(
             "id1",
             Source.Csv("x", Some(Map("header" -> "false", "sep" -> ","))),
-            Some(Memory)
+            cache = Some(Memory)
           ),
-          YaspSource(
-            "id2",
-            Source.Parquet("x", mergeSchema = false),
-            Some(MemoryAndDisk)
-          ),
+          YaspSource("id2", Source.Parquet("x", mergeSchema = false), cache = Some(MemoryAndDisk)),
           YaspSource(
             "id3",
             Source.Jdbc("url", Some(BasicCredentials("x", "y")), Some(Map("dbTable" -> "table"))),
-            None
+            cache = None
           ),
-          YaspSource("id4", Source.Csv("z", None), Some(Checkpoint))
+          YaspSource("id4", Source.Csv("z", None), cache = Some(Checkpoint))
         ),
         Seq(
-          YaspProcess("p1", Sql("my-query"), None),
-          YaspProcess("p2", Sql("my-query"), None)
+          YaspProcess("p1", Sql("my-query"), cache = None),
+          YaspProcess("p2", Sql("my-query"), cache = None)
         ),
         Seq(
           YaspSink("p1", Dest.Parquet("out-path-1", None)),
-          YaspSink("p3", Dest.Parquet("out-path-2", None))
+          YaspSink("p3", Dest.Parquet("out-path-2", Some(Seq("col1", "col2"))))
         )
       )
     )
@@ -98,6 +94,9 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |    dest:
         |      Parquet:
         |        path: out-path-2
+        |        partitionBy:
+        |          - col1
+        |          - col2
         |""".stripMargin
     )
     assert(actual == expected)

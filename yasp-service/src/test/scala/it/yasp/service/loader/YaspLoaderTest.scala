@@ -39,7 +39,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
         .once()
     )
 
-    yaspLoader.load(YaspSource("tbl", Parquet("x", mergeSchema = false), None))
+    yaspLoader.load(YaspSource("tbl", Parquet("x", mergeSchema = false), cache = None))
   }
 
   test("load will read cache and register source") {
@@ -65,7 +65,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
         .once()
     )
 
-    yaspLoader.load(YaspSource("tbl", Parquet("x", mergeSchema = false), Some(Memory)))
+    yaspLoader.load(YaspSource("tbl", Parquet("x", mergeSchema = false), cache = Some(Memory)))
   }
 
   test("load will read repartition cache and register a source") {
@@ -99,7 +99,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
         .once()
     )
 
-    yaspLoader.load(YaspSource("tbl", Parquet("x", mergeSchema = false), Some(Memory), Some(100)))
+    yaspLoader.load(YaspSource("tbl", Parquet("x", mergeSchema = false), Some(100), Some(Memory)))
   }
 
 }
