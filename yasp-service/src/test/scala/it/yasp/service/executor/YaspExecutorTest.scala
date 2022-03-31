@@ -1,4 +1,4 @@
-package it.yasp.service
+package it.yasp.service.executor
 
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.{Dest, Source}
@@ -21,7 +21,7 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
   test("exec with 1 source and 1 sink") {
     inSequence(
       (loader.load _)
-        .expects(YaspSource("id1", Source.Json("sourcePath", None), None))
+        .expects(YaspSource("id1", Source.Json("sourcePath", None), cache = None))
         .once(),
       (writer.write _)
         .expects(YaspSink("id1", Dest.Parquet("destPath", None)))
@@ -30,7 +30,7 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
 
     yaspExecutor.exec(
       YaspPlan(
-        sources = Seq(YaspSource("id1", Source.Json("sourcePath", None), None)),
+        sources = Seq(YaspSource("id1", Source.Json("sourcePath", None), cache = None)),
         processes = Seq.empty,
         sinks = Seq(YaspSink("id1", Dest.Parquet("destPath", None)))
       )
@@ -40,10 +40,10 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
   test("exec with 1 source 1 process 1 sink") {
     inSequence(
       (loader.load _)
-        .expects(YaspSource("id1", Source.Json("sourcePath", None), None))
+        .expects(YaspSource("id1", Source.Json("sourcePath", None), cache = None))
         .once(),
       (processor.process _)
-        .expects(YaspProcess("id2", Sql("my-sql"), None))
+        .expects(YaspProcess("id2", Sql("my-sql"), cache = None))
         .once(),
       (writer.write _)
         .expects(YaspSink("id2", Dest.Parquet("destPath", None)))
@@ -52,8 +52,8 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
 
     yaspExecutor.exec(
       YaspPlan(
-        sources = Seq(YaspSource("id1", Source.Json("sourcePath", None), None)),
-        processes = Seq(YaspProcess("id2", Sql("my-sql"), None)),
+        sources = Seq(YaspSource("id1", Source.Json("sourcePath", None), cache = None)),
+        processes = Seq(YaspProcess("id2", Sql("my-sql"), cache = None)),
         sinks = Seq(YaspSink("id2", Dest.Parquet("destPath", None)))
       )
     )
@@ -62,16 +62,16 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
   test("exec with n source n process n sink") {
     inSequence(
       (loader.load _)
-        .expects(YaspSource("id1", Source.Json("sourcePath1", None), None))
+        .expects(YaspSource("id1", Source.Json("sourcePath1", None), cache = None))
         .once(),
       (loader.load _)
-        .expects(YaspSource("id2", Source.Parquet("sourcePath2", mergeSchema = true), None))
+        .expects(YaspSource("id2", Source.Parquet("sourcePath2", mergeSchema = true), cache = None))
         .once(),
       (processor.process _)
-        .expects(YaspProcess("id3", Sql("my-sql-1"), None))
+        .expects(YaspProcess("id3", Sql("my-sql-1"), cache = None))
         .once(),
       (processor.process _)
-        .expects(YaspProcess("id4", Sql("my-sql-2"), None))
+        .expects(YaspProcess("id4", Sql("my-sql-2"), cache = None))
         .once(),
       (writer.write _)
         .expects(YaspSink("id4", Dest.Parquet("destPath1", None)))
@@ -84,12 +84,12 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
     yaspExecutor.exec(
       YaspPlan(
         sources = Seq(
-          YaspSource("id1", Source.Json("sourcePath1", None), None),
-          YaspSource("id2", Source.Parquet("sourcePath2", mergeSchema = true), None)
+          YaspSource("id1", Source.Json("sourcePath1", None), cache = None),
+          YaspSource("id2", Source.Parquet("sourcePath2", mergeSchema = true), cache = None)
         ),
         processes = Seq(
-          YaspProcess("id3", Sql("my-sql-1"), None),
-          YaspProcess("id4", Sql("my-sql-2"), None)
+          YaspProcess("id3", Sql("my-sql-1"), cache = None),
+          YaspProcess("id4", Sql("my-sql-2"), cache = None)
         ),
         sinks = Seq(
           YaspSink("id4", Dest.Parquet("destPath1", None)),

@@ -7,12 +7,14 @@ import it.yasp.core.spark.model.{CacheLayer, Source}
   *   The unique ID of the source
   * @param source:
   *   An instance of [[Source]]
+  * @param partitions:
+  *   An Optional number of partition that will be used to reshuffle the dataset
   * @param cache:
   *   An Optional [[CacheLayer]]
   */
 case class YaspSource(
     id: String,
     source: Source,
-    cache: Option[CacheLayer],
-    partitions: Option[Int] = None
+    partitions: Option[Int] = None,
+    cache: Option[CacheLayer]
 )

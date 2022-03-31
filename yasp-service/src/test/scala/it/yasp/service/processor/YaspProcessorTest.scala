@@ -45,7 +45,7 @@ class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory
         .expects(*, "tbl")
         .once()
     )
-    yaspProcessor.process(YaspProcess("tbl", Sql("select * from test_table"), Some(Memory)))
+    yaspProcessor.process(YaspProcess("tbl", Sql("select * from test_table"), cache = Some(Memory)))
   }
 
   test("process will exec sql proc and no cache") {
@@ -62,7 +62,7 @@ class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory
         .expects(*, "tbl")
         .once()
     )
-    yaspProcessor.process(YaspProcess("tbl", Sql("select * from test_table"), None))
+    yaspProcessor.process(YaspProcess("tbl", Sql("select * from test_table"), cache = None))
   }
 
 }
