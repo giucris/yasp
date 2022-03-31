@@ -55,9 +55,7 @@ class YaspServiceTest
         session = Session(Local, "my-app-name", Map.empty),
         plan = YaspPlan(
           sources = Seq(
-            YaspSource(
-              "data_1",
-              Source.Csv(
+            YaspSource("data_1", Source.Csv(
                 path = s"$workspace/csv-data-source-1/file1.csv",
                 Some(
                   Map(
@@ -65,12 +63,8 @@ class YaspServiceTest
                     "sep"    -> ","
                   )
                 )
-              ),
-              cache = None
-            ),
-            YaspSource(
-              "data_2",
-              Source.Csv(
+              ), cache = None),
+            YaspSource("data_2", Source.Csv(
                 path = s"$workspace/csv-data-source-2/file1.csv",
                 Some(
                   Map(
@@ -78,16 +72,10 @@ class YaspServiceTest
                     "sep"    -> ","
                   )
                 )
-              ),
-              cache = None
-            )
+              ), cache = None)
           ),
           processes = Seq(
-            YaspProcess(
-              "data_3",
-              Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id"),
-              None
-            )
+            YaspProcess("data_3", Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id"), cache = None)
           ),
           sinks = Seq(
             YaspSink("data_3", Dest.Parquet(s"$workspace/parquet-out/", None))

@@ -4,12 +4,15 @@
 
 Yet Another SPark Framework
 
-An easy and lightweight tool for data engineering process built on top of Apache Spark.
+An easy and lightweight tool for data engineering process built on top of Apache Spark for ETL/ELT process.
 
 ## Introduction
 
 Yasp was created to help data engineers working with Apache Spark to reduce their pipeline development time by using a
 no-code/less-code approach.
+
+With Yasp you can configure an ETL/ELT job that fetch data from multiple source execute multiple transformation
+and write in multiple destination
 
 It is written in **Scala (2.11.12)** on top of **Apache Spark (2.4.7)** and managed as an **SBT (1.4.9)** multi module
 project.

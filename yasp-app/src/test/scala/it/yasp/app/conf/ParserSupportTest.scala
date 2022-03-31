@@ -15,26 +15,14 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
       Session(Distributed, "my-app-name", Map("key-1" -> "value", "key-2" -> "value")),
       YaspPlan(
         Seq(
-          YaspSource(
-            "id1",
-            Source.Csv("x", Some(Map("header" -> "false", "sep" -> ","))),
-            Some(Memory)
-          ),
-          YaspSource(
-            "id2",
-            Source.Parquet("x", mergeSchema = false),
-            Some(MemoryAndDisk)
-          ),
-          YaspSource(
-            "id3",
-            Source.Jdbc("url", Some(BasicCredentials("x", "y")), Some(Map("dbTable" -> "table"))),
-            None
-          ),
-          YaspSource("id4", Source.Csv("z", None), Some(Checkpoint))
+          YaspSource("id1", Source.Csv("x", Some(Map("header" -> "false", "sep" -> ","))), cache = Some(Memory)),
+          YaspSource("id2", Source.Parquet("x", mergeSchema = false), cache = Some(MemoryAndDisk)),
+          YaspSource("id3", Source.Jdbc("url", Some(BasicCredentials("x", "y")), Some(Map("dbTable" -> "table"))), cache = None),
+          YaspSource("id4", Source.Csv("z", None), cache = Some(Checkpoint))
         ),
         Seq(
-          YaspProcess("p1", Sql("my-query"), None),
-          YaspProcess("p2", Sql("my-query"), None)
+          YaspProcess("p1", Sql("my-query"), cache = None),
+          YaspProcess("p2", Sql("my-query"), cache = None)
         ),
         Seq(
           YaspSink("p1", Dest.Parquet("out-path-1", None)),
