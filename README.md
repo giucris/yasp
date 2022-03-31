@@ -380,6 +380,8 @@ case class Parquet(
 * Add BuiltIn Processor
 * Add Table format as Source
 * Add Table format as Dest
+* Add data quality process
+* Add spark metrics via SparkListener  
 * Add Structured Streaming Execution
 
 
