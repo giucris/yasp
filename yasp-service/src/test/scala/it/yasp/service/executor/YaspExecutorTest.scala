@@ -1,4 +1,4 @@
-package it.yasp.service
+package it.yasp.service.executor
 
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.{Dest, Source}
