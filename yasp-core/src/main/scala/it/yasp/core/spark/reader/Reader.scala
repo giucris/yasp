@@ -2,7 +2,7 @@ package it.yasp.core.spark.reader
 
 import it.yasp.core.spark.model.Source
 import it.yasp.core.spark.model.Source._
-import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 /** Reader
   *
@@ -29,12 +29,11 @@ object Reader {
   private[reader] trait SparkReadSupport {
     def read(
         spark: SparkSession,
-        fmt: String,
-        opts: Map[String, String],
+        format: String,
+        options: Map[String, String],
         schema: Option[String]
-    ): DataFrame =
-      schema.map(spark.read.schema).getOrElse(spark.read).format(fmt).options(opts).load()
-
+    ): Dataset[Row] =
+      schema.map(spark.read.schema).getOrElse(spark.read).format(format).options(options).load()
   }
 
   /** CsvReader an instance of Reader[Csv]
@@ -44,7 +43,7 @@ object Reader {
   class CsvReader(spark: SparkSession) extends Reader[Csv] with SparkReadSupport {
     override def read(source: Csv): Dataset[Row] = {
       val opts = source.options.getOrElse(Map.empty) ++ Map("path" -> source.path)
-      read(spark, fmt = "csv", opts.filterKeys(_ != "schema"), opts.get("schema"))
+      read(spark, format = "csv", opts.filterKeys(_ != "schema"), opts.get("schema"))
     }
   }
 
@@ -55,7 +54,7 @@ object Reader {
   class JsonReader(spark: SparkSession) extends Reader[Json] with SparkReadSupport {
     override def read(source: Json): Dataset[Row] = {
       val opts = source.options.getOrElse(Map.empty) ++ Map("path" -> source.path)
-      read(spark, fmt = "json", opts.filterKeys(_ != "schema"), opts.get("schema"))
+      read(spark, format = "json", opts.filterKeys(_ != "schema"), opts.get("schema"))
     }
   }
 
@@ -66,7 +65,7 @@ object Reader {
   class ParquetReader(spark: SparkSession) extends Reader[Parquet] with SparkReadSupport {
     override def read(source: Parquet): Dataset[Row] = {
       val opts = Map("path" -> source.path, "mergeSchema" -> source.mergeSchema.toString)
-      read(spark, fmt = "parquet", opts, None)
+      read(spark, format = "parquet", opts, None)
     }
   }
 
@@ -81,7 +80,7 @@ object Reader {
         "user"     -> source.credentials.map(_.username).getOrElse(""),
         "password" -> source.credentials.map(_.password).getOrElse("")
       )
-      read(spark, fmt = "jdbc", opts, None)
+      read(spark, format = "jdbc", opts, None)
     }
   }
 
@@ -92,7 +91,7 @@ object Reader {
   class AvroReader(spark: SparkSession) extends Reader[Avro] with SparkReadSupport {
     override def read(source: Avro): Dataset[Row] = {
       val opts = source.options.getOrElse(Map.empty) ++ Map("path" -> source.path)
-      read(spark, fmt = "avro", opts, None)
+      read(spark, format = "avro", opts, None)
     }
   }
 
@@ -103,7 +102,7 @@ object Reader {
   class XmlReader(spark: SparkSession) extends Reader[Xml] with SparkReadSupport {
     override def read(source: Xml): Dataset[Row] = {
       val opts = source.options.getOrElse(Map.empty) ++ Map("path" -> source.path)
-      read(spark, fmt = "xml", opts.filterKeys(_ != "schema"), opts.get("schema"))
+      read(spark, format = "xml", opts.filterKeys(_ != "schema"), opts.get("schema"))
     }
   }
 
@@ -113,7 +112,7 @@ object Reader {
     */
   class OrcReader(spark: SparkSession) extends Reader[Orc] with SparkReadSupport {
     override def read(source: Orc): Dataset[Row] =
-      read(spark, fmt = "orc", Map("path" -> source.path), None)
+      read(spark, format = "orc", Map("path" -> source.path), None)
   }
 
   //TODO Something that retrieve automatically the relative Reader[A] should be implemented. Instead of doing it with an exhaustive pattern matching. probably shapeless could help on this
