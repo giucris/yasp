@@ -41,8 +41,8 @@ Yasp provide 3 different module and you can use any one of them.
 
 ### YaspApp
 
-YaspApp module provide the highest possible level of asbstraction for your ETL. You should just provide a yml definition
-of your data operations ait will provide to initialize the SparkSession and execute all the steps provided on the yml
+YaspApp module provide the highest possible level of abstraction for your ETL. You should just provide a yml definition
+of your data operations and it will provide to initialize the SparkSession and execute all the steps provided on the yml
 file.
 
 YaspApp are able to interpolate environment variable into your yaml file, helping you to avoid writing secrets in your
