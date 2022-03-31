@@ -1,26 +1,26 @@
 package it.yasp.core.spark.registry
 
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 /** Registry trait
   */
 trait Registry {
 
-  /** Register a dataframe with the provided name
-    * @param df:
-    *   DataFrame
+  /** Register a dataset with the provided name
+    * @param dataset:
+    *   Dataset
     * @param name:
     *   DataFrame name
     */
-  def register(df: DataFrame, name: String): Unit
+  def register(dataset: Dataset[Row], name: String): Unit
 
-  /** Retrieve a dataframe
+  /** Retrieve a dataset
     * @param name:
-    *   DataFrame name
+    *   Dataset name
     * @return
-    *   a DataFrame
+    *   a Dataset
     */
-  def retrieve(name: String): DataFrame
+  def retrieve(name: String): Dataset[Row]
 }
 
 object Registry {
@@ -29,10 +29,10 @@ object Registry {
     */
   class DefaultRegistry(spark: SparkSession) extends Registry {
 
-    override def register(df: DataFrame, name: String): Unit =
-      df.createTempView(name)
+    override def register(dataset: Dataset[Row], name: String): Unit =
+      dataset.createTempView(name)
 
-    override def retrieve(name: String): DataFrame =
+    override def retrieve(name: String): Dataset[Row] =
       spark.table(name)
   }
 }

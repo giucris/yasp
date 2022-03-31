@@ -3,9 +3,8 @@ package it.yasp.app.conf
 import io.circe.generic.auto._
 import it.yasp.core.spark.model.CacheLayer.{Checkpoint, Memory, MemoryAndDisk}
 import it.yasp.core.spark.model.Process.Sql
-import it.yasp.core.spark.model.{BasicCredentials, Dest, Source}
-import it.yasp.core.spark.session.SessionConf
-import it.yasp.core.spark.session.SessionType.Distributed
+import it.yasp.core.spark.model.SessionType.Distributed
+import it.yasp.core.spark.model._
 import it.yasp.service.model._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -13,7 +12,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
 
   test("parse") {
     val expected = YaspExecution(
-      SessionConf(Distributed, "my-app-name", Map("key-1" -> "value", "key-2" -> "value")),
+      Session(Distributed, "my-app-name", Map("key-1" -> "value", "key-2" -> "value")),
       YaspPlan(
         Seq(
           YaspSource(
@@ -45,10 +44,10 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
     )
     val actual   = parseYaml[YaspExecution](
       """
-        |conf:
-        |  sessionType: Distributed
-        |  appName: my-app-name
-        |  config:
+        |session:
+        |  kind: Distributed
+        |  name: my-app-name
+        |  conf:
         |    key-1: value
         |    key-2: value
         |plan:

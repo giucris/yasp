@@ -40,10 +40,10 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
     createFile(
       filePath = s"$workspace/test1/execution/example.yml",
       rows = Seq(
-        """conf:
-          |  sessionType: Local
-          |  appName: example-app
-          |  config: {}
+        """session:
+          |  kind: Local
+          |  name: example-app
+          |  conf: {}
           |plan:
           |  sources:
           |    - id: users

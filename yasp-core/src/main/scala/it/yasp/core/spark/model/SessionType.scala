@@ -1,4 +1,4 @@
-package it.yasp.core.spark.session
+package it.yasp.core.spark.model
 
 /** A SumType that describe all possible value for a Session.
   *
@@ -10,9 +10,9 @@ object SessionType {
 
   /** Represent a Local Spark session, used to execute Spark Session in a local mode
     */
-  case object Local extends SessionType
+  final case object Local extends SessionType
 
   /** Represent a Distributed Spark session, used to execute Spark on a cluster
     */
-  case object Distributed extends SessionType
+  final case object Distributed extends SessionType
 }

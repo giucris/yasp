@@ -1,9 +1,8 @@
 package it.yasp.service
 
 import it.yasp.core.spark.model.Process.Sql
-import it.yasp.core.spark.model.{Dest, Source}
-import it.yasp.core.spark.session.SessionConf
-import it.yasp.core.spark.session.SessionType.Local
+import it.yasp.core.spark.model.SessionType.Local
+import it.yasp.core.spark.model.{Dest, Session, Source}
 import it.yasp.service.model._
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
@@ -53,7 +52,7 @@ class YaspServiceTest
 
     YaspService().run(
       YaspExecution(
-        conf = SessionConf(Local, "my-app-name", Map.empty),
+        session = Session(Local, "my-app-name", Map.empty),
         plan = YaspPlan(
           sources = Seq(
             YaspSource(

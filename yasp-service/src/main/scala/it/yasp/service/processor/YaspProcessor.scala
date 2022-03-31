@@ -1,7 +1,7 @@
 package it.yasp.service.processor
 
-import it.yasp.core.spark.cache.Cache
 import it.yasp.core.spark.model.Process
+import it.yasp.core.spark.operators.Operators
 import it.yasp.core.spark.processor.Processor
 import it.yasp.core.spark.registry.Registry
 import it.yasp.service.model.YaspProcess
@@ -23,19 +23,24 @@ trait YaspProcessor {
 object YaspProcessor {
 
   /** DefaultYaspProcessor implementation
-    * @param processor:
-    *   A [[Processor]] instance
-    * @param registry:
-    *   A [[Registry]] instance
-    * @param cache:
-    *   A [[Cache]] instance
+    *
+    * @param processor
+    *   : A [[Processor]] instance
+    * @param operators
+    *   : A [[Registry]] instance
+    * @param registry
+    *   : A [[Operators]] instance
     */
-  class DefaultYaspProcessor(processor: Processor[Process], registry: Registry, cache: Cache)
-      extends YaspProcessor {
+  class DefaultYaspProcessor(
+      processor: Processor[Process],
+      operators: Operators,
+      registry: Registry
+  ) extends YaspProcessor {
     override def process(process: YaspProcess): Unit = {
-      val df1 = processor.execute(process.process)
-      val df2 = process.cache.map(cache.cache(df1, _)).getOrElse(df1)
-      registry.register(df2, process.id)
+      val ds1 = processor.execute(process.process)
+      val ds2 = process.partitions.map(operators.repartition(ds1, _)).getOrElse(ds1)
+      val ds3 = process.cache.map(operators.cache(ds2, _)).getOrElse(ds2)
+      registry.register(ds3, process.id)
     }
   }
 }

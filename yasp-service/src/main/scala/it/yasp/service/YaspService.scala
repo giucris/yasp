@@ -1,6 +1,6 @@
 package it.yasp.service
 
-import it.yasp.core.spark.session.SparkSessionFactory
+import it.yasp.core.spark.factory.SessionFactory
 import it.yasp.service.executor.YaspExecutorFactory
 import it.yasp.service.model.YaspExecution
 
@@ -24,11 +24,12 @@ trait YaspService {
 object YaspService {
 
   def apply(): YaspService =
-    new DefaultYaspService(new SparkSessionFactory, new YaspExecutorFactory)
+    new DefaultYaspService(new SessionFactory, new YaspExecutorFactory)
 
   /** YaspService Default implementation
-    * @param sessionFactory:
-    *   An [[SparkSessionFactory]] instance to generate the [[org.apache.spark.sql.SparkSession]] at
+    *
+    * @param sessionFactory
+    *   : An [[SessionFactory]] instance to generate the [[org.apache.spark.sql.SparkSession]] at
     *   runtime
     * @param yaspExecutorFactory:
     *   An instance of [[YaspExecutorFactory]] to generate a
@@ -36,12 +37,12 @@ object YaspService {
     *   [[it.yasp.service.model.YaspPlan]]
     */
   class DefaultYaspService(
-      sessionFactory: SparkSessionFactory,
+      sessionFactory: SessionFactory,
       yaspExecutorFactory: YaspExecutorFactory
   ) extends YaspService {
 
     override def run(yaspExecution: YaspExecution): Unit = {
-      val session = sessionFactory.create(yaspExecution.conf)
+      val session = sessionFactory.create(yaspExecution.session)
       yaspExecutorFactory.create(session).exec(yaspExecution.plan)
     }
 
