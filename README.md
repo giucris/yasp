@@ -34,9 +34,10 @@ project.
 
 Yasp provide 3 layer of abstraction over spark framework.
 
-* **YaspApp** provide an executable binary to manage your complex etl job with a simple yml file
-* **YaspService** provide an high level of abraction for your ETL job.
-* **YaspCore** provide some spark primitives usefull for yasp process.
+* **YaspApp** provide the highest possible level of abstraction for your ETL job and come with an executable main class.
+  Allow you to manage complex big data etl job with a simple yml file
+* **YaspService** provide an domain specific language for your ETL job.
+* **YaspCore** provide some spark primitives useful for yasp operations.
 
 ### YaspApp
 
@@ -56,10 +57,10 @@ object MyUsersByCitiesReport with ParserSupport{
   def main(args: Array[String]): Unit={
       YaspService().run(
         parseYaml[YaspExecution](
-          """conf:
-            |  sessionType: Local
-            |  appName: example-app
-            |  config: {}
+          """session:
+            |  kind: Local
+            |  name: example-app
+            |  conf: {}
             |plan:
             |  sources:
             |    - id: users
@@ -74,12 +75,14 @@ object MyUsersByCitiesReport with ParserSupport{
             |    - id: user_with_address
             |      process:
             |        Sql:
-            |          query: SELECT u.name,u.surname,a.address FROM users u JOIN addresses a ON u.id = a.user_id
+            |          query: SELECT u.name,u.surname,a.address,a.city,a.country FROM users u JOIN addresses a ON u.id = a.user_id
             |  sinks:
             |    - id: user_with_address
             |      dest:
             |        Parquet:
             |          path: user_with_address
+            |          partitionBy:
+            |            - country
             |""".stripMargin    
         )
       )
@@ -105,9 +108,9 @@ A YaspExecution define a `SessionConf` that describe how the `SparkSession` will
 describe all data operations within the ETL job.
 
 ```scala
-case class SessionConf(
-  sessionType: SessionType, // A SumType with two possible value Local (for local session) Distributed (for cluster session)
-  appName: String, // Spark application name
+case class Session(
+  kind: SessionType, // A SumType with two possible value Local (for local session) Distributed (for cluster session)
+  name: String, // Spark application name
   config: Map[String, String] // Spark session configuration
 )
 
@@ -118,7 +121,7 @@ case class YaspPlan(
 )
 
 case class YaspExecution(
-  conf: SessionConf, // A SessionConf instance
+  session: Session, // A SessionConf instance
   plan: YaspPlan // A YaspPlan Instance
 )
 
@@ -130,26 +133,28 @@ trait YaspService {
 
 #### YaspSource, YaspProcess and YaspSink
 
-A `YaspSource` define a data source. Each `YaspSource` are loaded via a `YaspLoader` that read the data, cache the
-dataframe to the specific `CacheLayer` and create a temporary table with the unique id provided.
+A `YaspSource` define a data source. Each `YaspSource` are loaded via a `YaspLoader` that read repartition and cache the
+data to a specific `CacheLayer` and register it as a temporary table with the id provided.
 
 A `YaspProcess` define a data process operation. Each `YaspProcess` are executed via a `YaspProcessor` that execute
-the `Process`, cache the resulting dataframe to the specific `CacheLayer` and create a temporary table with the unique
+the `Process`, repartition and cache the data to a specific `CacheLayer` and register it as a temporary table with the
 id provided.
 
 A `YaspSink` define a data output operation. Each `YaspSink` are executed via a `YaspWriter` that retrieve the specific
-dataframe using the provided `id` and write them.
+data using the provided `id` and write them to the specified destination.
 
 ```scala
 case class YaspSource(
   id: String, // Unique ID to internally identify the resulting dataframe
   source: Source, // Source Sum Type
-  cache: Option[CacheLayer] // Optional cache layer that will be used to cache resulting dataframe
+  partitions: Option[Int], // Optional number of partitions 
+  cache: Option[CacheLayer] // Optional cache layer that will be used to cache resulting dataframe  
 )
 
 case class YaspProcess(
   id: String, // Unique ID to internally identify the resulting dataframe
   process: Process, // Source Sum Type
+  partitions: Option[Int], // Optional number of partitions
   cache: Option[CacheLayer] // Optional cache layer that will be used to cache resulting dataframe
 )
 
@@ -184,20 +189,20 @@ object MyUsersByCitiesReport {
   def main(args: Array[String]): Unit = {
     YaspService().run(
       YaspExecution(
-        conf = SessionConf(Local, "my-app-name", Map.empty),
+        session = Session(Local, "my-app-name", Map.empty),
         plan = YaspPlan(
           sources = Seq(
-            YaspSource("users", Source.Csv(path = "users/", Some(Map("header" -> "true"))), cache = None),
-            YaspSource("addresses", Source.Json(path = "addresses/", None), cache = None),
-            YaspSource("cities", Source.Parquet(path = "cities/", mergeSchema = false), cache = None)
+            YaspSource("users", Csv(path = "users/", Some(Map("header" -> "true"))), partitions=None,cache = None),
+            YaspSource("addresses", Json(path = "addresses/", None),  partitions=None, cache = None),
+            YaspSource("cities", Parquet(path = "cities/", mergeSchema = false),  partitions=None, cache = None)
           ),
           processes = Seq(
-            YaspProcess("users_addresses", Sql("SELECT u.*,a.address,a.city_id FROM users u JOIN addresses a ON u.address_id=a.id"), None),
-            YaspProcess("users_addresses_cities", Sql("SELECT u.*,a.address,a.city_id FROM users_addresses u JOIN cities c ON u.city_id=c.id"), None),
-            YaspProcess("users_by_city", Sql("SELECT city,count(*) FROM users_addresses_cities GROUP BY city"), None)
+            YaspProcess("users_addresses", Sql("SELECT u.*,a.address,a.city_id FROM users u JOIN addresses a ON u.address_id=a.id"),partitions=None,cache= None),
+            YaspProcess("users_addresses_cities", Sql("SELECT u.*,a.address,a.city_id FROM users_addresses u JOIN cities c ON u.city_id=c.id"), partitions=None,cache= None),
+            YaspProcess("users_by_city", Sql("SELECT city,count(*) FROM users_addresses_cities GROUP BY city"), partitions=None,cache= None)
           ),
           sinks = Seq(
-            YaspSink("users_by_city", Dest.Parquet(s"user-by-city"))
+            YaspSink("users_by_city", Dest.Parquet(s"user-by-city",partitionBy(Seq("city"))))
           )
         )
       )
