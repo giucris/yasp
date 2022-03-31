@@ -1,9 +1,9 @@
 package it.yasp.service.processor
 
-import it.yasp.core.spark.cache.Cache
 import it.yasp.core.spark.model.CacheLayer.Memory
 import it.yasp.core.spark.model.Process
 import it.yasp.core.spark.model.Process.Sql
+import it.yasp.core.spark.operators.Operators
 import it.yasp.core.spark.processor.Processor
 import it.yasp.core.spark.registry.Registry
 import it.yasp.service.model.YaspProcess
@@ -18,10 +18,10 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory {
   val processor: Processor[Process] = mock[Processor[Process]]
+  val operators: Operators          = mock[Operators]
   val registry: Registry            = mock[Registry]
-  val cache: Cache                  = mock[Cache]
 
-  val yaspProcessor = new DefaultYaspProcessor(processor, registry, cache)
+  val yaspProcessor = new DefaultYaspProcessor(processor, operators, registry)
 
   test("process will exec sql proc and cache") {
     inSequence(
@@ -33,7 +33,7 @@ class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory
             RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
           )
         ),
-      (cache.cache _)
+      (operators.cache _)
         .expects(*, Memory)
         .once()
         .returns(

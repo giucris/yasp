@@ -1,9 +1,8 @@
 package it.yasp.app.conf
 
 import it.yasp.core.spark.model.Process.Sql
-import it.yasp.core.spark.model.{Dest, Source}
-import it.yasp.core.spark.session.SessionConf
-import it.yasp.core.spark.session.SessionType.Local
+import it.yasp.core.spark.model.SessionType.Local
+import it.yasp.core.spark.model._
 import it.yasp.service.model._
 import it.yasp.testkit.TestUtils
 import org.scalatest.BeforeAndAfterAll
@@ -26,10 +25,10 @@ class YaspExecutionLoaderTest extends AnyFunSuite with BeforeAndAfterAll {
     TestUtils.createFile(
       filePath = s"$workspace/example.yml",
       rows = Seq(
-        """conf:
-          |  sessionType: Local
-          |  appName: my-app
-          |  config: {}
+        """session:
+          |  kind: Local
+          |  name: my-app
+          |  conf: {}
           |plan:
           |  sources:
           |    - id: id1
@@ -59,7 +58,7 @@ class YaspExecutionLoaderTest extends AnyFunSuite with BeforeAndAfterAll {
 
     val actual   = YaspExecutionLoader.load(s"$workspace/example.yml")
     val expected = YaspExecution(
-      SessionConf(Local, "my-app", Map.empty),
+      Session(Local, "my-app", Map.empty),
       YaspPlan(
         sources = Seq(
           YaspSource("id1", Source.Csv("path1", Some(Map("header" -> "true", "sep" -> ","))), None),

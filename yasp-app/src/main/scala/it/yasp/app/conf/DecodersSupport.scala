@@ -2,10 +2,9 @@ package it.yasp.app.conf
 
 import io.circe.Decoder.Result
 import io.circe.{Decoder, HCursor}
-import it.yasp.core.spark.model.CacheLayer
 import it.yasp.core.spark.model.CacheLayer._
-import it.yasp.core.spark.session.SessionType
-import it.yasp.core.spark.session.SessionType.{Distributed, Local}
+import it.yasp.core.spark.model.SessionType.{Distributed, Local}
+import it.yasp.core.spark.model.{CacheLayer, SessionType}
 
 /** Provide a set of encoder and decoder useful to beautify all Yasp ADT.
   */

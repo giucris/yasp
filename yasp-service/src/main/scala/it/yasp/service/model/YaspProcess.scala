@@ -10,4 +10,9 @@ import it.yasp.core.spark.model.{CacheLayer, Process}
   * @param cache:
   *   An Optional [[CacheLayer]]
   */
-case class YaspProcess(id: String, process: Process, cache: Option[CacheLayer])
+case class YaspProcess(
+    id: String,
+    process: Process,
+    cache: Option[CacheLayer],
+    partitions: Option[Int] = None
+)
