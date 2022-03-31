@@ -351,3 +351,32 @@ case class Parquet(
   partitionBy: Option[Seq[String]] // Optional Seq of column name to use for partition
 ) extends Dest
 ```
+
+## Roadmap
+
+* Add a Changelog
+* Add BuiltIn Processor
+* Add Table format as Source
+* Add Table format as Dest
+
+## Contributing
+
+Contributions make the open source community amazing so any kind of **Contribution are greatly appreciated**.
+
+You can contribute in three possible way:
+
+* **Reporting a bug**: Open an issue with the tag `bug` and provide error details, expected behaviour and all possible
+  information to replicate it.
+* **New proposal**: Open an issue with the tag `enhancement` and provide all details regarding your suggestion.
+* **Open a pull request**:
+  * Fork the project
+  * Create your feature branch `git checkout -b feature/my-awesome-feature`
+  * Add your changes and commit `git commit -m 'my awesome feature'`
+  * Push to the branch `git push origin feature/my-awesome-feature`
+  * Open a pull request
+  * Wait for project owners to approve or start a conversation on your pull request
+
+### Contribution code of conduct
+
+* Avoid massive refactors
+* Provide the relative test cases for your feature/bug-fix
