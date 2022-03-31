@@ -32,7 +32,7 @@ project.
 
 ## Usage
 
-Yasp provide 3 layer of abstraction over spark framework.
+Yasp provide 3 different module and you can use any one of them.
 
 * **YaspApp** provide the highest possible level of abstraction for your ETL job and come with an executable main class.
   Allow you to manage complex big data etl job with a simple yml file
@@ -41,57 +41,62 @@ Yasp provide 3 layer of abstraction over spark framework.
 
 ### YaspApp
 
-You can use the YaspApp module as an executable binary or just as a library. Add the yasp-app reference to your
-dependencies into your `build.sbt`or `pom.xml` file and then start using it.
+YaspApp module provide the highest possible level of asbstraction for your ETL. You should just provide a yml definition
+of your data operations and the `YaspApp` will provide to initialize the SparkSession and execute all the steps provided
+on the yml file.
+
+**Currently there are only one stable way to use the YaspApp, as a library on your code**
+
+**Any way YaspApp come with an executable entry point and we are working to make it stable in order to run the binary jar
+with the yml provided as external file.**
 
 #### YaspApp as library
 
-YaspApp module provide an high level of abstraction around an etl job. 
+Add the yasp-app reference to your dependencies into the `build.sbt`or `pom.xml` build and start using it in your code.
 
-YaspApp provide a way to define your etl in a pure descriptive way with a simple yml file.
+##### YaspApp in action
 
-For example:
 ```scala
-object MyUsersByCitiesReport with ParserSupport{
+object MyUsersByCitiesReport{
   
   def main(args: Array[String]): Unit={
-      YaspService().run(
-        parseYaml[YaspExecution](
-          """session:
-            |  kind: Local
-            |  name: example-app
-            |  conf: {}
-            |plan:
-            |  sources:
-            |    - id: users
-            |      source:
-            |        Csv:
-            |          path: users.csv
-            |    - id: addresses
-            |      source:
-            |        Json:
-            |          path: addresses.jsonl
-            |  processes:
-            |    - id: user_with_address
-            |      process:
-            |        Sql:
-            |          query: SELECT u.name,u.surname,a.address,a.city,a.country FROM users u JOIN addresses a ON u.id = a.user_id
-            |  sinks:
-            |    - id: user_with_address
-            |      dest:
-            |        Parquet:
-            |          path: user_with_address
-            |          partitionBy:
-            |            - country
-            |""".stripMargin    
-        )
-      )
+    YaspApp.fromYaml(
+      """session:
+        |  kind: Local
+        |  name: example-app
+        |  conf: {}
+        |plan:
+        |  sources:
+        |    - id: users
+        |      source:
+        |        Csv:
+        |          path: users.csv
+        |    - id: addresses
+        |      source:
+        |        Json:
+        |          path: addresses.jsonl
+        |  processes:
+        |    - id: user_with_address
+        |      process:
+        |        Sql:
+        |          query: SELECT u.name,u.surname,a.address,a.city,a.country FROM users u JOIN addresses a ON u.id = a.user_id
+        |  sinks:
+        |    - id: user_with_address
+        |      dest:
+        |        Parquet:
+        |          path: user_with_address
+        |          partitionBy:
+        |            - country
+        |""".stripMargin    
+    )
   }
 }
 ```
 
-Take a look at the YaspService and YaspCore section for more detail
+The YaspApp will interpolate the yml content provided with environment variable, parse the yml into a YaspExecution and
+execute it via a YaspService
 
+Take a look at the YaspService and YaspCore modules section for more detail.
 
 ### YaspService
 
