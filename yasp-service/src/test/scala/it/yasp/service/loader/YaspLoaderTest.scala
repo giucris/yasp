@@ -1,9 +1,9 @@
 package it.yasp.service.loader
 
-import it.yasp.core.spark.operators.Operators
 import it.yasp.core.spark.model.CacheLayer.Memory
 import it.yasp.core.spark.model.Source
 import it.yasp.core.spark.model.Source.Parquet
+import it.yasp.core.spark.operators.Operators
 import it.yasp.core.spark.reader.Reader
 import it.yasp.core.spark.registry.Registry
 import it.yasp.service.loader.YaspLoader.DefaultYaspLoader
@@ -18,11 +18,11 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
 
-  val reader: Reader[Source]   = mock[Reader[Source]]
+  val reader: Reader[Source] = mock[Reader[Source]]
   val dataHandler: Operators = mock[Operators]
-  val registry: Registry       = mock[Registry]
+  val registry: Registry     = mock[Registry]
 
-  val yaspLoader: YaspLoader = new DefaultYaspLoader(reader,dataHandler, registry)
+  val yaspLoader: YaspLoader = new DefaultYaspLoader(reader, dataHandler, registry)
 
   test("load will read and register source") {
     inSequence(
@@ -68,7 +68,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     yaspLoader.load(YaspSource("tbl", Parquet("x", mergeSchema = false), Some(Memory)))
   }
 
-  test("load will read repartition cache and register a source"){
+  test("load will read repartition cache and register a source") {
     inSequence(
       (reader.read _)
         .expects(Parquet("x", mergeSchema = false))
@@ -99,7 +99,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
         .once()
     )
 
-    yaspLoader.load(YaspSource("tbl", Parquet("x", mergeSchema = false), Some(Memory),Some(100)))
+    yaspLoader.load(YaspSource("tbl", Parquet("x", mergeSchema = false), Some(Memory), Some(100)))
   }
 
 }
