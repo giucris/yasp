@@ -8,8 +8,8 @@ An easy and lightweight tool for data engineering process built on top of Apache
 
 ## Introduction
 
-Yasp was originally created just for fun and to help data engineers (I am one of them) working with Apache Spark to
-reduce their pipeline development time by using a no-code/less-code approach.
+Yasp was created to help data engineers working with Apache Spark to reduce their pipeline development time by using a
+no-code/less-code approach.
 
 It is written in **Scala (2.11.12)** on top of **Apache Spark (2.4.7)** and managed as an **SBT (1.4.9)** multi module
 project.
@@ -36,22 +36,21 @@ Yasp provide 3 different module and you can use any one of them.
 
 * **YaspApp** provide the highest possible level of abstraction for your ETL job and come with an executable main class.
   Allow you to manage complex big data etl job with a simple yml file
-* **YaspService** provide an domain specific language for your ETL job.
-* **YaspCore** provide some spark primitives useful for yasp operations.
+* **YaspService** provide all the yasp ops for your ETL job.
+* **YaspCore** provide spark primitives useful for yasp operations.
 
 ### YaspApp
 
 YaspApp module provide the highest possible level of asbstraction for your ETL. You should just provide a yml definition
-of your data operations ait will provide to initialize the SparkSession and execute all the steps provided
-on the yml file.
+of your data operations ait will provide to initialize the SparkSession and execute all the steps provided on the yml
+file.
 
-You can also specify inside the yaml file some env variable reference with a placeholder `${my-pwd}` that will be
-substituted at runtime with an environment variable.
+YaspApp are able to interpolate environment variable into your yaml file, helping you to avoid writing secrets in your
+task. Just add some placeholder like this `${my-pwd}` and yasp will interpolate it.
 
-**Currently there are only one stable way to use the YaspApp, as a library on your code**
+Currenlty there are two way to run a YaspApp **but only one is stable, us it as a dependency on your code**
 
-**Any way YaspApp come with an executable entry point and I'm working to make it stable in order to run the binary jar
-with the yml provided as external file.**
+**I'm working to make the executable version stable in order to run the binary jar with the yml provided as external file.**
 
 #### YaspApp as library
 
@@ -60,51 +59,51 @@ Add the yasp-app reference to your dependencies into the `build.sbt`or `pom.xml`
 ##### YaspApp in action
 
 ```scala
-object MyUsersByCitiesReport{
-  
-  def main(args: Array[String]): Unit={
+object MyUsersByCitiesReport {
+
+  def main(args: Array[String]): Unit = {
     YaspApp.fromYaml(
       s"""
-        |session:
-        |  kind: Local
-        |  name: example-app
-        |  conf: {}
-        |plan:
-        |  sources:
-        |    - id: users
-        |      source:
-        |        Csv:
-        |          path: users.csv
-        |    - id: addresses
-        |      source:
-        |        Json:
-        |          path: addresses.jsonl
-        |    - id: cities
-        |      source:
-        |        Jdbc:
-        |          url: my-db-url
-        |          credentials:
-        |            username: ${db_username}
-        |            password: ${db_password}
-        |          options:
-        |            dbTable: my-table
-        |  processes:
-        |    - id: user_with_address
-        |      process:
-        |        Sql:
-        |          query: ->
-        |            SELECT u.name,u.surname,a.address,a.city,a.country 
-        |            FROM users u 
-        |            JOIN addresses a ON u.id = a.user_id
-        |            JOIN cities c ON a.city_id = c.id
-        |  sinks:
-        |    - id: user_with_address
-        |      dest:
-        |        Parquet:
-        |          path: user_with_address
-        |          partitionBy:
-        |            - country_id
-        |""".stripMargin    
+         |session:
+         |  kind: Local
+         |  name: example-app
+         |  conf: {}
+         |plan:
+         |  sources:
+         |    - id: users
+         |      source:
+         |        Csv:
+         |          path: users.csv
+         |    - id: addresses
+         |      source:
+         |        Json:
+         |          path: addresses.jsonl
+         |    - id: cities
+         |      source:
+         |        Jdbc:
+         |          url: my-db-url
+         |          credentials:
+         |            username: ${db_username}
+         |            password: ${db_password}
+         |          options:
+         |            dbTable: my-table
+         |  processes:
+         |    - id: user_with_address
+         |      process:
+         |        Sql:
+         |          query: ->
+         |            SELECT u.name,u.surname,a.address,a.city,a.country 
+         |            FROM users u 
+         |            JOIN addresses a ON u.id = a.user_id
+         |            JOIN cities c ON a.city_id = c.id
+         |  sinks:
+         |    - id: user_with_address
+         |      dest:
+         |        Parquet:
+         |          path: user_with_address
+         |          partitionBy:
+         |            - country_id
+         |""".stripMargin
     )
   }
 }
@@ -126,8 +125,8 @@ The main component of the YaspService module are `YaspExecution`, `YaspPlan` and
 
 A YaspExecution is a model that define an e2e ETL job executed by the `YaspService`.
 
-A YaspExecution define a `SessionConf` that describe how the `SparkSession` will be created and a `YaspPlan` that
-describe all data operations within the ETL job.
+A YaspExecution define a `Session` that will be used to create the `SparkSession` and a `YaspPlan` that describe all
+data operations within the job.
 
 ```scala
 case class Session(
@@ -214,17 +213,17 @@ object MyUsersByCitiesReport {
         session = Session(Local, "my-app-name", Map.empty),
         plan = YaspPlan(
           sources = Seq(
-            YaspSource("users", Csv(path = "users/", Some(Map("header" -> "true"))), partitions=None,cache = None),
-            YaspSource("addresses", Json(path = "addresses/", None),  partitions=None, cache = None),
-            YaspSource("cities", Parquet(path = "cities/", mergeSchema = false),  partitions=None, cache = None)
+            YaspSource("users", Csv(path = "users/", Some(Map("header" -> "true"))), partitions = None, cache = None),
+            YaspSource("addresses", Json(path = "addresses/", None), partitions = None, cache = None),
+            YaspSource("cities", Parquet(path = "cities/", mergeSchema = false), partitions = None, cache = None)
           ),
           processes = Seq(
-            YaspProcess("users_addresses", Sql("SELECT u.*,a.address,a.city_id FROM users u JOIN addresses a ON u.address_id=a.id"),partitions=None,cache= None),
-            YaspProcess("users_addresses_cities", Sql("SELECT u.*,a.address,a.city_id FROM users_addresses u JOIN cities c ON u.city_id=c.id"), partitions=None,cache= None),
-            YaspProcess("users_by_city", Sql("SELECT city,count(*) FROM users_addresses_cities GROUP BY city"), partitions=None,cache= None)
+            YaspProcess("users_addresses", Sql("SELECT u.*,a.address,a.city_id FROM users u JOIN addresses a ON u.address_id=a.id"), partitions = None, cache = None),
+            YaspProcess("users_addresses_cities", Sql("SELECT u.*,a.address,a.city_id FROM users_addresses u JOIN cities c ON u.city_id=c.id"), partitions = None, cache = None),
+            YaspProcess("users_by_city", Sql("SELECT city,count(*) FROM users_addresses_cities GROUP BY city"), partitions = None, cache = None)
           ),
           sinks = Seq(
-            YaspSink("users_by_city", Dest.Parquet(s"user-by-city",partitionBy(Seq("city"))))
+            YaspSink("users_by_city", Dest.Parquet(s"user-by-city", partitionBy(Seq("city"))))
           )
         )
       )
@@ -248,6 +247,7 @@ There are a lot of `Source` that you can use with Yasp. Each `Source` define how
 specific `Reader`
 
 ##### Csv
+
 ```scala
 case class Csv(
   path:String, 
@@ -259,6 +259,7 @@ In the options field you can specify any spark csv options. **In addition to the
 a user-defined `schema`**
 
 Examples:
+
 ```scala
 //Define a basic csv
 Csv(path="my-csv-path",None)
@@ -274,6 +275,7 @@ Csv(path="my-csv-path",Some(Map("sep"->"\t","schema"->"field1 INT, field2 STRING
 ```
 
 ##### Json
+
 ```scala
 case class Json(
   path:String, 
@@ -285,6 +287,7 @@ In the options field you can specify any spark csv options.  **In addition to th
 the `schema` of the source.**
 
 Examples:
+
 ```scala
 //Define a basic json
 Json(path="my-csv-path",None)
@@ -306,6 +309,7 @@ case class Parquet(
 ```
 
 Examples:
+
 ```scala
 //Define a basic parquet
 Parquet(path="my-csv-path",false)
@@ -323,6 +327,7 @@ case class Orc(
 ```
 
 ##### Avro
+
 ```scala
 case class Avro(
   path: String,
@@ -349,12 +354,12 @@ case class Jdbc(
 ) extends Source
 ```
 
-
 #### Process
+
 Define a data operations
 
-
 ##### Sql
+
 ```scala
 case class Sql(
   query: String
@@ -378,12 +383,11 @@ case class Parquet(
 
 * Add a Changelog
 * Add BuiltIn Processor
-* Add Table format as Source
-* Add Table format as Dest
+* Add Table format like Deltalake, Iceberg and Hudi as Source
+* Add Table format like Deltalake, Iceberg and Hudi Dest
 * Add data quality process
-* Add spark metrics via SparkListener  
+* Add collection of metrics with SparkListener
 * Add Structured Streaming Execution
-
 
 ## Contributing
 
@@ -402,7 +406,22 @@ You can contribute in three possible way:
   * Open a pull request
   * Wait for project owners to approve or start a conversation on your pull request
 
-### Contribution code of conduct
+### Code of conduct
 
+* Respect the code base and all the project style
 * Avoid massive refactors
+* Avoid meaningless class names, functions and variables
+* Avoid to write more than 5/10 lines of logic within a function, often due to poor single responsability principles
+* Avoid duplicated lines of codes
 * Provide the relative test cases for your feature/bug-fix
+
+## Contact
+
+- Giuseppe Cristiano [Twitter](https://twitter.com/giucristiano89) [Linkedin](https://www.linkedin.com/in/giuseppe-cristiano-developer/)
+
+## Acknowledgements
+
+Yasp was originally created just for fun, to avoid repeating my self, and to help data engineers (I am one of them)
+working with Apache Spark to reduce their pipeline development time.
+
+After rewriting from scratch I chose to make it available to the open source community.
