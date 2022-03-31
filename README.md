@@ -42,12 +42,15 @@ Yasp provide 3 different module and you can use any one of them.
 ### YaspApp
 
 YaspApp module provide the highest possible level of asbstraction for your ETL. You should just provide a yml definition
-of your data operations and the `YaspApp` will provide to initialize the SparkSession and execute all the steps provided
+of your data operations ait will provide to initialize the SparkSession and execute all the steps provided
 on the yml file.
+
+You can also specify inside the yaml file some env variable reference with a placeholder `${my-pwd}` that will be
+substituted at runtime with an environment variable.
 
 **Currently there are only one stable way to use the YaspApp, as a library on your code**
 
-**Any way YaspApp come with an executable entry point and we are working to make it stable in order to run the binary jar
+**Any way YaspApp come with an executable entry point and I'm working to make it stable in order to run the binary jar
 with the yml provided as external file.**
 
 #### YaspApp as library
@@ -61,7 +64,8 @@ object MyUsersByCitiesReport{
   
   def main(args: Array[String]): Unit={
     YaspApp.fromYaml(
-      """session:
+      s"""
+        |session:
         |  kind: Local
         |  name: example-app
         |  conf: {}
@@ -75,18 +79,31 @@ object MyUsersByCitiesReport{
         |      source:
         |        Json:
         |          path: addresses.jsonl
+        |    - id: cities
+        |      source:
+        |        Jdbc:
+        |          url: my-db-url
+        |          credentials:
+        |            username: ${db_username}
+        |            password: ${db_password}
+        |          options:
+        |            dbTable: my-table
         |  processes:
         |    - id: user_with_address
         |      process:
         |        Sql:
-        |          query: SELECT u.name,u.surname,a.address,a.city,a.country FROM users u JOIN addresses a ON u.id = a.user_id
+        |          query: ->
+        |            SELECT u.name,u.surname,a.address,a.city,a.country 
+        |            FROM users u 
+        |            JOIN addresses a ON u.id = a.user_id
+        |            JOIN cities c ON a.city_id = c.id
         |  sinks:
         |    - id: user_with_address
         |      dest:
         |        Parquet:
         |          path: user_with_address
         |          partitionBy:
-        |            - country
+        |            - country_id
         |""".stripMargin    
     )
   }
@@ -94,9 +111,9 @@ object MyUsersByCitiesReport{
 ```
 
 The YaspApp will interpolate the yml content provided with environment variable, parse the yml into a YaspExecution and
-execute it via a YaspService
+execute it via a YaspService.
 
-Take a look at the YaspService and YaspCore modules section for more detail.
+Take a look at the YaspService and YaspCore modules section for more detail on how it works.
 
 ### YaspService
 
