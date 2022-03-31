@@ -48,7 +48,7 @@ file.
 YaspApp are able to interpolate environment variable into your yaml file, helping you to avoid writing secrets in your
 task. Just add some placeholder like this `${my-pwd}` and yasp will interpolate it.
 
-Currenlty there are two way to run a YaspApp **but only one is stable, us it as a dependency on your code**
+Currenlty there are two way to run a YaspApp **but only one is stable, use it as a dependency on your code**
 
 **I'm working to make the executable version stable in order to run the binary jar with the yml provided as external file.**
 
