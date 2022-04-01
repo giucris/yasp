@@ -2,7 +2,6 @@ package it.yasp.app.conf
 
 import io.circe.generic.auto._
 import it.yasp.core.spark.model.CacheLayer.{Checkpoint, Memory, MemoryAndDisk}
-import it.yasp.core.spark.model.Dest._
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.SessionType.Distributed
 import it.yasp.core.spark.model.Source._
@@ -44,8 +43,8 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
           YaspProcess("p2", Sql("my-query"))
         ),
         Seq(
-          YaspSink("p1", Parquet("out-path-1")),
-          YaspSink("p3", Parquet("out-path-2", Seq("col1", "col2")))
+          YaspSink("p1", Dest.Parquet("out-path-1")),
+          YaspSink("p3", Dest.Parquet("out-path-2", Seq("col1", "col2")))
         )
       )
     )
