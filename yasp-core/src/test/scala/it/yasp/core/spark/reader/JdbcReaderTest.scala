@@ -64,9 +64,8 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new JdbcReader(spark).read(
-      Jdbc(url = connUrl1, credentials = None, Some(Map("dbTable" -> "my_table")))
-    )
+    val actual   =
+      new JdbcReader(spark).read(Jdbc(url = connUrl1, options = Map("dbTable" -> "my_table")))
     assertDatasetEquals(actual, expected)
   }
 
@@ -87,7 +86,7 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite {
       Jdbc(
         url = connUrl2,
         credentials = Some(BasicCredentials("usr", "pwd")),
-        Some(Map("dbTable" -> "my_table"))
+        options = Map("dbTable" -> "my_table")
       )
     )
     assertDatasetEquals(actual, expected)
@@ -108,9 +107,10 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite {
       Jdbc(
         url = "jdbc:h2:mem:db2",
         credentials = Some(BasicCredentials("usr", "pwd")),
-        Some(Map("dbTable" -> "(select ID from my_table where id=1) test"))
+        options = Map("dbTable" -> "(select ID from my_table where id=1) test")
       )
     )
+
     assertDatasetEquals(actual, expected)
   }
 

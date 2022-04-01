@@ -1,7 +1,7 @@
 package it.yasp.app.conf
 
 import io.circe.Decoder.Result
-import io.circe.{Decoder, HCursor}
+import io.circe.{Decoder, HCursor, KeyDecoder}
 import it.yasp.core.spark.model.CacheLayer._
 import it.yasp.core.spark.model.SessionType.{Distributed, Local}
 import it.yasp.core.spark.model.{CacheLayer, SessionType}
@@ -9,6 +9,25 @@ import it.yasp.core.spark.model.{CacheLayer, SessionType}
 /** Provide a set of encoder and decoder useful to beautify all Yasp ADT.
   */
 trait DecodersSupport {
+
+  /** Rewrite the default decodeSeq.
+    *
+    * In yasp any Map should be parsed as empty even if null
+    * @tparam A
+    * @return
+    */
+  implicit def decodeSeq[A: Decoder]: Decoder[Seq[A]] =
+    Decoder.decodeOption(Decoder.decodeSeq[A]).map(_.toSeq.flatten)
+
+  /** Rewrite the default decodeMap.
+    *
+    * In yasp any Map should be parsed as empty even if null
+    * @tparam A
+    * @tparam B
+    * @return
+    */
+  implicit def decodeMap[A: KeyDecoder, B: Decoder]: Decoder[Map[A, B]] =
+    Decoder.decodeOption(Decoder.decodeMap[A, B]).map(_.getOrElse(Map.empty))
 
   /** A SessionType circe Decoder
     *

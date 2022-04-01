@@ -16,5 +16,5 @@ case class YaspProcess(
     id: String,
     process: Process,
     partitions: Option[Int] = None,
-    cache: Option[CacheLayer]
+    cache: Option[CacheLayer] = None
 )

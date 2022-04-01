@@ -2,8 +2,10 @@ package it.yasp.app.conf
 
 import io.circe.generic.auto._
 import it.yasp.core.spark.model.CacheLayer.{Checkpoint, Memory, MemoryAndDisk}
+import it.yasp.core.spark.model.Dest._
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.SessionType.Distributed
+import it.yasp.core.spark.model.Source._
 import it.yasp.core.spark.model._
 import it.yasp.service.model._
 import org.scalatest.funsuite.AnyFunSuite
@@ -11,30 +13,39 @@ import org.scalatest.funsuite.AnyFunSuite
 class ParserSupportTest extends AnyFunSuite with ParserSupport {
 
   test("parse") {
+
     val expected = YaspExecution(
       Session(Distributed, "my-app-name", Map("key-1" -> "value", "key-2" -> "value")),
       YaspPlan(
         Seq(
           YaspSource(
             "id1",
-            Source.Csv("x", Some(Map("header" -> "false", "sep" -> ","))),
+            Csv("x", Map("header" -> "false", "sep" -> ",")),
             cache = Some(Memory)
           ),
-          YaspSource("id2", Source.Parquet("x", mergeSchema = false), cache = Some(MemoryAndDisk)),
+          YaspSource(
+            "id2",
+            Parquet("x", mergeSchema = false),
+            cache = Some(MemoryAndDisk)
+          ),
           YaspSource(
             "id3",
-            Source.Jdbc("url", Some(BasicCredentials("x", "y")), Some(Map("dbTable" -> "table"))),
+            Jdbc("url", Some(BasicCredentials("x", "y")), Map("dbTable" -> "table")),
             cache = None
           ),
-          YaspSource("id4", Source.Csv("z", None), cache = Some(Checkpoint))
+          YaspSource(
+            "id4",
+            Csv("z"),
+            cache = Some(Checkpoint)
+          )
         ),
         Seq(
-          YaspProcess("p1", Sql("my-query"), cache = None),
-          YaspProcess("p2", Sql("my-query"), cache = None)
+          YaspProcess("p1", Sql("my-query")),
+          YaspProcess("p2", Sql("my-query"))
         ),
         Seq(
-          YaspSink("p1", Dest.Parquet("out-path-1", None)),
-          YaspSink("p3", Dest.Parquet("out-path-2", Some(Seq("col1", "col2"))))
+          YaspSink("p1", Parquet("out-path-1")),
+          YaspSink("p3", Parquet("out-path-2", Seq("col1", "col2")))
         )
       )
     )

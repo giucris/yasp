@@ -42,7 +42,7 @@ object Reader {
     */
   class CsvReader(spark: SparkSession) extends Reader[Csv] with SparkReadSupport {
     override def read(source: Csv): Dataset[Row] = {
-      val opts = source.options.getOrElse(Map.empty) ++ Map("path" -> source.path)
+      val opts = source.options ++ Map("path" -> source.path)
       read(spark, format = "csv", opts.filterKeys(_ != "schema"), opts.get("schema"))
     }
   }
@@ -53,7 +53,7 @@ object Reader {
     */
   class JsonReader(spark: SparkSession) extends Reader[Json] with SparkReadSupport {
     override def read(source: Json): Dataset[Row] = {
-      val opts = source.options.getOrElse(Map.empty) ++ Map("path" -> source.path)
+      val opts = source.options ++ Map("path" -> source.path)
       read(spark, format = "json", opts.filterKeys(_ != "schema"), opts.get("schema"))
     }
   }
@@ -75,7 +75,7 @@ object Reader {
     */
   class JdbcReader(spark: SparkSession) extends Reader[Jdbc] with SparkReadSupport {
     override def read(source: Jdbc): Dataset[Row] = {
-      val opts = source.options.getOrElse(Map.empty) ++ Map(
+      val opts = source.options ++ Map(
         "url"      -> source.url,
         "user"     -> source.credentials.map(_.username).getOrElse(""),
         "password" -> source.credentials.map(_.password).getOrElse("")
@@ -90,7 +90,7 @@ object Reader {
     */
   class AvroReader(spark: SparkSession) extends Reader[Avro] with SparkReadSupport {
     override def read(source: Avro): Dataset[Row] = {
-      val opts = source.options.getOrElse(Map.empty) ++ Map("path" -> source.path)
+      val opts = source.options ++ Map("path" -> source.path)
       read(spark, format = "avro", opts, None)
     }
   }
@@ -101,7 +101,7 @@ object Reader {
     */
   class XmlReader(spark: SparkSession) extends Reader[Xml] with SparkReadSupport {
     override def read(source: Xml): Dataset[Row] = {
-      val opts = source.options.getOrElse(Map.empty) ++ Map("path" -> source.path)
+      val opts = source.options ++ Map("path" -> source.path)
       read(spark, format = "xml", opts.filterKeys(_ != "schema"), opts.get("schema"))
     }
   }

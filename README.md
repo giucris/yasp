@@ -11,7 +11,7 @@ An easy and lightweight tool for data engineering process built on top of Apache
 Yasp was created to help data engineers working with Apache Spark to reduce their pipeline development time by using a
 no-code/less-code approach.
 
-With Yasp you can configure an ETL/ELT job that fetch data from multiple source execute multiple transformation
+With Yasp you can configure an ETL/ELT job that fetch data from a multiple source execute multiple transformation
 and write in multiple destination
 
 It is written in **Scala (2.11.12)** on top of **Apache Spark (2.4.7)** and managed as an **SBT (1.4.9)** multi module
@@ -35,7 +35,7 @@ project.
 
 ## Usage
 
-Yasp provide 3 different module and you can use any one of them.
+Yasp provide 3 different module, you can use any one of them.
 
 * **YaspApp** provide the highest possible level of abstraction for your ETL job and come with an executable main class.
   Allow you to manage complex big data etl job with a simple yml file
@@ -45,13 +45,13 @@ Yasp provide 3 different module and you can use any one of them.
 ### YaspApp
 
 YaspApp module provide the highest possible level of abstraction for your ETL. You should just provide a yml definition
-of your data operations and it will provide to initialize the SparkSession and execute all the steps provided on the yml
+of your data operations, it will initialize the SparkSession and execute all the steps provided on the yml
 file.
 
 YaspApp are able to interpolate environment variable into your yaml file, helping you to avoid writing secrets in your
-task. Just add some placeholder like this `${my-pwd}` and yasp will interpolate it.
+task. Just add some placeholders like this `${my-pwd}` and yasp will interpolate it.
 
-Currenlty there are two way to run a YaspApp **but only one is stable, use it as a dependency on your code**
+Currently, there are two different mode to run a YaspApp **but only one is stable, use it as a dependency on your code**
 
 **I'm working to make the executable version stable in order to run the binary jar with the yml provided as external file.**
 
@@ -237,7 +237,7 @@ object MyUsersByCitiesReport {
 ```
 
 `Source`, `Process`, `Dest` and `CacheLayer` are all part of the `YaspCore` module. Take a look at the yasp core module
-section for more details about available source, process and dest.
+section for more details about the available sources, processes and destination.
 
 ### YaspCore
 
@@ -405,6 +405,7 @@ You can contribute in three possible way:
   * Fork the project
   * Create your feature branch `git checkout -b feature/my-awesome-feature`
   * Add your changes and commit `git commit -m 'my awesome feature'`
+  * Run the ci locally `bash ci.sh`  
   * Push to the branch `git push origin feature/my-awesome-feature`
   * Open a pull request
   * Wait for project owners to approve or start a conversation on your pull request
@@ -414,7 +415,7 @@ You can contribute in three possible way:
 * Respect the code base and all the project style
 * Avoid massive refactors
 * Avoid meaningless class names, functions and variables
-* Avoid to write more than 5/10 lines of logic within a function, often due to poor single responsability principles
+* Avoid write more than 5/10 lines of logic within a function, often due to poor single responsibility principles
 * Avoid duplicated lines of codes
 * Provide the relative test cases for your feature/bug-fix
 
@@ -427,4 +428,4 @@ You can contribute in three possible way:
 Yasp was originally created just for fun, to avoid repeating my self, and to help data engineers (I am one of them)
 working with Apache Spark to reduce their pipeline development time.
 
-After rewriting from scratch I chose to make it available to the open source community.
+I rewrote it from scratch and make it available to the open source community.
