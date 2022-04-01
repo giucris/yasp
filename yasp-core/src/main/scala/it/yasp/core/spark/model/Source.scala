@@ -16,7 +16,7 @@ object Source {
     */
   final case class Csv(
       path: String,
-      options: Option[Map[String, String]]
+      options: Map[String, String] = Map.empty
   ) extends Source
 
   /** A Json Source Model
@@ -29,7 +29,7 @@ object Source {
     */
   final case class Json(
       path: String,
-      options: Option[Map[String, String]]
+      options: Map[String, String] = Map.empty
   ) extends Source
 
   /** A Parquet Source Model
@@ -61,7 +61,7 @@ object Source {
     */
   final case class Avro(
       path: String,
-      options: Option[Map[String, String]]
+      options: Map[String, String] = Map.empty
   ) extends Source
 
   /** An Xml Source Model
@@ -74,7 +74,7 @@ object Source {
     */
   final case class Xml(
       path: String,
-      options: Option[Map[String, String]]
+      options: Map[String, String] = Map.empty
   ) extends Source
 
   /** A Jdbc Source Model
@@ -89,7 +89,7 @@ object Source {
     */
   final case class Jdbc(
       url: String,
-      credentials: Option[BasicCredentials],
-      options: Option[Map[String, String]]
+      credentials: Option[BasicCredentials] = None,
+      options: Map[String, String] = Map.empty
   ) extends Source
 }

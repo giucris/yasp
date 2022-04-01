@@ -39,12 +39,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new CsvReader(spark).read(
-      Csv(
-        path = s"$workspace/input1/",
-        options = None
-      )
-    )
+    val actual   = new CsvReader(spark).read(Csv(s"$workspace/input1/"))
     assertDatasetEquals(actual, expected)
   }
 
@@ -62,12 +57,8 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new CsvReader(spark).read(
-      Csv(
-        path = s"$workspace/input2/",
-        options = Some(Map("header" -> "true"))
-      )
-    )
+    val actual   =
+      new CsvReader(spark).read(Csv(path = s"$workspace/input2/", Map("header" -> "true")))
     assertDatasetEquals(actual, expected)
   }
 
@@ -85,12 +76,8 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new CsvReader(spark).read(
-      Csv(
-        path = s"$workspace/input3/",
-        options = Some(Map("header" -> "true", "sep" -> "|"))
-      )
-    )
+    val actual   =
+      new CsvReader(spark).read(Csv(s"$workspace/input3/", Map("header" -> "true", "sep" -> "|")))
     assertDatasetEquals(actual, expected)
   }
 
@@ -111,9 +98,8 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
 
     val actual = new CsvReader(spark).read(
       Csv(
-        path = s"$workspace/input4/",
-        options =
-          Some(Map("header" -> "true", "sep" -> "|", "schema" -> "h1 INT, h2 STRING, h3 STRING"))
+        s"$workspace/input4/",
+        Map("header" -> "true", "sep" -> "|", "schema" -> "h1 INT, h2 STRING, h3 STRING")
       )
     )
     assertDatasetEquals(actual, expected)
@@ -138,12 +124,10 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     val actual = new CsvReader(spark).read(
       Csv(
         path = s"$workspace/input5/",
-        options = Some(
-          Map(
-            "header" -> "true",
-            "sep"    -> "|",
-            "schema" -> "h1 INT, h2 STRING, h3 STRING,_corrupt_record STRING"
-          )
+        Map(
+          "header" -> "true",
+          "sep"    -> "|",
+          "schema" -> "h1 INT, h2 STRING, h3 STRING,_corrupt_record STRING"
         )
       )
     )

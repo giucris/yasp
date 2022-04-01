@@ -59,11 +59,9 @@ class YaspServiceTest
               "data_1",
               Source.Csv(
                 path = s"$workspace/csv-data-source-1/file1.csv",
-                Some(
-                  Map(
-                    "header" -> "true",
-                    "sep"    -> ","
-                  )
+                Map(
+                  "header" -> "true",
+                  "sep"    -> ","
                 )
               ),
               cache = None
@@ -72,11 +70,9 @@ class YaspServiceTest
               "data_2",
               Source.Csv(
                 path = s"$workspace/csv-data-source-2/file1.csv",
-                Some(
-                  Map(
-                    "header" -> "true",
-                    "sep"    -> ","
-                  )
+                Map(
+                  "header" -> "true",
+                  "sep"    -> ","
                 )
               ),
               cache = None
@@ -90,7 +86,7 @@ class YaspServiceTest
             )
           ),
           sinks = Seq(
-            YaspSink("data_3", Dest.Parquet(s"$workspace/parquet-out/", None))
+            YaspSink("data_3", Dest.Parquet(s"$workspace/parquet-out/"))
           )
         )
       )
