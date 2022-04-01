@@ -54,8 +54,8 @@ object Writer {
   //TODO Something that retrieve automatically the relative Writer[A] should be implemented. Instead of doing it with an exhaustive pattern matching. probably shapeless could help on this
   /** DestWriter an implementation of Writer[Dest]
     *
-    * Provide a method to dispatch the write request at the specific Writer implementation
-    *   A [[SparkSession]] instance
+    * Provide a method to dispatch the write request at the specific Writer implementation A
+    * [[SparkSession]] instance
     */
   class DestWriter extends Writer[Dest] {
     override def write(dataFrame: DataFrame, dest: Dest): Unit =
