@@ -66,6 +66,7 @@ lazy val core    = (project in file("yasp-core"))
       dependencies.sparkXml,
       dependencies.scalactic,
       dependencies.scalaTest % Test,
+      dependencies.scalaMock % Test,
       dependencies.h2db      % Test
     )
   )
