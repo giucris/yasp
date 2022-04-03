@@ -22,17 +22,17 @@ class YaspWriterTest extends AnyFunSuite with SparkTestSuite with MockFactory {
 
     inSequence(
       Seq(
-      (registry.retrieve _)
-        .expects("id")
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("a")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (writer.write _)
-        .expects(*, Parquet("path"))
-        .once()
+        (registry.retrieve _)
+          .expects("id")
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("a")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (writer.write _)
+          .expects(*, Parquet("path"))
+          .once()
       )
     )
     new DefaultYaspWriter(registry, writer).write(YaspSink("id", Parquet("path")))

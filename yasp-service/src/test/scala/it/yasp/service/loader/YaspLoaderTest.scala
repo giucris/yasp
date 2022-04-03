@@ -27,17 +27,17 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
   test("load will read and register source") {
     inSequence(
       Seq(
-      (reader.read _)
-        .expects(Parquet("x", mergeSchema = false))
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("b")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (registry.register _)
-        .expects(*, "tbl")
-        .once()
+        (reader.read _)
+          .expects(Parquet("x", mergeSchema = false))
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("b")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (registry.register _)
+          .expects(*, "tbl")
+          .once()
       )
     )
 
@@ -47,25 +47,25 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
   test("load will read cache and register source") {
     inSequence(
       Seq(
-      (reader.read _)
-        .expects(Parquet("x", mergeSchema = false))
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("a")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (dataHandler.cache _)
-        .expects(*, Memory)
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("a")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (registry.register _)
-        .expects(*, "tbl")
-        .once()
+        (reader.read _)
+          .expects(Parquet("x", mergeSchema = false))
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("a")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (dataHandler.cache _)
+          .expects(*, Memory)
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("a")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (registry.register _)
+          .expects(*, "tbl")
+          .once()
       )
     )
 
@@ -76,32 +76,32 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     inSequence(
       Seq(
         (reader.read _)
-        .expects(Parquet("x", mergeSchema = false))
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("a")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (dataHandler.repartition _)
-        .expects(*, 100)
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("a")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (dataHandler.cache _)
-        .expects(*, Memory)
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("a")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (registry.register _)
-        .expects(*, "tbl")
-        .once()
+          .expects(Parquet("x", mergeSchema = false))
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("a")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (dataHandler.repartition _)
+          .expects(*, 100)
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("a")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (dataHandler.cache _)
+          .expects(*, Memory)
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("a")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (registry.register _)
+          .expects(*, "tbl")
+          .once()
       )
     )
 
