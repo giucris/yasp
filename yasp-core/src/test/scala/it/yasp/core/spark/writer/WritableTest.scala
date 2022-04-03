@@ -6,27 +6,22 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class WritableTest extends AnyFunSuite {
 
-  Seq(
-    (
-      Csv("p1", Seq.empty, Map.empty),
-      OutFormat("csv", Map("path" -> "p1"), Seq.empty)
-    ),
-    (
-      Csv("p2", Seq("x", "y"), Map.empty),
-      OutFormat("csv", Map("path" -> "p2"), Seq("x", "y"))
-    ),
-    (
-      Csv("p3", Seq("x", "y"), Map("k" -> "v")),
-      OutFormat("csv", Map("path" -> "p3", "k" -> "v"), Seq("x", "y"))
-    ),
-    (
-      Csv("p4", Seq("x", "y"), Map("k" -> "v", "path" -> "z")),
-      OutFormat("csv", Map("path" -> "p4", "k" -> "v"), Seq("x", "y"))
-    )
-  ) foreach { case (input: Csv, expected: OutFormat) =>
-    test(s"csv writable format $input") {
-      assert(Writable.csvWritable.format(input) == expected)
-    }
+  test("csvWritable create OutFormat") {
+    val actual   = Writable.csvWritable.format(Csv("p1", Seq.empty, Map.empty))
+    val expected = OutFormat("csv", Map("path" -> "p1"), Seq.empty)
+    assert(actual == expected)
+  }
+
+  test("csvWritable create OutFormat with path override") {
+    val actual   = Writable.csvWritable.format(Csv("p1", Seq.empty, Map("path"->"px")))
+    val expected = OutFormat("csv", Map("path" -> "p1"), Seq.empty)
+    assert(actual == expected)
+  }
+
+  test("csvWritable create OutFormat with partitionBy and options") {
+    val actual   = Writable.csvWritable.format(Csv("p2", Seq("x", "y"), Map("k" -> "v")))
+    val expected = OutFormat("csv", Map("path" -> "p2", "k" -> "v"), Seq("x", "y"))
+    assert(actual == expected)
   }
 
 }
