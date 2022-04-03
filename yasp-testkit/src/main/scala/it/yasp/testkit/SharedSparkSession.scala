@@ -10,7 +10,8 @@ import org.scalatest.{BeforeAndAfterAll, Suite}
   */
 trait SharedSparkSession extends BeforeAndAfterAll {
   this: Suite =>
-
+  //TODO manage session in a proper way
+  @SuppressWarnings(Array("org.wartremover.warts.Null","org.wartremover.warts.Var"))
   var spark: SparkSession = _
 
   override protected def beforeAll(): Unit = {

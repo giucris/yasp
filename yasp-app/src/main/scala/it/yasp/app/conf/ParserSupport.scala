@@ -17,6 +17,7 @@ trait ParserSupport extends DecodersSupport {
     * @return
     *   instance of type `A`
     */
+  @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   def parseYaml[A](content: String)(implicit ev: Decoder[A]): A =
     io.circe.yaml.parser
       .parse(content)

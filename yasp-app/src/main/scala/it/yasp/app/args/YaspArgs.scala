@@ -2,7 +2,7 @@ package it.yasp.app.args
 
 import scopt.OParser
 
-case class YaspArgs(filePath: String = "")
+final case class YaspArgs(filePath: String = "")
 
 object YaspArgs {
 

@@ -1,6 +1,20 @@
-ThisBuild / organization := "it.yasp"
-ThisBuild / version      := "0.0.1"
-ThisBuild / scalaVersion := "2.11.12"
+inThisBuild(
+  Seq(
+    organization := "yasp",
+    licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
+    version      := "0.0.1",
+    scalaVersion := "2.11.12",
+    scalacOptions ++= Settings.scalaCompilerSettings,
+    developers   := List(
+      Developer(
+        "giucris",
+        "Giuseppe Cristiano",
+        "giucristiano89@gmail.com",
+        url("https://github.com/giucris")
+      )
+    )
+  )
+)
 
 lazy val dependencies = new {
   val scoptV      = "4.0.1"
@@ -34,6 +48,7 @@ lazy val root = (project in file("."))
 lazy val testKit = (project in file("yasp-testkit"))
   .settings(
     name := "yasp-testkit",
+    Settings.wartRemoverSettings,
     libraryDependencies ++= Seq(
       dependencies.sparkSql,
       dependencies.scalactic,
@@ -41,9 +56,10 @@ lazy val testKit = (project in file("yasp-testkit"))
     )
   )
 
-lazy val core    = (project in file("yasp-core"))
+lazy val core                = (project in file("yasp-core"))
   .settings(
     name := "yasp-core",
+    Settings.wartRemoverSettings,
     libraryDependencies ++= Seq(
       dependencies.sparkSql,
       dependencies.sparkAvro,
@@ -55,9 +71,10 @@ lazy val core    = (project in file("yasp-core"))
   )
   .dependsOn(testKit % Test)
 
-lazy val service = (project in file("yasp-service"))
+lazy val service             = (project in file("yasp-service"))
   .settings(
     name := "yasp-service",
+    Settings.wartRemoverSettings,
     libraryDependencies ++= Seq(
       dependencies.scalactic,
       dependencies.scalaTest % Test,
@@ -67,9 +84,10 @@ lazy val service = (project in file("yasp-service"))
   )
   .dependsOn(core, testKit % Test)
 
-lazy val app     = (project in file("yasp-app"))
+lazy val app                 = (project in file("yasp-app"))
   .settings(
     name := "yasp-app",
+    Settings.wartRemoverSettings,
     libraryDependencies ++= Seq(
       dependencies.scopt,
       dependencies.apacheText,
@@ -84,3 +102,4 @@ lazy val app     = (project in file("yasp-app"))
     )
   )
   .dependsOn(service, testKit % Test)
+

@@ -7,8 +7,11 @@ import it.yasp.app.args.YaspArgs
   * An executable Yasp application. Process input args, that accept a yml file location, and create
   * a YaspApp using the fromFile funcitons, create the relative YaspExecution and execute it.
   */
-object Yasp extends App {
+object Yasp {
 
-  YaspArgs.parse(args).foreach(conf => YaspApp.fromFile(conf.filePath))
+  def main(args: Array[String]): Unit =
+    YaspArgs
+      .parse(args)
+      .foreach(conf => YaspApp.fromFile(conf.filePath))
 
 }

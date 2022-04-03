@@ -20,12 +20,14 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
 
   test("exec with 1 source and 1 sink") {
     inSequence(
-      (loader.load _)
-        .expects(YaspSource("id1", Source.Json("sourcePath"), cache = None))
-        .once(),
-      (writer.write _)
-        .expects(YaspSink("id1", Dest.Parquet("destPath")))
-        .once()
+      Seq(
+        (loader.load _)
+          .expects(YaspSource("id1", Source.Json("sourcePath"), cache = None))
+          .once(),
+        (writer.write _)
+          .expects(YaspSink("id1", Dest.Parquet("destPath")))
+          .once()
+      )
     )
 
     yaspExecutor.exec(
@@ -39,15 +41,17 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
 
   test("exec with 1 source 1 process 1 sink") {
     inSequence(
-      (loader.load _)
-        .expects(YaspSource("id1", Source.Json("sourcePath"), cache = None))
-        .once(),
-      (processor.process _)
-        .expects(YaspProcess("id2", Sql("my-sql"), cache = None))
-        .once(),
-      (writer.write _)
-        .expects(YaspSink("id2", Dest.Parquet("destPath")))
-        .once()
+      Seq(
+        (loader.load _)
+          .expects(YaspSource("id1", Source.Json("sourcePath"), cache = None))
+          .once(),
+        (processor.process _)
+          .expects(YaspProcess("id2", Sql("my-sql"), cache = None))
+          .once(),
+        (writer.write _)
+          .expects(YaspSink("id2", Dest.Parquet("destPath")))
+          .once()
+      )
     )
 
     yaspExecutor.exec(
@@ -61,7 +65,8 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
 
   test("exec with n source n process n sink") {
     inSequence(
-      (loader.load _)
+      Seq(
+        (loader.load _)
         .expects(YaspSource("id1", Source.Json("sourcePath1"), cache = None))
         .once(),
       (loader.load _)
@@ -79,6 +84,7 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
       (writer.write _)
         .expects(YaspSink("id3", Dest.Parquet("destPath2")))
         .once()
+      )
     )
 
     yaspExecutor.exec(
