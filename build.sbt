@@ -56,7 +56,7 @@ lazy val testKit = (project in file("yasp-testkit"))
     )
   )
 
-lazy val core                = (project in file("yasp-core"))
+lazy val core    = (project in file("yasp-core"))
   .settings(
     name := "yasp-core",
     Settings.wartRemoverSettings,
@@ -71,7 +71,7 @@ lazy val core                = (project in file("yasp-core"))
   )
   .dependsOn(testKit % Test)
 
-lazy val service             = (project in file("yasp-service"))
+lazy val service = (project in file("yasp-service"))
   .settings(
     name := "yasp-service",
     Settings.wartRemoverSettings,
@@ -84,7 +84,7 @@ lazy val service             = (project in file("yasp-service"))
   )
   .dependsOn(core, testKit % Test)
 
-lazy val app                 = (project in file("yasp-app"))
+lazy val app     = (project in file("yasp-app"))
   .settings(
     name := "yasp-app",
     Settings.wartRemoverSettings,
@@ -102,4 +102,3 @@ lazy val app                 = (project in file("yasp-app"))
     )
   )
   .dependsOn(service, testKit % Test)
-
