@@ -1,7 +1,8 @@
 package it.yasp.core.spark.writer
 
-import it.yasp.core.spark.model.Dest.Csv
-import it.yasp.core.spark.writer.Writer.CsvWriter
+import it.yasp.core.spark.model.Dest
+import it.yasp.core.spark.model.Dest.{Csv, Json, Parquet}
+import it.yasp.core.spark.writer.Writer.writer
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -11,9 +12,9 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.{BeforeAndAfterAll, DoNotDiscover}
 
 @DoNotDiscover
-class CsvWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
+class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
 
-  private val workspace = "yasp-core/src/test/resources/CsvWriterTest"
+  private val workspace = "yasp-core/src/test/resources/WriterTest"
 
   override protected def beforeAll(): Unit = {
     TestUtils.cleanFolder(workspace)
@@ -25,8 +26,8 @@ class CsvWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterA
     super.afterAll()
   }
 
-  test("write") {
-    new CsvWriter().write(
+  test("write csv") {
+    writer.write(
       spark.createDataset(Seq(Row("a", "b", "c")))(
         RowEncoder(
           StructType(
@@ -57,7 +58,7 @@ class CsvWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterA
     assertDatasetEquals(actual, expected)
   }
 
-  test("write with header") {
+  test("write parquet") {
     val expected = spark.createDataset(Seq(Row("a", "b", "c")))(
       RowEncoder(
         StructType(
@@ -69,11 +70,27 @@ class CsvWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterA
         )
       )
     )
+    writer.write(expected, Parquet(s"$workspace/parquet1/"))
+    val actual   = spark.read.parquet(s"$workspace/parquet1/")
 
-    new CsvWriter().write(expected, Csv(s"$workspace/csv2/", options = Map("header" -> "true")))
-
-    val actual = spark.read.option("header", "true").csv(s"$workspace/csv2/")
     assertDatasetEquals(actual, expected)
   }
 
+  test("write json") {
+    val expected = spark.createDataset(Seq(Row("a", "b", "c")))(
+      RowEncoder(
+        StructType(
+          Seq(
+            StructField("h0", StringType, nullable = true),
+            StructField("h1", StringType, nullable = true),
+            StructField("h2", StringType, nullable = true)
+          )
+        )
+      )
+    )
+    writer.write(expected, Json(s"$workspace/json1/"))
+    val actual   = spark.read.json(s"$workspace/json1/")
+
+    assertDatasetEquals(actual, expected)
+  }
 }
