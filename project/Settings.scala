@@ -8,7 +8,7 @@ object Settings {
     "-deprecation",
     "-feature",
     "-unchecked",
-    "-Xlint",
+    "-Xlint:_,-missing-interpolator",
     "-Ywarn-dead-code",
     "-encoding",
     "UTF-8",
