@@ -5,7 +5,7 @@ import it.yasp.core.spark.operators.DefaultOperatorsTest
 import it.yasp.core.spark.processor.{ProcessProcessorTest, SqlProcessorTest}
 import it.yasp.core.spark.reader._
 import it.yasp.core.spark.registry.RegistryTest
-import it.yasp.core.spark.writer.{DestWriterTest, ParquetWriterTest}
+import it.yasp.core.spark.writer.WriterTest
 import org.scalatest.Stepwise
 
 class YaspCoreSuites
@@ -21,8 +21,7 @@ class YaspCoreSuites
       new SourceReaderTest,
       new SqlProcessorTest,
       new ProcessProcessorTest,
-      new ParquetWriterTest,
-      new DestWriterTest,
+      new WriterTest,
       new RegistryTest,
       new DefaultOperatorsTest
     )
