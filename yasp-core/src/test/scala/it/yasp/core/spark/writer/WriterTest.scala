@@ -70,7 +70,7 @@ class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll 
           )
         )
       ),
-      Parquet("$workspace/parquet1/")
+      Parquet(s"$workspace/parquet1/")
     )
 
     val expected = spark.createDataset(Seq(Row("a", "b", "c")))(

@@ -1,10 +1,11 @@
 package it.yasp.service.executor
 
+import it.yasp.core.spark.model.Dest
 import it.yasp.core.spark.operators.Operators.DefaultOperators
 import it.yasp.core.spark.processor.Processor.ProcessProcessor
 import it.yasp.core.spark.reader.Reader.SourceReader
 import it.yasp.core.spark.registry.Registry.DefaultRegistry
-import it.yasp.core.spark.writer.Writer.DestWriter
+import it.yasp.core.spark.writer.Writer.writer
 import it.yasp.service.executor.YaspExecutor.DefaultYaspExecutor
 import it.yasp.service.loader.YaspLoader.DefaultYaspLoader
 import it.yasp.service.processor.YaspProcessor.DefaultYaspProcessor
@@ -30,7 +31,7 @@ class YaspExecutorFactory {
     new DefaultYaspExecutor(
       new DefaultYaspLoader(new SourceReader(spark), dataHandler, registry),
       new DefaultYaspProcessor(new ProcessProcessor(spark), dataHandler, registry),
-      new DefaultYaspWriter(registry, new DestWriter())
+      new DefaultYaspWriter(registry, writer[Dest])
     )
   }
 }
