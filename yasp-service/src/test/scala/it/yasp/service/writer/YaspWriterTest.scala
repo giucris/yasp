@@ -21,6 +21,7 @@ class YaspWriterTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     val writer   = mock[Writer[Dest]]
 
     inSequence(
+      Seq(
       (registry.retrieve _)
         .expects("id")
         .once()
@@ -32,6 +33,7 @@ class YaspWriterTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       (writer.write _)
         .expects(*, Parquet("path"))
         .once()
+      )
     )
     new DefaultYaspWriter(registry, writer).write(YaspSink("id", Parquet("path")))
   }

@@ -13,7 +13,7 @@ object Writable {
   def apply[A](implicit ev: Writable[A]): Writable[A] = ev
 
   object ops {
-    def format[A: Writable](a: A) = Writable[A].format(a)
+    def format[A: Writable](a: A): OutFormat = Writable[A].format(a)
 
     implicit class WritableOps[A: Writable](a: A) {
       def format: OutFormat = Writable[A].format(a)

@@ -25,42 +25,46 @@ class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory
 
   test("process will exec sql proc and cache") {
     inSequence(
-      (processor.execute _)
-        .expects(Sql("select * from test_table"))
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("a")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (operators.cache _)
-        .expects(*, Memory)
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("a")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (registry.register _)
-        .expects(*, "tbl")
-        .once()
+      Seq(
+        (processor.execute _)
+          .expects(Sql("select * from test_table"))
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("a")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (operators.cache _)
+          .expects(*, Memory)
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("a")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (registry.register _)
+          .expects(*, "tbl")
+          .once()
+      )
     )
     yaspProcessor.process(YaspProcess("tbl", Sql("select * from test_table"), cache = Some(Memory)))
   }
 
   test("process will exec sql proc and no cache") {
     inSequence(
-      (processor.execute _)
-        .expects(Sql("select * from test_table"))
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("a")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (registry.register _)
-        .expects(*, "tbl")
-        .once()
+      Seq(
+        (processor.execute _)
+          .expects(Sql("select * from test_table"))
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("a")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (registry.register _)
+          .expects(*, "tbl")
+          .once()
+      )
     )
     yaspProcessor.process(YaspProcess("tbl", Sql("select * from test_table"), cache = None))
   }
