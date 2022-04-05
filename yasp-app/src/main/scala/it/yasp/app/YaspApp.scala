@@ -2,6 +2,8 @@ package it.yasp.app
 
 import io.circe.generic.auto._
 import it.yasp.app.conf.{FileSupport, ParserSupport, VariablesSupport}
+import it.yasp.app.err.YaspAppErrors
+import it.yasp.app.err.YaspAppErrors.YaspExecutionError
 import it.yasp.service.YaspService
 import it.yasp.service.model.YaspExecution
 
@@ -16,10 +18,11 @@ object YaspApp extends FileSupport with ParserSupport with VariablesSupport {
     * @return
     *   Unit
     */
-  def fromFile(filePath: String): Unit =
+  def fromFile(filePath: String): Either[YaspAppErrors, Unit] =
     for {
       content <- read(filePath).right
-    } yield fromYaml(content)
+      _       <- fromYaml(content).right
+    } yield ()
 
   /** Load a YaspExecution from a yml content.
     *
@@ -30,10 +33,14 @@ object YaspApp extends FileSupport with ParserSupport with VariablesSupport {
     *   YaspExecution in yml format
     * @return
     */
-  def fromYaml(content: String): Unit =
+  def fromYaml(content: String): Either[YaspAppErrors, Unit] =
     for {
       contentWithEnv <- interpolate(content, sys.env).right
       yaspExecution  <- parseYaml[YaspExecution](contentWithEnv).right
-    } yield YaspService().run(yaspExecution)
+      _              <- exec(yaspExecution).right
+    } yield ()
 
+  private def exec(yaspExecution: YaspExecution): Either[YaspExecutionError, Unit] =
+    try Right(YaspService().run(yaspExecution))
+    catch { case t: Throwable => Left(YaspExecutionError(yaspExecution, t)) }
 }
