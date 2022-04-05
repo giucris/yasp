@@ -26,17 +26,19 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
 
   test("load will read and register source") {
     inSequence(
-      (reader.read _)
-        .expects(Parquet("x", mergeSchema = false))
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("b")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (registry.register _)
-        .expects(*, "tbl")
-        .once()
+      Seq(
+        (reader.read _)
+          .expects(Parquet("x", mergeSchema = false))
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("b")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (registry.register _)
+          .expects(*, "tbl")
+          .once()
+      )
     )
 
     yaspLoader.load(YaspSource("tbl", Parquet("x", mergeSchema = false), cache = None))
@@ -44,25 +46,27 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
 
   test("load will read cache and register source") {
     inSequence(
-      (reader.read _)
-        .expects(Parquet("x", mergeSchema = false))
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("a")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (dataHandler.cache _)
-        .expects(*, Memory)
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("a")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (registry.register _)
-        .expects(*, "tbl")
-        .once()
+      Seq(
+        (reader.read _)
+          .expects(Parquet("x", mergeSchema = false))
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("a")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (dataHandler.cache _)
+          .expects(*, Memory)
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("a")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (registry.register _)
+          .expects(*, "tbl")
+          .once()
+      )
     )
 
     yaspLoader.load(YaspSource("tbl", Parquet("x", mergeSchema = false), cache = Some(Memory)))
@@ -70,33 +74,35 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
 
   test("load will read repartition cache and register a source") {
     inSequence(
-      (reader.read _)
-        .expects(Parquet("x", mergeSchema = false))
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("a")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (dataHandler.repartition _)
-        .expects(*, 100)
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("a")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (dataHandler.cache _)
-        .expects(*, Memory)
-        .once()
-        .returns(
-          spark.createDataset(Seq(Row("a")))(
-            RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
-          )
-        ),
-      (registry.register _)
-        .expects(*, "tbl")
-        .once()
+      Seq(
+        (reader.read _)
+          .expects(Parquet("x", mergeSchema = false))
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("a")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (dataHandler.repartition _)
+          .expects(*, 100)
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("a")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (dataHandler.cache _)
+          .expects(*, Memory)
+          .once()
+          .returns(
+            spark.createDataset(Seq(Row("a")))(
+              RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+            )
+          ),
+        (registry.register _)
+          .expects(*, "tbl")
+          .once()
+      )
     )
 
     yaspLoader.load(YaspSource("tbl", Parquet("x", mergeSchema = false), Some(100), Some(Memory)))

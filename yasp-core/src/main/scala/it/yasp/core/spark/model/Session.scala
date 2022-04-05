@@ -9,7 +9,7 @@ package it.yasp.core.spark.model
   * @param conf:
   *   A [[Map]] of spark specific session configuration
   */
-case class Session(
+final case class Session(
     kind: SessionType,
     name: String,
     conf: Map[String, String]

@@ -2,10 +2,21 @@ package it.yasp.app.args
 
 import scopt.OParser
 
-case class YaspArgs(filePath: String = "")
+/** YaspArgs model
+  *
+  * @param filePath:
+  *   the yasp file path
+  */
+final case class YaspArgs(filePath: String = "")
 
 object YaspArgs {
 
+  /** Parse YaspArgs from args Array
+    * @param args:
+    *   [[Array]] of String
+    * @return
+    *   Some(YaspArgs) otherwise None
+    */
   def parse(args: Array[String]): Option[YaspArgs] = {
     val builder = OParser.builder[YaspArgs]
     val parser  =

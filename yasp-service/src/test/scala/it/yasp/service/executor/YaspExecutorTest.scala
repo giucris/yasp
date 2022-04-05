@@ -20,12 +20,14 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
 
   test("exec with 1 source and 1 sink") {
     inSequence(
-      (loader.load _)
-        .expects(YaspSource("id1", Source.Json("sourcePath", None), cache = None))
-        .once(),
-      (writer.write _)
-        .expects(YaspSink("id1", Dest.Parquet("destPath", None)))
-        .once()
+      Seq(
+        (loader.load _)
+          .expects(YaspSource("id1", Source.Json("sourcePath", None), cache = None))
+          .once(),
+        (writer.write _)
+          .expects(YaspSink("id1", Dest.Parquet("destPath", None)))
+          .once()
+      )
     )
 
     yaspExecutor.exec(
@@ -39,15 +41,17 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
 
   test("exec with 1 source 1 process 1 sink") {
     inSequence(
-      (loader.load _)
-        .expects(YaspSource("id1", Source.Json("sourcePath", None), cache = None))
-        .once(),
-      (processor.process _)
-        .expects(YaspProcess("id2", Sql("my-sql"), cache = None))
-        .once(),
-      (writer.write _)
-        .expects(YaspSink("id2", Dest.Parquet("destPath", None)))
-        .once()
+      Seq(
+        (loader.load _)
+          .expects(YaspSource("id1", Source.Json("sourcePath", None), cache = None))
+          .once(),
+        (processor.process _)
+          .expects(YaspProcess("id2", Sql("my-sql"), cache = None))
+          .once(),
+        (writer.write _)
+          .expects(YaspSink("id2", Dest.Parquet("destPath", None)))
+          .once()
+      )
     )
 
     yaspExecutor.exec(
@@ -61,24 +65,28 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
 
   test("exec with n source n process n sink") {
     inSequence(
-      (loader.load _)
-        .expects(YaspSource("id1", Source.Json("sourcePath1", None), cache = None))
-        .once(),
-      (loader.load _)
-        .expects(YaspSource("id2", Source.Parquet("sourcePath2", mergeSchema = true), cache = None))
-        .once(),
-      (processor.process _)
-        .expects(YaspProcess("id3", Sql("my-sql-1"), cache = None))
-        .once(),
-      (processor.process _)
-        .expects(YaspProcess("id4", Sql("my-sql-2"), cache = None))
-        .once(),
-      (writer.write _)
-        .expects(YaspSink("id4", Dest.Parquet("destPath1", None)))
-        .once(),
-      (writer.write _)
-        .expects(YaspSink("id3", Dest.Parquet("destPath2", None)))
-        .once()
+      Seq(
+        (loader.load _)
+          .expects(YaspSource("id1", Source.Json("sourcePath1", None), cache = None))
+          .once(),
+        (loader.load _)
+          .expects(
+            YaspSource("id2", Source.Parquet("sourcePath2", mergeSchema = true), cache = None)
+          )
+          .once(),
+        (processor.process _)
+          .expects(YaspProcess("id3", Sql("my-sql-1"), cache = None))
+          .once(),
+        (processor.process _)
+          .expects(YaspProcess("id4", Sql("my-sql-2"), cache = None))
+          .once(),
+        (writer.write _)
+          .expects(YaspSink("id4", Dest.Parquet("destPath1", None)))
+          .once(),
+        (writer.write _)
+          .expects(YaspSink("id3", Dest.Parquet("destPath2", None)))
+          .once()
+      )
     )
 
     yaspExecutor.exec(
