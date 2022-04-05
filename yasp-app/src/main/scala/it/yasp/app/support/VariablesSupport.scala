@@ -1,4 +1,4 @@
-package it.yasp.app.conf
+package it.yasp.app.support
 
 import it.yasp.app.err.YaspAppErrors.InterpolationError
 import org.apache.commons.text.StringSubstitutor

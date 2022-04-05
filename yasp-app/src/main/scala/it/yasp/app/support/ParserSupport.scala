@@ -1,4 +1,4 @@
-package it.yasp.app.conf
+package it.yasp.app.support
 
 import cats.implicits._
 import io.circe.Decoder
