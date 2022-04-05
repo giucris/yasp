@@ -10,7 +10,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class ParserSupportTest extends AnyFunSuite with ParserSupport {
 
-  test("parse") {
+  test("parse return Right(YaspExecution)") {
     val expected = YaspExecution(
       Session(Distributed, "my-app-name", Map("key-1" -> "value", "key-2" -> "value")),
       YaspPlan(
@@ -99,7 +99,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |          - col2
         |""".stripMargin
     )
-    assert(actual == expected)
+    assert(actual == Right(expected))
   }
 
 }

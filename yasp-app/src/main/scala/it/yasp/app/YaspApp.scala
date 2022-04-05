@@ -14,10 +14,12 @@ object YaspApp extends FileSupport with ParserSupport with VariablesSupport {
     * @param filePath
     *   : a yml file path
     * @return
-    *   [[YaspExecution]]
+    *   Unit
     */
   def fromFile(filePath: String): Unit =
-    fromYaml(read(filePath))
+    for {
+      content <- read(filePath).right
+    } yield fromYaml(content)
 
   /** Load a YaspExecution from a yml content.
     *
@@ -29,6 +31,9 @@ object YaspApp extends FileSupport with ParserSupport with VariablesSupport {
     * @return
     */
   def fromYaml(content: String): Unit =
-    YaspService().run(parseYaml[YaspExecution](interpolate(content, sys.env)))
+    for {
+      contentWithEnv <- interpolate(content, sys.env).right
+      yaspExecution  <- parseYaml[YaspExecution](contentWithEnv).right
+    } yield YaspService().run(yaspExecution)
 
 }

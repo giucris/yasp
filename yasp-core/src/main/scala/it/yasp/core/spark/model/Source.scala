@@ -14,7 +14,7 @@ object Source {
     *   the official spark documentation
     *   (https://spark.apache.org/docs/2.4.7/api/java/org/apache/spark/sql/DataFrameReader.html#csv-java.lang.String...-).
     */
-  case class Csv(
+  final case class Csv(
       path: String,
       options: Option[Map[String, String]]
   ) extends Source
@@ -27,7 +27,7 @@ object Source {
     *   the official spark documentation
     *   (https://spark.apache.org/docs/2.4.7/api/java/org/apache/spark/sql/DataFrameReader.html#json-java.lang.String...-).
     */
-  case class Json(
+  final case class Json(
       path: String,
       options: Option[Map[String, String]]
   ) extends Source
@@ -38,7 +38,7 @@ object Source {
     * @param mergeSchema:
     *   option that enable the merge schema operation on read
     */
-  case class Parquet(
+  final case class Parquet(
       path: String,
       mergeSchema: Boolean
   ) extends Source
@@ -47,7 +47,7 @@ object Source {
     * @param path:
     *   path of the Orc files
     */
-  case class Orc(
+  final case class Orc(
       path: String
   ) extends Source
 
@@ -59,7 +59,7 @@ object Source {
     *   the official spark documentation
     *   (https://spark.apache.org/docs/2.4.7/sql-data-sources-avro.html)
     */
-  case class Avro(
+  final case class Avro(
       path: String,
       options: Option[Map[String, String]]
   ) extends Source
@@ -72,7 +72,7 @@ object Source {
     *   the official databricks spark-xml github repository.
     *   (https://github.com/databricks/spark-xml)
     */
-  case class Xml(
+  final case class Xml(
       path: String,
       options: Option[Map[String, String]]
   ) extends Source
@@ -87,7 +87,7 @@ object Source {
     *   the official spark documentation
     *   (https://spark.apache.org/docs/2.4.7/sql-data-sources-jdbc.html)
     */
-  case class Jdbc(
+  final case class Jdbc(
       url: String,
       credentials: Option[BasicCredentials],
       options: Option[Map[String, String]]

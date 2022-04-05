@@ -11,7 +11,8 @@ import org.scalatest.{BeforeAndAfterAll, Suite}
 trait SharedSparkSession extends BeforeAndAfterAll {
   this: Suite =>
 
-  var spark: SparkSession = _
+  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
+  @transient var spark: SparkSession = _
 
   override protected def beforeAll(): Unit = {
     spark = SparkSession
@@ -25,4 +26,5 @@ trait SharedSparkSession extends BeforeAndAfterAll {
 
   override protected def afterAll(): Unit =
     super.afterAll()
+
 }

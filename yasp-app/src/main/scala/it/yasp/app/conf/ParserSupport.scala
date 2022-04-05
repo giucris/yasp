@@ -2,6 +2,7 @@ package it.yasp.app.conf
 
 import cats.implicits._
 import io.circe.Decoder
+import it.yasp.app.err.YaspAppErrors.ParseYmlError
 
 /** Provide a method to parse a yml content
   */
@@ -15,12 +16,11 @@ trait ParserSupport extends DecodersSupport {
     * @tparam A:
     *   case class instance to derivce
     * @return
-    *   instance of type `A`
+    *   Right(A) otherwise Left(ParseYmlError)
     */
-  def parseYaml[A](content: String)(implicit ev: Decoder[A]): A =
-    io.circe.yaml.parser
-      .parse(content)
-      .leftMap(err => err)
-      .flatMap(_.as[A])
-      .valueOr(throw _)
+  def parseYaml[A](content: String)(implicit ev: Decoder[A]): Either[ParseYmlError, A] =
+    io.circe.yaml.parser.parse(content).flatMap(_.as[A]) match {
+      case Right(r) => Right(r)
+      case Left(l)  => Left(ParseYmlError(content, l))
+    }
 }

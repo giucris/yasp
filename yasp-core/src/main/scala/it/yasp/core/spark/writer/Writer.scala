@@ -2,7 +2,7 @@ package it.yasp.core.spark.writer
 
 import it.yasp.core.spark.model.Dest
 import it.yasp.core.spark.model.Dest.Parquet
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.DataFrame
 
 /** Writer
   *
@@ -36,8 +36,6 @@ object Writer {
   /** DestWriter an implementation of Writer[Dest]
     *
     * Provide a method to dispatch the write request at the specific Writer implementation
-    * @param spark:
-    *   A [[SparkSession]] instance
     */
   class DestWriter extends Writer[Dest] {
     override def write(dataFrame: DataFrame, dest: Dest): Unit =
