@@ -2,4 +2,15 @@ package it.yasp.service.model
 
 import it.yasp.core.spark.model.Session
 
-case class YaspExecution(session: Session, plan: YaspPlan)
+/** YaspExecution.
+  *
+  * Define an execution model for the Yasp framework.
+  * @param session:
+  *   A [[Session]] instance
+  * @param plan:
+  *   A [[YaspPlan]] instance
+  */
+final case class YaspExecution(
+    session: Session,
+    plan: YaspPlan
+)

@@ -1,6 +1,7 @@
-package it.yasp.app.conf
+package it.yasp.app.support
 
 import io.circe.generic.auto._
+import it.yasp.app.err.YaspAppErrors.ParseYmlError
 import it.yasp.core.spark.model.CacheLayer.{Checkpoint, Memory, MemoryAndDisk}
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.SessionType.Distributed
@@ -10,7 +11,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class ParserSupportTest extends AnyFunSuite with ParserSupport {
 
-  test("parse") {
+  test("parse return Right") {
     val expected = YaspExecution(
       Session(Distributed, "my-app-name", Map("key-1" -> "value", "key-2" -> "value")),
       YaspPlan(
@@ -99,7 +100,27 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |          - col2
         |""".stripMargin
     )
-    assert(actual == expected)
+    assert(actual == Right(expected))
+  }
+
+  test("parse return Left") {
+    val actual = parseYaml[YaspExecution](
+      """
+        |session:
+        |plan:
+        |  sources:
+        |  - id: id3
+        |  - id: p3
+        |    dest:
+        |      Parquet:
+        |        path: out-path-2
+        |        partitionBy:
+        |          - col1
+        |          - col2
+        |""".stripMargin
+    )
+    assert(actual.isLeft)
+    assert(actual.left.get.isInstanceOf[ParseYmlError])
   }
 
 }

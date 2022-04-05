@@ -1,4 +1,4 @@
-package it.yasp.app.conf
+package it.yasp.app.support
 
 import io.circe.Decoder.Result
 import io.circe.{Decoder, HCursor}
