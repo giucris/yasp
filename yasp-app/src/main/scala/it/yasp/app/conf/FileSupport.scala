@@ -16,11 +16,12 @@ trait FileSupport {
     * @return
     *   Right(String) otherwise Left(ReadFileError)
     */
-  def read(filePath: String): Either[ReadFileError, String] = {
-    val source = Source.fromFile(filePath, "UTF-8")
-    try Right(source.mkString.trim)
-    catch { case t: Throwable => Left(ReadFileError(filePath, t)) }
-    finally source.close()
-  }
+  def read(filePath: String): Either[ReadFileError, String] =
+    try {
+      val source = Source.fromFile(filePath, "UTF-8")
+      try Right(source.mkString.trim)
+      catch { case t: Throwable => Left(ReadFileError(filePath, t)) }
+      finally source.close()
+    } catch { case t: Throwable => Left(ReadFileError(filePath, t)) }
 
 }
