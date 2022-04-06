@@ -12,5 +12,5 @@ package it.yasp.core.spark.model
 final case class Session(
     kind: SessionType,
     name: String,
-    conf: Map[String, String]
+    conf: Map[String, String] = Map.empty
 )

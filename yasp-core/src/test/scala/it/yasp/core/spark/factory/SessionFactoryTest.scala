@@ -1,8 +1,7 @@
 package it.yasp.core.spark.factory
 
-import it.yasp.core.spark.model
-import it.yasp.core.spark.model.Session
 import it.yasp.core.spark.model.SessionType.{Distributed, Local}
+import it.yasp.core.spark.model._
 import org.apache.spark.sql.SparkSession
 import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
@@ -30,7 +29,7 @@ class SessionFactoryTest extends AnyFunSuite {
 
   test("create local session with config") {
     val session = sessionFactory.create(
-      model.Session(
+      Session(
         kind = Local,
         name = "test-app-2",
         conf = Map("myConf1" -> "myConfValue1", "myConf2" -> "myConfValue2")
@@ -49,7 +48,7 @@ class SessionFactoryTest extends AnyFunSuite {
   test("create distributed session raise a 'master must be set...' exception") {
     val exception = intercept[Exception] {
       val spark = sessionFactory.create(
-        model.Session(
+        Session(
           kind = Distributed,
           name = "test-app-1",
           conf = Map("myConf1" -> "myConfValue1", "myConf2" -> "myConfValue2")

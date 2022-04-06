@@ -12,5 +12,8 @@ object Dest {
     * @param partitionBy:
     *   Optional Seq of column name
     */
-  final case class Parquet(path: String, partitionBy: Option[Seq[String]]) extends Dest
+  final case class Parquet(
+      path: String,
+      partitionBy: Seq[String] = Seq.empty
+  ) extends Dest
 }

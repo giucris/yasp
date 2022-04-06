@@ -37,7 +37,7 @@ class ParquetWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAf
         )
       )
     )
-    new ParquetWriter().write(expected, Parquet(s"$workspace/parquet1/", None))
+    new ParquetWriter().write(expected, Parquet(s"$workspace/parquet1/"))
     val actual   = spark.read.parquet(s"$workspace/parquet1/")
 
     assertDatasetEquals(actual, expected)
@@ -56,7 +56,7 @@ class ParquetWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAf
       )
     )
 
-    new ParquetWriter().write(expected, Parquet(s"$workspace/parquet2/", Some(Seq("h1", "h2"))))
+    new ParquetWriter().write(expected, Parquet(s"$workspace/parquet2/", Seq("h1", "h2")))
 
     val actual = spark.read
       .option("basePath", s"$workspace/parquet2/")
