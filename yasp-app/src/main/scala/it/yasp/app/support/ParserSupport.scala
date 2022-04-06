@@ -14,13 +14,13 @@ trait ParserSupport extends DecodersSupport {
     * @param ev:
     *   Decoder[A]
     * @tparam A:
-    *   case class instance to derivce
+    *   case class instance to derive
     * @return
     *   Right(A) otherwise Left(ParseYmlError)
     */
   def parseYaml[A](content: String)(implicit ev: Decoder[A]): Either[ParseYmlError, A] =
-    io.circe.yaml.parser.parse(content).flatMap(_.as[A]) match {
-      case Right(r) => Right(r)
-      case Left(l)  => Left(ParseYmlError(content, l))
-    }
+    io.circe.yaml.parser
+      .parse(content)
+      .flatMap(_.as[A])
+      .leftMap(e => ParseYmlError(content, e))
 }

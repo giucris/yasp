@@ -53,7 +53,7 @@ class DefaultOperatorsTest extends AnyFunSuite with SparkTestSuite with BeforeAn
   }
 
   test("cache with MemoryAndDisk") {
-    val ds2 = spark.createDataset(Seq(Row("g", "h", "i")))(
+    val ds3 = spark.createDataset(Seq(Row("g", "h", "i")))(
       RowEncoder(
         StructType(
           Seq(
@@ -64,11 +64,11 @@ class DefaultOperatorsTest extends AnyFunSuite with SparkTestSuite with BeforeAn
         )
       )
     )
-    assert(operators.cache(ds2, MemoryAndDisk).storageLevel == StorageLevel.MEMORY_AND_DISK)
+    assert(operators.cache(ds3, MemoryAndDisk).storageLevel == StorageLevel.MEMORY_AND_DISK)
   }
 
   test("cache with MemorySer") {
-    val ds2 = spark.createDataset(Seq(Row("l", "m", "n")))(
+    val ds4 = spark.createDataset(Seq(Row("l", "m", "n")))(
       RowEncoder(
         StructType(
           Seq(
@@ -79,13 +79,11 @@ class DefaultOperatorsTest extends AnyFunSuite with SparkTestSuite with BeforeAn
         )
       )
     )
-    assert(
-      new DefaultOperators().cache(ds2, MemorySer).storageLevel == StorageLevel.MEMORY_ONLY_SER
-    )
+    assert(operators.cache(ds4, MemorySer).storageLevel == StorageLevel.MEMORY_ONLY_SER)
   }
 
   test("cache with MemoryAndDiskSer") {
-    val ds2 = spark.createDataset(Seq(Row("o", "p", "q")))(
+    val ds5 = spark.createDataset(Seq(Row("o", "p", "q")))(
       RowEncoder(
         StructType(
           Seq(
@@ -96,18 +94,14 @@ class DefaultOperatorsTest extends AnyFunSuite with SparkTestSuite with BeforeAn
         )
       )
     )
-    assert(
-      new DefaultOperators()
-        .cache(ds2, MemoryAndDiskSer)
-        .storageLevel == StorageLevel.MEMORY_AND_DISK_SER
-    )
+    assert(operators.cache(ds5, MemoryAndDiskSer).storageLevel == StorageLevel.MEMORY_AND_DISK_SER)
   }
 
   test("repartition") {
-    val ds1    = spark.createDataset(Seq(Row("a"), Row("b"), Row("c"), Row("d"), Row("e"), Row("f")))(
+    val ds6    = spark.createDataset(Seq(Row("a"), Row("b"), Row("c"), Row("d"), Row("e"), Row("f")))(
       RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
     )
-    val actual = operators.repartition(ds1, 2)
+    val actual = operators.repartition(ds6, 2)
     assert(actual.rdd.getNumPartitions == 2)
   }
 }

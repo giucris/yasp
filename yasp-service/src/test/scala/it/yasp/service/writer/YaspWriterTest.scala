@@ -31,11 +31,11 @@ class YaspWriterTest extends AnyFunSuite with SparkTestSuite with MockFactory {
             )
           ),
         (writer.write _)
-          .expects(*, Parquet("path", None))
+          .expects(*, Parquet("path"))
           .once()
       )
     )
-    new DefaultYaspWriter(registry, writer).write(YaspSink("id", Parquet("path", None)))
+    new DefaultYaspWriter(registry, writer).write(YaspSink("id", Parquet("path")))
   }
 
 }
