@@ -23,9 +23,4 @@ trait ParserSupport extends DecodersSupport {
       .parse(content)
       .flatMap(_.as[A])
       .leftMap(e => ParseYmlError(content, e))
-  /*
-    match {
-      case Right(r) => Right(r)
-      case Left(l)  => Left(ParseYmlError(content, l))
-    }*/
 }
