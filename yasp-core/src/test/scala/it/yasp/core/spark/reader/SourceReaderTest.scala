@@ -58,11 +58,9 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
     val actual   = new SourceReader(spark).read(
       Csv(
         path = s"$workspace/singleCsv/file1.csv",
-        options = Some(
-          Map(
-            "header" -> "false",
-            "sep"    -> ","
-          )
+        options = Map(
+          "header" -> "false",
+          "sep"    -> ","
         )
       )
     )
@@ -89,7 +87,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = new SourceReader(spark).read(Json(s"$workspace/json/json1.json", None))
+    val actual = new SourceReader(spark).read(Json(s"$workspace/json/json1.json"))
 
     assertDatasetEquals(actual, expected)
   }
@@ -122,9 +120,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
           )
         )
       )
-    val actual   = new SourceReader(spark).read(
-      Parquet(s"$workspace/parquet1/", mergeSchema = false)
-    )
+    val actual   = new SourceReader(spark).read(Parquet(s"$workspace/parquet1/"))
     assertDatasetEquals(actual, expected)
   }
 
@@ -151,7 +147,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
     )
 
     val actual =
-      new SourceReader(spark).read(Xml(s"$workspace/xml/file.xml", Some(Map("rowTag" -> "root"))))
+      new SourceReader(spark).read(Xml(s"$workspace/xml/file.xml", Map("rowTag" -> "root")))
     assertDatasetEquals(actual, expected)
   }
 
@@ -174,7 +170,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
     expected.write.format("avro").save(s"$workspace/avro/fileWithoutSchema/")
-    val actual   = new SourceReader(spark).read(Avro(s"$workspace/avro/fileWithoutSchema/", None))
+    val actual   = new SourceReader(spark).read(Avro(s"$workspace/avro/fileWithoutSchema/"))
 
     assertDatasetEquals(actual, expected)
   }
@@ -193,7 +189,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
     val actual   = new SourceReader(spark).read(
-      Jdbc(url = connUrl1, credentials = None, Some(Map("dbTable" -> "my_table")))
+      Jdbc(url = connUrl1, credentials = None, Map("dbTable" -> "my_table"))
     )
     assertDatasetEquals(actual, expected)
   }

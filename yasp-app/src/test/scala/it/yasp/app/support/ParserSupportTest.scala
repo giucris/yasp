@@ -18,24 +18,27 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         Seq(
           YaspSource(
             "id1",
-            Source.Csv("x", Some(Map("header" -> "false", "sep" -> ","))),
+            Source.Csv("x", Map("header" -> "false", "sep" -> ",")),
             cache = Some(Memory)
           ),
-          YaspSource("id2", Source.Parquet("x", mergeSchema = false), cache = Some(MemoryAndDisk)),
+          YaspSource(
+            "id2",
+            Source.Parquet("x"),
+            cache = Some(MemoryAndDisk)
+          ),
           YaspSource(
             "id3",
-            Source.Jdbc("url", Some(BasicCredentials("x", "y")), Some(Map("dbTable" -> "table"))),
-            cache = None
+            Source.Jdbc("url", Some(BasicCredentials("x", "y")), Map("dbTable" -> "table"))
           ),
-          YaspSource("id4", Source.Csv("z", None), cache = Some(Checkpoint))
+          YaspSource("id4", Source.Csv("z"), cache = Some(Checkpoint))
         ),
         Seq(
-          YaspProcess("p1", Sql("my-query"), cache = None),
-          YaspProcess("p2", Sql("my-query"), cache = None)
+          YaspProcess("p1", Sql("my-query")),
+          YaspProcess("p2", Sql("my-query"))
         ),
         Seq(
-          YaspSink("p1", Dest.Parquet("out-path-1", None)),
-          YaspSink("p3", Dest.Parquet("out-path-2", Some(Seq("col1", "col2"))))
+          YaspSink("p1", Dest.Parquet("out-path-1")),
+          YaspSink("p3", Dest.Parquet("out-path-2", Seq("col1", "col2")))
         )
       )
     )
@@ -61,7 +64,6 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |    source:
         |      Parquet:
         |        path: x
-        |        mergeSchema: false
         |    cache: MemoryAndDisk
         |  - id: id3
         |    source:

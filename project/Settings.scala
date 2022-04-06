@@ -28,7 +28,8 @@ object Settings {
       Wart.Nothing,
       Wart.DefaultArguments,
       Wart.NonUnitStatements,
-      Wart.Equals
+      Wart.Equals,
+      Wart.Option2Iterable
     )
   )
 

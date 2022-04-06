@@ -42,7 +42,7 @@ object Reader {
     */
   class CsvReader(spark: SparkSession) extends Reader[Csv] with SparkReadSupport {
     override def read(source: Csv): Dataset[Row] = {
-      val opts = source.options.getOrElse(Map.empty) ++ Map("path" -> source.path)
+      val opts = source.options ++ Map("path" -> source.path)
       read(spark, format = "csv", opts.filterKeys(_ != "schema"), opts.get("schema"))
     }
   }
@@ -53,7 +53,7 @@ object Reader {
     */
   class JsonReader(spark: SparkSession) extends Reader[Json] with SparkReadSupport {
     override def read(source: Json): Dataset[Row] = {
-      val opts = source.options.getOrElse(Map.empty) ++ Map("path" -> source.path)
+      val opts = source.options ++ Map("path" -> source.path)
       read(spark, format = "json", opts.filterKeys(_ != "schema"), opts.get("schema"))
     }
   }
@@ -64,7 +64,10 @@ object Reader {
     */
   class ParquetReader(spark: SparkSession) extends Reader[Parquet] with SparkReadSupport {
     override def read(source: Parquet): Dataset[Row] = {
-      val opts = Map("path" -> source.path, "mergeSchema" -> source.mergeSchema.toString)
+      val opts = Map(
+        "path"        -> source.path,
+        "mergeSchema" -> source.mergeSchema.getOrElse(false).toString
+      )
       read(spark, format = "parquet", opts, None)
     }
   }
@@ -75,7 +78,7 @@ object Reader {
     */
   class JdbcReader(spark: SparkSession) extends Reader[Jdbc] with SparkReadSupport {
     override def read(source: Jdbc): Dataset[Row] = {
-      val opts = source.options.getOrElse(Map.empty) ++ Map(
+      val opts = source.options ++ Map(
         "url"      -> source.url,
         "user"     -> source.credentials.map(_.username).getOrElse(""),
         "password" -> source.credentials.map(_.password).getOrElse("")
@@ -90,7 +93,7 @@ object Reader {
     */
   class AvroReader(spark: SparkSession) extends Reader[Avro] with SparkReadSupport {
     override def read(source: Avro): Dataset[Row] = {
-      val opts = source.options.getOrElse(Map.empty) ++ Map("path" -> source.path)
+      val opts = source.options ++ Map("path" -> source.path)
       read(spark, format = "avro", opts, None)
     }
   }
@@ -101,7 +104,7 @@ object Reader {
     */
   class XmlReader(spark: SparkSession) extends Reader[Xml] with SparkReadSupport {
     override def read(source: Xml): Dataset[Row] = {
-      val opts = source.options.getOrElse(Map.empty) ++ Map("path" -> source.path)
+      val opts = source.options ++ Map("path" -> source.path)
       read(spark, format = "xml", opts.filterKeys(_ != "schema"), opts.get("schema"))
     }
   }
@@ -124,13 +127,13 @@ object Reader {
   class SourceReader(spark: SparkSession) extends Reader[Source] {
     override def read(source: Source): Dataset[Row] =
       source match {
-        case s @ Csv(_, _)     => new CsvReader(spark).read(s)
-        case s @ Parquet(_, _) => new ParquetReader(spark).read(s)
-        case s @ Json(_, _)    => new JsonReader(spark).read(s)
-        case s @ Avro(_, _)    => new AvroReader(spark).read(s)
-        case s @ Xml(_, _)     => new XmlReader(spark).read(s)
-        case s @ Jdbc(_, _, _) => new JdbcReader(spark).read(s)
-        case s @ Orc(_)        => new OrcReader(spark).read(s)
+        case s: Csv     => new CsvReader(spark).read(s)
+        case s: Parquet => new ParquetReader(spark).read(s)
+        case s: Json    => new JsonReader(spark).read(s)
+        case s: Avro    => new AvroReader(spark).read(s)
+        case s: Xml     => new XmlReader(spark).read(s)
+        case s: Jdbc    => new JdbcReader(spark).read(s)
+        case s: Orc     => new OrcReader(spark).read(s)
       }
   }
 
