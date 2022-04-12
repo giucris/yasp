@@ -9,11 +9,14 @@ object Dest {
   /** A Parquet destination Model
     * @param path:
     *   output Path
+    * @param mode:
+    *   Optional SaveMode
     * @param partitionBy:
     *   Optional Seq of column name
     */
   final case class Parquet(
       path: String,
+      mode: Option[String] = None,
       partitionBy: Seq[String] = Seq.empty
   ) extends Dest
 }

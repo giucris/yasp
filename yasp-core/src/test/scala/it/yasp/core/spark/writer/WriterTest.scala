@@ -1,7 +1,7 @@
 package it.yasp.core.spark.writer
 
-import it.yasp.core.spark.model.Dest.{Csv, Parquet}
-import it.yasp.core.spark.writer.Writer.writer
+import it.yasp.core.spark.model.Dest.Parquet
+import it.yasp.core.spark.writer.Writer.ParquetWriter
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -25,71 +25,8 @@ class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll 
     super.afterAll()
   }
 
-  test("write csv") {
-    writer[Csv].write(
-      spark.createDataset(Seq(Row("a", "b", "c")))(
-        RowEncoder(
-          StructType(
-            Seq(
-              StructField("h0", StringType, nullable = true),
-              StructField("h1", StringType, nullable = true),
-              StructField("h2", StringType, nullable = true)
-            )
-          )
-        )
-      ),
-      Csv(s"$workspace/csv1/", options = Map("header" -> "true"))
-    )
-
-    val expected = spark.createDataset(Seq(Row("a", "b", "c")))(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("h0", StringType, nullable = true),
-            StructField("h1", StringType, nullable = true),
-            StructField("h2", StringType, nullable = true)
-          )
-        )
-      )
-    )
-    val actual   = spark.read.option("header", "true").csv(s"$workspace/csv1/")
-
-    assertDatasetEquals(actual, expected)
-  }
-
-  test("write csv with partitionBy") {
-    writer[Csv].write(
-      spark.createDataset(Seq(Row("a", "b", "c")))(
-        RowEncoder(
-          StructType(
-            Seq(
-              StructField("h0", StringType, nullable = true),
-              StructField("h1", StringType, nullable = true),
-              StructField("h2", StringType, nullable = true)
-            )
-          )
-        )
-      ),
-      Csv(s"$workspace/csv1/", partitionBy = Seq("h0"), options = Map("header" -> "true"))
-    )
-
-    val expected = spark.createDataset(Seq(Row("b", "c")))(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("h1", StringType, nullable = true),
-            StructField("h2", StringType, nullable = true)
-          )
-        )
-      )
-    )
-    val actual   = spark.read.option("header", "true").csv(s"$workspace/csv1/h0=a/")
-
-    assertDatasetEquals(actual, expected)
-  }
-
   test("write parquet") {
-    writer[Parquet].write(
+    new ParquetWriter().write(
       spark.createDataset(Seq(Row("a", "b", "c")))(
         RowEncoder(
           StructType(
@@ -121,7 +58,7 @@ class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll 
   }
 
   test("write parquet with partitionBy") {
-    writer[Parquet].write(
+    new ParquetWriter().write(
       spark.createDataset(Seq(Row("a", "b", "c")))(
         RowEncoder(
           StructType(

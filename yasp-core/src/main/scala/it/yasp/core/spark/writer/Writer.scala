@@ -27,9 +27,9 @@ object Writer {
     */
   class ParquetWriter extends Writer[Parquet] {
     override def write(dataFrame: DataFrame, dest: Parquet): Unit = {
-      val writer = dataFrame.write
-      if (dest.partitionBy.isEmpty) writer.parquet(dest.path)
-      else writer.partitionBy(dest.partitionBy: _*).parquet(dest.path)
+      val writer = dest.mode.map(dataFrame.write.mode).getOrElse(dataFrame.write).format("parquet")
+      if (dest.partitionBy.isEmpty) writer.save(dest.path)
+      else writer.partitionBy(dest.partitionBy: _*).save(dest.path)
     }
   }
 
