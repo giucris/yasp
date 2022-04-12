@@ -19,7 +19,6 @@ class SessionFactoryTest extends AnyFunSuite {
         conf = Map.empty
       )
     )
-
     assert(session.isInstanceOf[SparkSession])
     assert(session.sparkContext.master == "local[*]")
     assert(session.sparkContext.appName == "test-app-1")
