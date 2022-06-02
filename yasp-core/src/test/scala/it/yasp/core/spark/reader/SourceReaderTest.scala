@@ -57,7 +57,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
     )
     val actual   = new SourceReader(spark).read(
       Csv(
-        path = s"$workspace/singleCsv/file1.csv",
+        csv = s"$workspace/singleCsv/file1.csv",
         options = Map(
           "header" -> "false",
           "sep"    -> ","

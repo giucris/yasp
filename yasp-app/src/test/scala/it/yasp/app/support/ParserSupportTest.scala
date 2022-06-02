@@ -34,7 +34,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         ),
         Seq(
           YaspProcess("p1", Sql("my-query")),
-          YaspProcess("p2", Sql("my-query"))
+          YaspProcess("p2", Sql("my-query-2"))
         ),
         Seq(
           YaspSink("p1", Dest.Parquet("out-path-1")),
@@ -54,52 +54,44 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |  sources:
         |  - id: id1
         |    source:
-        |      Csv:
-        |        path: x
-        |        options:
-        |          header: 'false'
-        |          sep: ','
+        |      csv: x
+        |      options:
+        |        header: 'false'
+        |        sep: ','
         |    cache: Memory
         |  - id: id2
         |    source:
-        |      Parquet:
-        |        path: x
+        |      parquet: x
         |    cache: MemoryAndDisk
         |  - id: id3
         |    source:
-        |      Jdbc:
-        |        url: url
-        |        credentials:
-        |          username: x
-        |          password: y
-        |        options:
-        |          dbTable: table
+        |      url: url
+        |      credentials:
+        |        username: x
+        |        password: y
+        |      options:
+        |        dbTable: table
         |  - id: id4
         |    source:
-        |      Csv:
-        |        path: z
+        |      csv: z
         |    cache: Checkpoint
         |  processes:
         |  - id: p1
         |    process:
-        |      Sql:
-        |        query: my-query
+        |      query: my-query
         |  - id: p2
         |    process:
-        |      Sql:
-        |        query: my-query
+        |      query: my-query-2
         |  sinks:
         |  - id: p1
         |    dest:
-        |      Parquet:
-        |        path: out-path-1
+        |      parquet: out-path-1
         |  - id: p3
         |    dest:
-        |      Parquet:
-        |        path: out-path-2
-        |        partitionBy:
-        |          - col1
-        |          - col2
+        |      parquet: out-path-2
+        |      partitionBy:
+        |        - col1
+        |        - col2
         |""".stripMargin
     )
     assert(actual == Right(expected))

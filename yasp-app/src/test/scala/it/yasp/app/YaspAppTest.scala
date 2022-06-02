@@ -47,26 +47,24 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
         |  sources:
         |    - id: users
         |      source:
-        |        Csv:
-        |          path: yasp-app/src/test/resources/YaspApp/test1/source/user.csv
-        |          options:
-        |            header: 'true'
-        |            sep: ','
+        |        csv: yasp-app/src/test/resources/YaspApp/test1/source/user.csv
+        |        options:
+        |          header: 'true'
+        |          sep: ','
         |      cache: Memory
         |    - id: addresses
         |      source:
-        |        Json:
-        |          path: yasp-app/src/test/resources/YaspApp/test1/source/addresses.jsonl
+        |        json: yasp-app/src/test/resources/YaspApp/test1/source/addresses.jsonl
         |  processes:
         |    - id: user_with_address
         |      process:
-        |        Sql:
-        |          query: SELECT u.name,u.surname,a.address FROM users u JOIN addresses a ON u.id = a.user_id
+        |        query: >-
+        |          SELECT u.name,u.surname,a.address
+        |          FROM users u JOIN addresses a ON u.id = a.user_id
         |  sinks:
         |    - id: user_with_address
         |      dest:
-        |        Parquet:
-        |          path: yasp-app/src/test/resources/YaspApp/test1/output/
+        |        parquet: yasp-app/src/test/resources/YaspApp/test1/output/
         |""".stripMargin
     )
 
@@ -118,26 +116,22 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
           |  sources:
           |    - id: users_file
           |      source:
-          |        Csv:
-          |          path: yasp-app/src/test/resources/YaspApp/test2/source/user.csv
-          |          options:
-          |            header: 'true'
-          |            sep: ','
+          |        csv: yasp-app/src/test/resources/YaspApp/test2/source/user.csv
+          |        options:
+          |          header: 'true'
+          |          sep: ','
           |      cache: Memory
           |    - id: addresses_file
           |      source:
-          |        Json:
-          |          path: yasp-app/src/test/resources/YaspApp/test2/source/addresses.jsonl
+          |        json: yasp-app/src/test/resources/YaspApp/test2/source/addresses.jsonl
           |  processes:
           |    - id: user_with_address_file
           |      process:
-          |        Sql:
-          |          query: SELECT u.name,u.surname,a.address FROM users_file u JOIN addresses_file a ON u.id = a.user_id
+          |        query: SELECT u.name,u.surname,a.address FROM users_file u JOIN addresses_file a ON u.id = a.user_id
           |  sinks:
           |    - id: user_with_address_file
           |      dest:
-          |        Parquet:
-          |          path: yasp-app/src/test/resources/YaspApp/test2/output/
+          |        parquet: yasp-app/src/test/resources/YaspApp/test2/output/
           |""".stripMargin
       )
     )

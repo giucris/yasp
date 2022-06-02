@@ -42,7 +42,7 @@ object Reader {
     */
   class CsvReader(spark: SparkSession) extends Reader[Csv] with SparkReadSupport {
     override def read(source: Csv): Dataset[Row] = {
-      val opts = source.options ++ Map("path" -> source.path)
+      val opts = source.options ++ Map("path" -> source.csv)
       read(spark, format = "csv", opts.filterKeys(_ != "schema"), opts.get("schema"))
     }
   }
@@ -53,7 +53,7 @@ object Reader {
     */
   class JsonReader(spark: SparkSession) extends Reader[Json] with SparkReadSupport {
     override def read(source: Json): Dataset[Row] = {
-      val opts = source.options ++ Map("path" -> source.path)
+      val opts = source.options ++ Map("path" -> source.json)
       read(spark, format = "json", opts.filterKeys(_ != "schema"), opts.get("schema"))
     }
   }
@@ -65,7 +65,7 @@ object Reader {
   class ParquetReader(spark: SparkSession) extends Reader[Parquet] with SparkReadSupport {
     override def read(source: Parquet): Dataset[Row] = {
       val opts = Map(
-        "path"        -> source.path,
+        "path"        -> source.parquet,
         "mergeSchema" -> source.mergeSchema.getOrElse(false).toString
       )
       read(spark, format = "parquet", opts, None)
@@ -93,7 +93,7 @@ object Reader {
     */
   class AvroReader(spark: SparkSession) extends Reader[Avro] with SparkReadSupport {
     override def read(source: Avro): Dataset[Row] = {
-      val opts = source.options ++ Map("path" -> source.path)
+      val opts = source.options ++ Map("path" -> source.avro)
       read(spark, format = "avro", opts, None)
     }
   }
@@ -104,7 +104,7 @@ object Reader {
     */
   class XmlReader(spark: SparkSession) extends Reader[Xml] with SparkReadSupport {
     override def read(source: Xml): Dataset[Row] = {
-      val opts = source.options ++ Map("path" -> source.path)
+      val opts = source.options ++ Map("path" -> source.xml)
       read(spark, format = "xml", opts.filterKeys(_ != "schema"), opts.get("schema"))
     }
   }
@@ -115,7 +115,7 @@ object Reader {
     */
   class OrcReader(spark: SparkSession) extends Reader[Orc] with SparkReadSupport {
     override def read(source: Orc): Dataset[Row] =
-      read(spark, format = "orc", Map("path" -> source.path), None)
+      read(spark, format = "orc", Map("path" -> source.orc), None)
   }
 
   //TODO Something that retrieve automatically the relative Reader[A] should be implemented. Instead of doing it with an exhaustive pattern matching. probably shapeless could help on this

@@ -29,7 +29,8 @@ object Settings {
       Wart.DefaultArguments,
       Wart.NonUnitStatements,
       Wart.Equals,
-      Wart.Option2Iterable
+      Wart.Option2Iterable,
+      Wart.TraversableOps
     )
   )
 

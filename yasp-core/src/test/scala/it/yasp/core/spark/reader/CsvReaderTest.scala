@@ -100,7 +100,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
 
     val actual = new CsvReader(spark).read(
       Csv(
-        path = s"$workspace/input4/",
+        csv = s"$workspace/input4/",
         options = Map("header" -> "true", "sep" -> "|", "schema" -> "h1 INT, h2 STRING, h3 STRING")
       )
     )
@@ -125,7 +125,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
 
     val actual = new CsvReader(spark).read(
       Csv(
-        path = s"$workspace/input5/",
+        csv = s"$workspace/input5/",
         options = Map(
           "header" -> "true",
           "sep"    -> "|",
