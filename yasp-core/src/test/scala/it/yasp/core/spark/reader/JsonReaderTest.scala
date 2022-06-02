@@ -97,7 +97,7 @@ class JsonReaderTest extends AnyFunSuite with SparkTestSuite {
     val actual   = new JsonReader(spark).read(
       Json(
         json = s"$workspace/input2/",
-        options = Map("schema" -> "a STRING, b LONG, c LONG, d STRING")
+        schema = Some("a STRING, b LONG, c LONG, d STRING")
       )
     )
     assertDatasetEquals(actual, expected)

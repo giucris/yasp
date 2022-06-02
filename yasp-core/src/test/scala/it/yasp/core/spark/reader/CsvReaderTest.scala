@@ -101,7 +101,8 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     val actual = new CsvReader(spark).read(
       Csv(
         csv = s"$workspace/input4/",
-        options = Map("header" -> "true", "sep" -> "|", "schema" -> "h1 INT, h2 STRING, h3 STRING")
+        schema = Some("h1 INT, h2 STRING, h3 STRING"),
+        options = Map("header" -> "true", "sep" -> "|")
       )
     )
     assertDatasetEquals(actual, expected)
@@ -126,10 +127,10 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     val actual = new CsvReader(spark).read(
       Csv(
         csv = s"$workspace/input5/",
+        schema = Some("h1 INT, h2 STRING, h3 STRING,_corrupt_record STRING"),
         options = Map(
           "header" -> "true",
-          "sep"    -> "|",
-          "schema" -> "h1 INT, h2 STRING, h3 STRING,_corrupt_record STRING"
+          "sep"    -> "|"
         )
       )
     )

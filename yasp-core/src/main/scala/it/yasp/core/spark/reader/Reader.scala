@@ -41,10 +41,8 @@ object Reader {
     *   A [[SparkSession]] instance
     */
   class CsvReader(spark: SparkSession) extends Reader[Csv] with SparkReadSupport {
-    override def read(source: Csv): Dataset[Row] = {
-      val opts = source.options ++ Map("path" -> source.csv)
-      read(spark, format = "csv", opts.filterKeys(_ != "schema"), opts.get("schema"))
-    }
+    override def read(source: Csv): Dataset[Row] =
+      read(spark, format = "csv", source.options ++ Map("path" -> source.csv), source.schema)
   }
 
   /** JsonReader an instance of Reader[Json]
@@ -52,10 +50,8 @@ object Reader {
     *   A [[SparkSession]] instance
     */
   class JsonReader(spark: SparkSession) extends Reader[Json] with SparkReadSupport {
-    override def read(source: Json): Dataset[Row] = {
-      val opts = source.options ++ Map("path" -> source.json)
-      read(spark, format = "json", opts.filterKeys(_ != "schema"), opts.get("schema"))
-    }
+    override def read(source: Json): Dataset[Row] =
+      read(spark, format = "json", source.options ++ Map("path" -> source.json), source.schema)
   }
 
   /** ParquetReader an instance of Reader[Parquet]
@@ -79,9 +75,9 @@ object Reader {
   class JdbcReader(spark: SparkSession) extends Reader[Jdbc] with SparkReadSupport {
     override def read(source: Jdbc): Dataset[Row] = {
       val opts = source.options ++ Map(
-        "url"      -> source.url,
-        "user"     -> source.credentials.map(_.username).getOrElse(""),
-        "password" -> source.credentials.map(_.password).getOrElse("")
+        "url"      -> source.jdbcUrl,
+        "user"     -> source.jdbcAuth.map(_.username).getOrElse(""),
+        "password" -> source.jdbcAuth.map(_.password).getOrElse("")
       )
       read(spark, format = "jdbc", opts, None)
     }

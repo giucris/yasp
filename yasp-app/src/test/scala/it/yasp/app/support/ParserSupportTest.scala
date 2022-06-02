@@ -18,7 +18,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         Seq(
           YaspSource(
             "id1",
-            Source.Csv("x", Map("header" -> "false", "sep" -> ",")),
+            Source.Csv("x", None,Map("header" -> "false", "sep" -> ",")),
             cache = Some(Memory)
           ),
           YaspSource(
@@ -65,8 +65,8 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |    cache: MemoryAndDisk
         |  - id: id3
         |    source:
-        |      url: url
-        |      credentials:
+        |      jdbcUrl: url
+        |      jdbcAuth:
         |        username: x
         |        password: y
         |      options:

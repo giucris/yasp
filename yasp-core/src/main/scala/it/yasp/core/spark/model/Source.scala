@@ -16,12 +16,15 @@ object Source {
     */
   final case class Csv(
       csv: String,
+      schema: Option[String] = None,
       options: Map[String, String] = Map.empty
   ) extends Source
 
   /** A Json Source Model
     * @param json:
     *   path of the json files
+    * @param schema:
+    *   string schema
     * @param options:
     *   An optional map of Json read configuration. For a complete list of valid configuration check
     *   the official spark documentation
@@ -29,6 +32,7 @@ object Source {
     */
   final case class Json(
       json: String,
+      schema: Option[String] = None,
       options: Map[String, String] = Map.empty
   ) extends Source
 
@@ -78,9 +82,9 @@ object Source {
   ) extends Source
 
   /** A Jdbc Source Model
-    * @param url:
+    * @param jdbcUrl:
     *   the url of the database
-    * @param credentials:
+    * @param jdbcAuth:
     *   an Optional BasicCredential configuration
     * @param options:
     *   An optional map of Jdbc read configuration. For a complete list of valid configuration check
@@ -88,8 +92,8 @@ object Source {
     *   (https://spark.apache.org/docs/2.4.7/sql-data-sources-jdbc.html)
     */
   final case class Jdbc(
-      url: String,
-      credentials: Option[BasicCredentials] = None,
+      jdbcUrl: String,
+      jdbcAuth: Option[BasicCredentials] = None,
       options: Map[String, String] = Map.empty
   ) extends Source
 

@@ -7,7 +7,7 @@ Yet Another SPark Framework
 An easy and lightweight tool for data engineering process built on top of Apache Spark for ETL/ELT process.
 
 ## Introduction
-f
+
 Yasp was created to help data engineers working with Apache Spark to reduce their pipeline development time by using a
 no-code/less-code approach.
 
@@ -249,12 +249,10 @@ specific `Reader`
 ```scala
 case class Csv(
   csv:String, 
+  schema: Option[String],
   options:Option[Map[String,String]]
 ) extends Source
 ```
-
-In the options field you can specify any spark csv options. **In addition to the standard spark options you can specify
-a user-defined `schema`**
 
 Examples:
 
@@ -269,7 +267,7 @@ Csv(csv="my-csv-path",Some(Map("header"->"true")))
 Csv(csv="my-csv-path",Some(Map("sep"->";")))
 
 //Define a csv with custom separator and user defined schema
-Csv(csv="my-csv-path",Some(Map("sep"->"\t","schema"->"field1 INT, field2 STRING")))
+Csv(csv="my-csv-path",Some("field1 INT, field2 STRING"),Some(Map("sep"->"\t")))
 ```
 
 ##### Json
@@ -277,24 +275,22 @@ Csv(csv="my-csv-path",Some(Map("sep"->"\t","schema"->"field1 INT, field2 STRING"
 ```scala
 case class Json(
   json:String, 
+  schema: Option[Schema],
   options:Option[Map[String,String]]
 ) extends Source
 ```
-
-In the options field you can specify any spark csv options.  **In addition to the standard spark options you can specify
-the `schema` of the source.**
 
 Examples:
 
 ```scala
 //Define a basic json
-Json(json="my-csv-path",None)
+Json(json="my-csv-path",None,None)
 
 //Define a json with primitives as string
-Json(json="my-csv-path",Some(Map("primitivesAsString"->"true")))
+Json(json="my-csv-path",None,Some(Map("primitivesAsString"->"true")))
 
 //Define a json with a user provided schema
-Json(json="my-csv-path",Some(Map("sep"->"\t","schema"->"field1 INT, field2 STRING")))
+Json(json="my-csv-path",Some("field1 INT, field2 STRING"),Some(Map("sep"->"\t")))
 ```
 
 ##### Parquet
@@ -346,8 +342,8 @@ case class Xml(
 
 ```scala
 case class Jdbc(
-  url: String,
-  credentials: Option[BasicCredentials],
+  jdbcUrl: String,
+  jdbcAuth: Option[BasicCredentials],
   options: Option[Map[String, String]]
 ) extends Source
 ```
