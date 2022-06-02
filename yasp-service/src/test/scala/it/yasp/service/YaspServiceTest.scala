@@ -58,7 +58,7 @@ class YaspServiceTest
             YaspSource(
               "data_1",
               Source.Csv(
-                path = s"$workspace/csv-data-source-1/file1.csv",
+                csv = s"$workspace/csv-data-source-1/file1.csv",
                 options = Map(
                   "header" -> "true",
                   "sep"    -> ","
@@ -69,7 +69,7 @@ class YaspServiceTest
             YaspSource(
               "data_2",
               Source.Csv(
-                path = s"$workspace/csv-data-source-2/file1.csv",
+                csv = s"$workspace/csv-data-source-2/file1.csv",
                 options = Map(
                   "header" -> "true",
                   "sep"    -> ","
