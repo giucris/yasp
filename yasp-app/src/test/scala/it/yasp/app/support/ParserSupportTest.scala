@@ -18,7 +18,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         Seq(
           YaspSource(
             "id1",
-            Source.Csv("x", None,Map("header" -> "false", "sep" -> ",")),
+            Source.Csv("x", None, Map("header" -> "false", "sep" -> ",")),
             cache = Some(Memory)
           ),
           YaspSource(
