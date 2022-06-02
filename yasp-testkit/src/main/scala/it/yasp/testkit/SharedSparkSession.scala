@@ -1,30 +1,26 @@
 package it.yasp.testkit
 
 import org.apache.spark.sql.SparkSession
-import org.scalatest.{BeforeAndAfterAll, Suite}
+import org.scalatest.Suite
 
 /** A SharedSparkSession trait
   *
   * Provide a spark session for testing purpose. Setup the spark session on the beforeAll method and
   * close the spark session on the afterAll method
   */
-trait SharedSparkSession extends BeforeAndAfterAll {
+trait SharedSparkSession {
   this: Suite =>
+  val spark: SparkSession = SharedSparkSession.init
+}
 
-  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
-  @transient var spark: SparkSession = _
-
-  override protected def beforeAll(): Unit = {
-    spark = SparkSession
+object SharedSparkSession {
+  def init: SparkSession = {
+    val spark = SparkSession
       .builder()
       .appName("testSession")
       .master("local[*]")
       .getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
-    super.beforeAll()
+    spark
   }
-
-  override protected def afterAll(): Unit =
-    super.afterAll()
-
 }

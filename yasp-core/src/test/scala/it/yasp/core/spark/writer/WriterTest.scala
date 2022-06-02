@@ -7,10 +7,9 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes.StringType
 import org.apache.spark.sql.types.{StructField, StructType}
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.{BeforeAndAfterAll, DoNotDiscover}
 
-@DoNotDiscover
 class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
 
   private val workspace = "yasp-core/src/test/resources/WriterTest"

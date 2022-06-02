@@ -7,14 +7,13 @@ import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
-import org.scalatest.DoNotDiscover
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.sql.Connection
 import java.sql.DriverManager._
 
-@DoNotDiscover
-class JdbcReaderTest extends AnyFunSuite with SparkTestSuite {
+class JdbcReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
 
   val connUrl1: String = "jdbc:h2:mem:db1"
   val connUrl2: String = "jdbc:h2:mem:db2"
@@ -43,13 +42,13 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite {
     )
   }
 
-  override protected def afterAll(): Unit = {
-    executeStatement(conn1, "DROP TABLE my_table")
-    executeStatement(conn2, "DROP TABLE my_table")
-    executeStatement(conn1, "SHUTDOWN")
-    executeStatement(conn2, "SHUTDOWN")
-    super.afterAll()
+  private def executeStatement(conn: Connection, stmt: String): Unit = {
+    val statement = conn.createStatement
+    statement.execute(stmt)
+    statement.close()
   }
+
+  val reader = new JdbcReader(spark)
 
   test("read database table") {
     val expected = spark.createDataset(
@@ -64,7 +63,7 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new JdbcReader(spark).read(Jdbc(connUrl1, options = Map("dbTable" -> "my_table")))
+    val actual   = reader.read(Jdbc(connUrl1, options = Map("dbTable" -> "my_table")))
     assertDatasetEquals(actual, expected)
   }
 
@@ -81,7 +80,7 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new JdbcReader(spark).read(
+    val actual   = reader.read(
       Jdbc(
         jdbcUrl = connUrl2,
         jdbcAuth = Some(BasicCredentials("usr", "pwd")),
@@ -102,7 +101,7 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = new JdbcReader(spark).read(
+    val actual = reader.read(
       Jdbc(
         jdbcUrl = "jdbc:h2:mem:db2",
         jdbcAuth = Some(BasicCredentials("usr", "pwd")),
@@ -112,9 +111,11 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite {
     assertDatasetEquals(actual, expected)
   }
 
-  private def executeStatement(conn: Connection, stmt: String): Unit = {
-    val statement = conn.createStatement
-    statement.execute(stmt)
-    statement.close()
+  override protected def afterAll(): Unit = {
+    executeStatement(conn1, "DROP TABLE my_table")
+    executeStatement(conn2, "DROP TABLE my_table")
+    executeStatement(conn1, "SHUTDOWN")
+    executeStatement(conn2, "SHUTDOWN")
+    super.afterAll()
   }
 }

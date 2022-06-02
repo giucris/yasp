@@ -6,10 +6,9 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes.StringType
 import org.apache.spark.sql.types.{StructField, StructType}
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.{BeforeAndAfterAll, DoNotDiscover}
 
-@DoNotDiscover
 class RegistryTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
 
   override protected def beforeAll(): Unit =
@@ -17,6 +16,8 @@ class RegistryTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAl
 
   override protected def afterAll(): Unit =
     super.afterAll()
+
+  val registry = new DefaultRegistry(spark)
 
   test("register") {
     val expected = spark.createDataset(Seq(Row("h1", "h2", "h3"), Row("a", "b", "c")))(
@@ -30,9 +31,8 @@ class RegistryTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAl
         )
       )
     )
-    new DefaultRegistry(spark).register(expected, "test_table")
-    val actual   = spark.table("test_table")
-    assertDatasetEquals(actual, expected)
+    registry.register(expected, "test_table")
+    assertDatasetEquals(spark.table("test_table"), expected)
   }
 
   test("retrieve") {
@@ -49,8 +49,7 @@ class RegistryTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAl
     )
     expected.createTempView("test_table_2")
 
-    val actual = new DefaultRegistry(spark).retrieve("test_table_2")
-    assertDatasetEquals(actual, expected)
+    assertDatasetEquals(registry.retrieve("test_table_2"), expected)
   }
 
 }
