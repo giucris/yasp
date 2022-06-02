@@ -1,2 +1,5 @@
 #!/bin/bash
-sbt scalafmtSbtCheck scalafmtCheckAll compile test
+sbt scalafmtSbtCheck \
+    scalafmtCheckAll \
+    compile \
+    test

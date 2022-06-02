@@ -83,8 +83,8 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite {
     )
     val actual   = new JdbcReader(spark).read(
       Jdbc(
-        connUrl2,
-        credentials = Some(BasicCredentials("usr", "pwd")),
+        jdbcUrl = connUrl2,
+        jdbcAuth = Some(BasicCredentials("usr", "pwd")),
         options = Map("dbTable" -> "my_table")
       )
     )
@@ -104,8 +104,8 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite {
 
     val actual = new JdbcReader(spark).read(
       Jdbc(
-        "jdbc:h2:mem:db2",
-        credentials = Some(BasicCredentials("usr", "pwd")),
+        jdbcUrl = "jdbc:h2:mem:db2",
+        jdbcAuth = Some(BasicCredentials("usr", "pwd")),
         options = Map("dbTable" -> "(select ID from my_table where id=1) test")
       )
     )
