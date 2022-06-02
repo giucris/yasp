@@ -81,7 +81,5 @@ class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll 
     assertDatasetEquals(actual, expected)
   }
 
-  test("write json"){
-
-  }
+  test("write json") {}
 }

@@ -56,7 +56,8 @@ class ParquetWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAf
       )
     )
 
-    new ParquetWriter().write(expected, Parquet(s"$workspace/parquet2/", partitionBy=Seq("h1", "h2")))
+    new ParquetWriter()
+      .write(expected, Parquet(s"$workspace/parquet2/", partitionBy = Seq("h1", "h2")))
 
     val actual = spark.read
       .option("basePath", s"$workspace/parquet2/")
