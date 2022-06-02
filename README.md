@@ -75,37 +75,32 @@ object MyUsersByCitiesReport {
          |  sources:
          |    - id: users
          |      source:
-         |        Csv:
-         |          path: users.csv
+         |        csv: users.csv
          |    - id: addresses
          |      source:
-         |        Json:
-         |          path: addresses.jsonl
+         |        json: addresses.jsonl
          |    - id: cities
          |      source:
-         |        Jdbc:
-         |          url: my-db-url
-         |          credentials:
-         |            username: ${db_username}
-         |            password: ${db_password}
-         |          options:
-         |            dbTable: my-table
+         |        url: my-db-url
+         |        credentials:
+         |          username: ${db_username}
+         |          password: ${db_password}
+         |        options:
+         |          dbTable: my-table
          |  processes:
          |    - id: user_with_address
          |      process:
-         |        Sql:
-         |          query: ->
-         |            SELECT u.name,u.surname,a.address,a.city,a.country 
-         |            FROM users u 
-         |            JOIN addresses a ON u.id = a.user_id
-         |            JOIN cities c ON a.city_id = c.id
+         |        query: >-
+         |          SELECT u.name,u.surname,a.address,a.city,a.country 
+         |          FROM users u 
+         |          JOIN addresses a ON u.id = a.user_id
+         |          JOIN cities c ON a.city_id = c.id
          |  sinks:
          |    - id: user_with_address
          |      dest:
-         |        Parquet:
-         |          path: user_with_address
-         |          partitionBy:
-         |            - country_id
+         |        parquet: user_with_address
+         |        partitionBy:
+         |          - country_id
          |""".stripMargin
     )
   }
@@ -218,7 +213,7 @@ object MyUsersByCitiesReport {
           sources = Seq(
             YaspSource("users", Csv(path = "users/", Some(Map("header" -> "true"))), partitions = None, cache = None),
             YaspSource("addresses", Json(path = "addresses/", None), partitions = None, cache = None),
-            YaspSource("cities", Parquet(path = "cities/", mergeSchema = false), partitions = None, cache = None)
+            YaspSource("cities", Parquet(parquet = "cities/", mergeSchema = false), partitions = None, cache = None)
           ),
           processes = Seq(
             YaspProcess("users_addresses", Sql("SELECT u.*,a.address,a.city_id FROM users u JOIN addresses a ON u.address_id=a.id"), partitions = None, cache = None),
@@ -253,60 +248,56 @@ specific `Reader`
 
 ```scala
 case class Csv(
-  path:String, 
+  csv:String, 
+  schema: Option[String],
   options:Option[Map[String,String]]
 ) extends Source
 ```
-
-In the options field you can specify any spark csv options. **In addition to the standard spark options you can specify
-a user-defined `schema`**
 
 Examples:
 
 ```scala
 //Define a basic csv
-Csv(path="my-csv-path",None)
+Csv(csv="my-csv-path",None)
 
 //Define a csv with header
-Csv(path="my-csv-path",Some(Map("header"->"true")))
+Csv(csv="my-csv-path",Some(Map("header"->"true")))
 
 //Define a csv with custom separator
-Csv(path="my-csv-path",Some(Map("sep"->";")))
+Csv(csv="my-csv-path",Some(Map("sep"->";")))
 
 //Define a csv with custom separator and user defined schema
-Csv(path="my-csv-path",Some(Map("sep"->"\t","schema"->"field1 INT, field2 STRING")))
+Csv(csv="my-csv-path",Some("field1 INT, field2 STRING"),Some(Map("sep"->"\t")))
 ```
 
 ##### Json
 
 ```scala
 case class Json(
-  path:String, 
+  json:String, 
+  schema: Option[Schema],
   options:Option[Map[String,String]]
 ) extends Source
 ```
-
-In the options field you can specify any spark csv options.  **In addition to the standard spark options you can specify
-the `schema` of the source.**
 
 Examples:
 
 ```scala
 //Define a basic json
-Json(path="my-csv-path",None)
+Json(json="my-csv-path",None,None)
 
 //Define a json with primitives as string
-Json(path="my-csv-path",Some(Map("primitivesAsString"->"true")))
+Json(json="my-csv-path",None,Some(Map("primitivesAsString"->"true")))
 
 //Define a json with a user provided schema
-Json(path="my-csv-path",Some(Map("sep"->"\t","schema"->"field1 INT, field2 STRING")))
+Json(json="my-csv-path",Some("field1 INT, field2 STRING"),Some(Map("sep"->"\t")))
 ```
 
 ##### Parquet
 
 ```scala
 case class Parquet(
-  path: String,
+  parquet: String,
   mergeSchema: Boolean
 ) extends Source
 ```
@@ -315,17 +306,17 @@ Examples:
 
 ```scala
 //Define a basic parquet
-Parquet(path="my-csv-path",false)
+Parquet(parquet="my-csv-path",false)
 
 //Define a basic parquet source with merge schema
-Parquet(path="my-csv-path",true)
+Parquet(parquet="my-csv-path",true)
 ```
 
 ##### Orc
 
 ```scala
 case class Orc(
-  path: String
+  orc: String
 ) extends Source
 ```
 
@@ -333,7 +324,7 @@ case class Orc(
 
 ```scala
 case class Avro(
-  path: String,
+  avro: String,
   options: Option[Map[String, String]]
 ) extends Source
 ```
@@ -342,7 +333,7 @@ case class Avro(
 
 ```scala
 case class Xml(
-  path: String,
+  xml: String,
   options: Option[Map[String, String]]
 ) extends Source
 ```
@@ -351,8 +342,8 @@ case class Xml(
 
 ```scala
 case class Jdbc(
-  url: String,
-  credentials: Option[BasicCredentials],
+  jdbcUrl: String,
+  jdbcAuth: Option[BasicCredentials],
   options: Option[Map[String, String]]
 ) extends Source
 ```
@@ -377,7 +368,7 @@ Define a destination
 
 ```scala
 case class Parquet(
-  path: String, // path of the destination
+  parquet: String, // path of the destination
   partitionBy: Option[Seq[String]] // Optional Seq of column name to use for partition
 ) extends Dest
 ```

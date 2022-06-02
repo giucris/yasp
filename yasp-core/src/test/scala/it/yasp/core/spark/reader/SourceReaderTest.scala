@@ -57,7 +57,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
     )
     val actual   = new SourceReader(spark).read(
       Csv(
-        path = s"$workspace/singleCsv/file1.csv",
+        csv = s"$workspace/singleCsv/file1.csv",
         options = Map(
           "header" -> "false",
           "sep"    -> ","
@@ -189,7 +189,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
     val actual   = new SourceReader(spark).read(
-      Jdbc(url = connUrl1, credentials = None, Map("dbTable" -> "my_table"))
+      Jdbc(jdbcUrl = connUrl1, jdbcAuth = None, Map("dbTable" -> "my_table"))
     )
     assertDatasetEquals(actual, expected)
   }
