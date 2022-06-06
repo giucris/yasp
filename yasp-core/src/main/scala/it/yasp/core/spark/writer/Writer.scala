@@ -1,7 +1,7 @@
 package it.yasp.core.spark.writer
 
 import it.yasp.core.spark.model.Dest
-import it.yasp.core.spark.model.Dest.{Csv, Parquet}
+import it.yasp.core.spark.model.Dest.{Csv, Jdbc, Parquet}
 import org.apache.spark.sql.DataFrame
 
 /** Writer
@@ -30,12 +30,15 @@ object Writer {
         options: Map[String, String],
         partitionBy: Seq[String],
         mode: Option[String],
-        path: String
+        path: Option[String]
     ): Unit = {
-      val writer     = dataFrame.write.format(format).options(options)
-      val writerMode = mode.map(writer.mode).getOrElse(writer)
-      if (partitionBy.isEmpty) writerMode.save(path)
-      else writerMode.partitionBy(partitionBy: _*).save(path)
+      val wr1 = dataFrame.write.format(format).options(options)
+      val wr2 = mode.map(wr1.mode).getOrElse(wr1)
+      val wr3 = if (partitionBy.isEmpty) wr2 else wr2.partitionBy(partitionBy: _*)
+      path match {
+        case Some(p) => wr3.save(p)
+        case None    => wr3.save()
+      }
     }
   }
 
@@ -43,14 +46,19 @@ object Writer {
     */
   class CsvWriter extends Writer[Csv] with SparkWriteSupport {
     override def write(dataFrame: DataFrame, dest: Csv): Unit =
-      writeDf(dataFrame, format = "csv", dest.options, dest.partitionBy, dest.mode, dest.csv)
+      writeDf(dataFrame, format = "csv", dest.options, dest.partitionBy, dest.mode, Some(dest.csv))
   }
 
   /** ParquetWriter an implementation of Writer[Parquet]
     */
   class ParquetWriter extends Writer[Parquet] with SparkWriteSupport {
     override def write(dataFrame: DataFrame, dest: Parquet): Unit =
-      writeDf(dataFrame, format = "parquet", Map.empty, dest.partitionBy, dest.mode, dest.parquet)
+      writeDf(dataFrame, format = "parquet", Map.empty, dest.partitionBy, dest.mode, Some(dest.parquet))
+  }
+
+  class JdbcWriter extends Writer[Jdbc] with SparkWriteSupport {
+    override def write(dataFrame: DataFrame, dest: Jdbc): Unit =
+      writeDf(dataFrame,format = "jdbc",Map("user"->dest.jdbcAuth.map(_.username).getOrElse("")),Seq.empty,None,None)
   }
 
   //TODO Something that retrieve automatically the relative Writer[A] should be implemented. Instead of doing it with an exhaustive pattern matching. probably shapeless could help on this
@@ -63,6 +71,7 @@ object Writer {
       dest match {
         case d: Parquet => new ParquetWriter().write(dataFrame, d)
         case d: Csv     => new CsvWriter().write(dataFrame, d)
+        case d: Jdbc => new JdbcWriter().write(dataFrame,d)
       }
   }
 }
