@@ -21,6 +21,21 @@ object Dest {
       partitionBy: Seq[String] = Seq.empty
   ) extends Dest
 
+  /** A Json destination Model
+    * @param json:
+    *   output path
+    * @param options:
+    *   csv output options
+    * @param partitionBy:
+    *   Sequence of column name
+    */
+  final case class Json(
+      json: String,
+      options: Map[String, String] = Map.empty,
+      mode: Option[String] = None,
+      partitionBy: Seq[String] = Seq.empty
+  ) extends Dest
+
   /** A Parquet destination Model
     * @param parquet:
     *   output Path

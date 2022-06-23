@@ -1,7 +1,7 @@
 package it.yasp.core.spark.writer
 
 import it.yasp.core.spark.model.Dest
-import it.yasp.core.spark.model.Dest.{Csv, Jdbc, Parquet}
+import it.yasp.core.spark.model.Dest.{Csv, Jdbc, Json, Parquet}
 import org.apache.spark.sql.DataFrame
 
 /** Writer
@@ -49,6 +49,20 @@ object Writer {
       writeDf(dataFrame, format = "csv", dest.options, dest.partitionBy, dest.mode, Some(dest.csv))
   }
 
+  /** CsvWrite an implementation of Writer[Csv]
+    */
+  class JsonWriter extends Writer[Json] with SparkWriteSupport {
+    override def write(dataFrame: DataFrame, dest: Json): Unit =
+      writeDf(
+        dataFrame,
+        format = "json",
+        dest.options,
+        dest.partitionBy,
+        dest.mode,
+        Some(dest.json)
+      )
+  }
+
   class JdbcWriter extends Writer[Jdbc] with SparkWriteSupport {
     override def write(dataFrame: DataFrame, dest: Jdbc): Unit = {
       val opts = dest.options ++ Map(
@@ -85,6 +99,7 @@ object Writer {
         case d: Parquet => new ParquetWriter().write(dataFrame, d)
         case d: Csv     => new CsvWriter().write(dataFrame, d)
         case d: Jdbc    => new JdbcWriter().write(dataFrame, d)
+        case d: Json    => new JsonWriter().write(dataFrame, d)
       }
   }
 }
