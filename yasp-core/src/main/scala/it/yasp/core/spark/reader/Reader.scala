@@ -27,7 +27,7 @@ trait Reader[A <: Source] {
 object Reader {
 
   private[reader] trait SparkReadSupport {
-    def read(
+    protected def read(
         spark: SparkSession,
         format: String,
         options: Map[String, String],

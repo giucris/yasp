@@ -44,6 +44,7 @@ object Dest {
   final case class Jdbc(
       jdbcUrl: String,
       jdbcAuth: Option[BasicCredentials] = None,
-      options: Map[String, String] = Map.empty
+      options: Map[String, String] = Map.empty,
+      mode: Option[String] = None
   ) extends Dest
 }

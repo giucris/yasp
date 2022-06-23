@@ -14,6 +14,7 @@ import java.sql.Connection
 import java.sql.DriverManager._
 
 class JdbcReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
+  val reader = new JdbcReader(spark)
 
   val connUrl1: String = "jdbc:h2:mem:db1"
   val connUrl2: String = "jdbc:h2:mem:db2"
@@ -41,14 +42,6 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfter
       stmt = "INSERT INTO my_table VALUES (1, 'name1'), (2,'name2'), (3,'name3'),(4,'name4')"
     )
   }
-
-  private def executeStatement(conn: Connection, stmt: String): Unit = {
-    val statement = conn.createStatement
-    statement.execute(stmt)
-    statement.close()
-  }
-
-  val reader = new JdbcReader(spark)
 
   test("read database table") {
     val expected = spark.createDataset(
@@ -111,11 +104,10 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfter
     assertDatasetEquals(actual, expected)
   }
 
-  override protected def afterAll(): Unit = {
-    executeStatement(conn1, "DROP TABLE my_table")
-    executeStatement(conn2, "DROP TABLE my_table")
-    executeStatement(conn1, "SHUTDOWN")
-    executeStatement(conn2, "SHUTDOWN")
-    super.afterAll()
+  private def executeStatement(conn: Connection, stmt: String): Unit = {
+    val statement = conn.createStatement
+    statement.execute(stmt)
+    statement.close()
   }
+
 }

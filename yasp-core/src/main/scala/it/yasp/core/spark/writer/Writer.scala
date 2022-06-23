@@ -24,7 +24,7 @@ trait Writer[A <: Dest] {
 object Writer {
 
   private[writer] trait SparkWriteSupport {
-    def writeDf(
+    protected def writeDf(
         dataFrame: DataFrame,
         format: String,
         options: Map[String, String],
@@ -49,6 +49,17 @@ object Writer {
       writeDf(dataFrame, format = "csv", dest.options, dest.partitionBy, dest.mode, Some(dest.csv))
   }
 
+  class JdbcWriter extends Writer[Jdbc] with SparkWriteSupport {
+    override def write(dataFrame: DataFrame, dest: Jdbc): Unit = {
+      val opts = dest.options ++ Map(
+        "url"      -> dest.jdbcUrl,
+        "user"     -> dest.jdbcAuth.map(_.username).getOrElse(""),
+        "password" -> dest.jdbcAuth.map(_.password).getOrElse("")
+      )
+      writeDf(dataFrame, format = "jdbc", opts, Seq.empty, dest.mode, None)
+    }
+  }
+
   /** ParquetWriter an implementation of Writer[Parquet]
     */
   class ParquetWriter extends Writer[Parquet] with SparkWriteSupport {
@@ -60,18 +71,6 @@ object Writer {
         dest.partitionBy,
         dest.mode,
         Some(dest.parquet)
-      )
-  }
-
-  class JdbcWriter extends Writer[Jdbc] with SparkWriteSupport {
-    override def write(dataFrame: DataFrame, dest: Jdbc): Unit =
-      writeDf(
-        dataFrame,
-        format = "jdbc",
-        Map("user" -> dest.jdbcAuth.map(_.username).getOrElse("")),
-        Seq.empty,
-        None,
-        None
       )
   }
 
