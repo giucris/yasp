@@ -58,9 +58,4 @@ class JdbcWriterTest extends AnyFunSuite with SparkTestSuite {
     assertDatasetEquals(actual, df)
   }
 
-  private def executeStatement(conn: Connection, stmt: String): Unit = {
-    val statement = conn.createStatement
-    statement.execute(stmt)
-    statement.close()
-  }
 }
