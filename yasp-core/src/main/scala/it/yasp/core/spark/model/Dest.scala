@@ -33,11 +33,13 @@ object Dest {
       partitionBy: Seq[String] = Seq.empty
   ) extends Dest
 
-  /**
-    * A JDBC Destination model
-    * @param jdbcUrl: Jdbc url
-    * @param jdbcAuth: Jdbc auth
-    * @param options: options map
+  /** A JDBC Destination model
+    * @param jdbcUrl:
+    *   Jdbc url
+    * @param jdbcAuth:
+    *   Jdbc auth
+    * @param options:
+    *   options map
     */
   final case class Jdbc(
       jdbcUrl: String,

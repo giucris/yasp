@@ -79,19 +79,31 @@ class CsvWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterA
   }
 
   test("write with append mode") {
-    writer.write(df, Csv(s"$workspace/output3/", options = Map("header" -> "true"),mode=Some("append")))
-    writer.write(df, Csv(s"$workspace/output3/", options = Map("header" -> "true"),mode=Some("append")))
+    writer.write(
+      df,
+      Csv(s"$workspace/output3/", options = Map("header" -> "true"), mode = Some("append"))
+    )
+    writer.write(
+      df,
+      Csv(s"$workspace/output3/", options = Map("header" -> "true"), mode = Some("append"))
+    )
 
-    val actual   = spark.read.option("header","true").csv(s"$workspace/output3/")
+    val actual   = spark.read.option("header", "true").csv(s"$workspace/output3/")
     val expected = df.union(df)
-    assertDatasetEquals(actual,expected)
+    assertDatasetEquals(actual, expected)
   }
 
   test("write with overwrite mode") {
-    writer.write(df, Csv(s"$workspace/output4/", options = Map("header" -> "true"),mode=Some("overwrite")))
-    writer.write(df, Csv(s"$workspace/output4/", options = Map("header" -> "true"),mode=Some("overwrite")))
+    writer.write(
+      df,
+      Csv(s"$workspace/output4/", options = Map("header" -> "true"), mode = Some("overwrite"))
+    )
+    writer.write(
+      df,
+      Csv(s"$workspace/output4/", options = Map("header" -> "true"), mode = Some("overwrite"))
+    )
 
-    val actual   = spark.read.option("header","true").csv(s"$workspace/output4/")
-    assertDatasetEquals(actual,df)
+    val actual = spark.read.option("header", "true").csv(s"$workspace/output4/")
+    assertDatasetEquals(actual, df)
   }
 }

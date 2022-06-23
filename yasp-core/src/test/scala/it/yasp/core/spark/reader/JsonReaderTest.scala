@@ -104,5 +104,4 @@ class JsonReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfter
     assertDatasetEquals(actual, expected)
   }
 
-
 }

@@ -53,12 +53,26 @@ object Writer {
     */
   class ParquetWriter extends Writer[Parquet] with SparkWriteSupport {
     override def write(dataFrame: DataFrame, dest: Parquet): Unit =
-      writeDf(dataFrame, format = "parquet", Map.empty, dest.partitionBy, dest.mode, Some(dest.parquet))
+      writeDf(
+        dataFrame,
+        format = "parquet",
+        Map.empty,
+        dest.partitionBy,
+        dest.mode,
+        Some(dest.parquet)
+      )
   }
 
   class JdbcWriter extends Writer[Jdbc] with SparkWriteSupport {
     override def write(dataFrame: DataFrame, dest: Jdbc): Unit =
-      writeDf(dataFrame,format = "jdbc",Map("user"->dest.jdbcAuth.map(_.username).getOrElse("")),Seq.empty,None,None)
+      writeDf(
+        dataFrame,
+        format = "jdbc",
+        Map("user" -> dest.jdbcAuth.map(_.username).getOrElse("")),
+        Seq.empty,
+        None,
+        None
+      )
   }
 
   //TODO Something that retrieve automatically the relative Writer[A] should be implemented. Instead of doing it with an exhaustive pattern matching. probably shapeless could help on this
@@ -71,7 +85,7 @@ object Writer {
       dest match {
         case d: Parquet => new ParquetWriter().write(dataFrame, d)
         case d: Csv     => new CsvWriter().write(dataFrame, d)
-        case d: Jdbc => new JdbcWriter().write(dataFrame,d)
+        case d: Jdbc    => new JdbcWriter().write(dataFrame, d)
       }
   }
 }
