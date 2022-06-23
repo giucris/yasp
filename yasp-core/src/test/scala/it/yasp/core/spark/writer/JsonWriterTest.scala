@@ -11,7 +11,8 @@ import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 
 class JsonWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
-  private val workspace = "yasp-core/src/test/resources/JsonWriterTest"
+  private val workspace  = "yasp-core/src/test/resources/JsonWriterTest"
+  val writer: JsonWriter = new JsonWriter()
 
   override protected def beforeAll(): Unit = {
     TestUtils.cleanFolder(workspace)
@@ -23,8 +24,7 @@ class JsonWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfter
     super.afterAll()
   }
 
-  val writer: JsonWriter = new JsonWriter()
-  val df: Dataset[Row]   = spark.createDataset(Seq(Row("a", "b", "c"), Row("x", "y", "z")))(
+  val df: Dataset[Row] = spark.createDataset(Seq(Row("a", "b", "c"), Row("x", "y", "z")))(
     RowEncoder(
       StructType(
         Seq(
