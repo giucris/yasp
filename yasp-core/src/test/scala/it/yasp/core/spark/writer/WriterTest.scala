@@ -22,7 +22,7 @@ class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll 
   private val connUrl1: String       = "jdbc:h2:mem:dbx"
   private val connection: Connection = getConnection(connUrl1)
 
-  private val df: Dataset[Row]       = spark.createDataset(Seq(Row("a", "b", "c")))(
+  private val df: Dataset[Row] = spark.createDataset(Seq(Row("a", "b", "c")))(
     RowEncoder(
       StructType(
         Seq(
