@@ -11,8 +11,8 @@ An easy and lightweight tool for data engineering process built on top of Apache
 Yasp was created to help data engineers working with Apache Spark to reduce their pipeline development time by using a
 no-code/less-code approach.
 
-With Yasp you can configure an ETL/ELT job that fetch data from a multiple source execute multiple transformation
-and write in multiple destination
+With Yasp you can configure an ETL/ELT job that fetch data from a multiple source execute multiple transformation and
+write in multiple destination
 
 It is written in **Scala (2.11.12)** on top of **Apache Spark (2.4.7)** and managed as an **SBT (1.4.9)** multi module
 project.
@@ -45,15 +45,15 @@ Yasp provide 3 different module, you can use any one of them.
 ### YaspApp
 
 YaspApp module provide the highest possible level of abstraction for your ETL. You should just provide a yml definition
-of your data operations, it will initialize the SparkSession and execute all the steps provided on the yml
-file.
+of your data operations, it will initialize the SparkSession and execute all the steps provided on the yml file.
 
 YaspApp are able to interpolate environment variable into your yaml file, helping you to avoid writing secrets in your
 task. Just add some placeholders like this `${my-pwd}` and yasp will interpolate it.
 
 Currently, there are two different mode to run a YaspApp **but only one is stable, use it as a dependency on your code**
 
-**I'm working to make the executable version stable in order to run the binary jar with the yml provided as external file.**
+**I'm working to make the executable version stable in order to run the binary jar with the yml provided as external
+file.**
 
 #### YaspApp as library
 
@@ -393,13 +393,13 @@ You can contribute in three possible way:
   information to replicate it.
 * **New proposal**: Open an issue with the tag `enhancement` and provide all details regarding your suggestion.
 * **Open a pull request**:
-  * Fork the project
-  * Create your feature branch `git checkout -b feature/my-awesome-feature`
-  * Add your changes and commit `git commit -m 'my awesome feature'`
-  * Run the ci locally `bash ci.sh`
-  * Push to the branch `git push origin feature/my-awesome-feature`
-  * Open a pull request
-  * Wait for project owners to approve or start a conversation on your pull request
+    * Fork the project
+    * Create your feature branch `git checkout -b feature/my-awesome-feature`
+    * Add your changes and commit `git commit -m 'my awesome feature'`
+    * Run the ci locally `bash ci.sh`
+    * Push to the branch `git push origin feature/my-awesome-feature`
+    * Open a pull request
+    * Wait for project owners to approve or start a conversation on your pull request
 
 ### Code of conduct
 
@@ -412,7 +412,8 @@ You can contribute in three possible way:
 
 ## Contact
 
-- Giuseppe Cristiano [Twitter](https://twitter.com/giucristiano89) [Linkedin](https://www.linkedin.com/in/giuseppe-cristiano-developer/)
+- Giuseppe
+  Cristiano [Twitter](https://twitter.com/giucristiano89) [Linkedin](https://www.linkedin.com/in/giuseppe-cristiano-developer/)
 
 ## Acknowledgements
 

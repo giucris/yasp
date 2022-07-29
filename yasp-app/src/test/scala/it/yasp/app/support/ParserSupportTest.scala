@@ -38,7 +38,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         ),
         Seq(
           YaspSink("p1", Dest.Parquet("out-path-1")),
-          YaspSink("p3", Dest.Parquet("out-path-2", Seq("col1", "col2")))
+          YaspSink("p3", Dest.Parquet("out-path-2", partitionBy = Seq("col1", "col2")))
         )
       )
     )

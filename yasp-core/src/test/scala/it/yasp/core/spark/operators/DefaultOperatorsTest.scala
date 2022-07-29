@@ -9,16 +9,8 @@ import org.apache.spark.sql.types.DataTypes.StringType
 import org.apache.spark.sql.types.{StructField, StructType}
 import org.apache.spark.storage.StorageLevel
 import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.{BeforeAndAfterAll, DoNotDiscover}
 
-@DoNotDiscover
-class DefaultOperatorsTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
-
-  override protected def beforeAll(): Unit =
-    super.beforeAll()
-
-  override protected def afterAll(): Unit =
-    super.afterAll()
+class DefaultOperatorsTest extends AnyFunSuite with SparkTestSuite {
 
   val operators = new DefaultOperators()
 

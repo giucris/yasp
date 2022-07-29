@@ -7,11 +7,10 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes._
 import org.apache.spark.sql.types.{StructField, StructType}
-import org.scalatest.DoNotDiscover
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 
-@DoNotDiscover
-class XmlReaderTest extends AnyFunSuite with SparkTestSuite {
+class XmlReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
 
   private val workspace = "yasp-core/src/test/resources/XmlReaderTest"
 
@@ -25,6 +24,7 @@ class XmlReaderTest extends AnyFunSuite with SparkTestSuite {
     super.afterAll()
   }
 
+  val reader = new XmlReader(spark)
   test("read a single xml file") {
     TestUtils.createFile(
       s"$workspace/xml/file.xml",
@@ -47,7 +47,7 @@ class XmlReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = new XmlReader(spark).read(Xml(s"$workspace/xml/file.xml", Map("rowTag" -> "root")))
+    val actual = reader.read(Xml(s"$workspace/xml/file.xml", Map("rowTag" -> "root")))
     assertDatasetEquals(actual, expected)
   }
 
@@ -85,7 +85,7 @@ class XmlReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = new XmlReader(spark).read(
+    val actual = reader.read(
       Xml(s"$workspace/xmls/file1.xml,$workspace/xmls/file2.xml", Map("rowTag" -> "root"))
     )
     assertDatasetEquals(actual, expected)

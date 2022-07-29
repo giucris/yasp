@@ -7,11 +7,10 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes.StringType
 import org.apache.spark.sql.types.{StructField, StructType}
-import org.scalatest.DoNotDiscover
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 
-@DoNotDiscover
-class OrcReaderTest extends AnyFunSuite with SparkTestSuite {
+class OrcReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
 
   private val workspace = "yasp-core/src/test/resources/OrcReaderTest"
 
@@ -24,6 +23,8 @@ class OrcReaderTest extends AnyFunSuite with SparkTestSuite {
     TestUtils.cleanFolder(workspace)
     super.afterAll()
   }
+
+  val reader = new OrcReader(spark)
 
   test("read") {
     val expected = spark
@@ -42,7 +43,7 @@ class OrcReaderTest extends AnyFunSuite with SparkTestSuite {
 
     expected.write.orc(s"$workspace/orcData/")
 
-    val actual = new OrcReader(spark).read(Orc(s"$workspace/orcData/"))
+    val actual = reader.read(Orc(s"$workspace/orcData/"))
     assertDatasetEquals(actual, expected)
   }
 

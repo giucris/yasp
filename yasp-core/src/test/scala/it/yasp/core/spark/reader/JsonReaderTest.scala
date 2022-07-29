@@ -8,11 +8,10 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes._
 import org.apache.spark.sql.types.{StructField, StructType}
-import org.scalatest.DoNotDiscover
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 
-@DoNotDiscover
-class JsonReaderTest extends AnyFunSuite with SparkTestSuite {
+class JsonReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
 
   private val workspace = "yasp-core/src/test/resources/JsonReaderTest"
 
@@ -25,6 +24,8 @@ class JsonReaderTest extends AnyFunSuite with SparkTestSuite {
     cleanFolder(workspace)
     super.afterAll()
   }
+
+  val reader = new JsonReader(spark)
 
   test("read") {
     createFile(
@@ -60,7 +61,7 @@ class JsonReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new JsonReader(spark).read(Json(s"$workspace/input1/"))
+    val actual   = reader.read(Json(s"$workspace/input1/"))
     assertDatasetEquals(actual, expected)
   }
 
@@ -94,7 +95,7 @@ class JsonReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new JsonReader(spark).read(
+    val actual   = reader.read(
       Json(
         json = s"$workspace/input2/",
         schema = Some("a STRING, b LONG, c LONG, d STRING")
