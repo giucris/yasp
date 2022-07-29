@@ -92,7 +92,12 @@ trait DecodersSupport {
     *   Decoder[Dest]
     */
   implicit def destDecoder: Decoder[Dest] =
-    Decoder[Dest.Parquet].widen
+    List[Decoder[Dest]](
+      Decoder[Dest.Csv].widen,
+      Decoder[Dest.Json].widen,
+      Decoder[Dest.Parquet].widen,
+      Decoder[Dest.Jdbc].widen
+    ).reduceLeft(_ or _)
 
   /** A Process circe Decoder
     * @return
