@@ -26,7 +26,7 @@ trait SparkTestSuite extends SharedSparkSession {
 
   /** Assertion method for [[Dataset]] of [[Row]]
     *
-    * Dataset are equal if scema are equals and rows are equals
+    * Dataset are equal if schema are equals and rows are equals
     *
     * @param actual:
     *   the actual [[Dataset]]

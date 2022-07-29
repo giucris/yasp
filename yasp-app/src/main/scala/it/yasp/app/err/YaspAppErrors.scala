@@ -29,7 +29,10 @@ object YaspAppErrors {
     * @param details:
     *   a [[Throwable]] instance that cause this [[YaspAppErrors]]
     */
-  final case class InterpolationError(yml: String, details: Throwable) extends YaspAppErrors
+  final case class InterpolationError(
+      yml: String,
+      details: Throwable
+  ) extends YaspAppErrors
 
   /** ParseYmlError model
     *

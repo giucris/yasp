@@ -6,10 +6,8 @@ import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
-import org.scalatest.DoNotDiscover
 import org.scalatest.funsuite.AnyFunSuite
 
-@DoNotDiscover
 class SqlProcessorTest extends AnyFunSuite with SparkTestSuite {
 
   test("process") {

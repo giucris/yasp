@@ -15,9 +15,9 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class YaspServiceTest
     extends AnyFunSuite
+    with SparkTestSuite
     with MockFactory
-    with BeforeAndAfterAll
-    with SparkTestSuite {
+    with BeforeAndAfterAll {
 
   private val workspace = "yasp-service/src/test/resources/YaspExecutorTest"
 

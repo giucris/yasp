@@ -7,11 +7,10 @@ import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes.StringType
 import org.apache.spark.sql.types.{StructField, StructType}
 import org.apache.spark.sql.{Row, SaveMode}
-import org.scalatest.DoNotDiscover
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 
-@DoNotDiscover
-class ParquetReaderTest extends AnyFunSuite with SparkTestSuite {
+class ParquetReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
 
   private val workspace = "yasp-core/src/test/resources/ParquetReaderTest"
 
@@ -24,6 +23,8 @@ class ParquetReaderTest extends AnyFunSuite with SparkTestSuite {
     TestUtils.cleanFolder(workspace)
     super.afterAll()
   }
+
+  val reader = new ParquetReader(spark)
 
   test("read single file") {
     spark
@@ -54,7 +55,7 @@ class ParquetReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
 
-    val actual = new ParquetReader(spark).read(Parquet(s"$workspace/parquet1/"))
+    val actual = reader.read(Parquet(s"$workspace/parquet1/"))
     assertDatasetEquals(actual, expected)
   }
 
@@ -102,7 +103,7 @@ class ParquetReaderTest extends AnyFunSuite with SparkTestSuite {
           )
         )
       )
-    val actual   = new ParquetReader(spark).read(Parquet(s"$workspace/parquet2/"))
+    val actual   = reader.read(Parquet(s"$workspace/parquet2/"))
     assertDatasetEquals(actual, expected)
   }
 
@@ -152,7 +153,7 @@ class ParquetReaderTest extends AnyFunSuite with SparkTestSuite {
           )
         )
       )
-    val actual   = new ParquetReader(spark).read(Parquet(s"$workspace/parquet3/", Some(true)))
+    val actual   = reader.read(Parquet(s"$workspace/parquet3/", Some(true)))
     assertDatasetEquals(actual, expected)
   }
 

@@ -8,11 +8,10 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes._
 import org.apache.spark.sql.types.{StructField, StructType}
-import org.scalatest.DoNotDiscover
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 
-@DoNotDiscover
-class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
+class CsvReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
 
   private val workspace = "yasp-core/src/test/resources/CsvReaderTest"
 
@@ -25,6 +24,8 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
     cleanFolder(workspace)
     super.afterAll()
   }
+
+  val reader: CsvReader = new CsvReader(spark)
 
   test("read without header") {
     createFile(s"$workspace/input1/file1.csv", Seq("h1,h2,h3", "a,b,c"))
@@ -39,7 +40,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new CsvReader(spark).read(Csv(s"$workspace/input1/"))
+    val actual   = reader.read(Csv(s"$workspace/input1/"))
     assertDatasetEquals(actual, expected)
   }
 
@@ -57,7 +58,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new CsvReader(spark).read(
+    val actual   = reader.read(
       Csv(s"$workspace/input2/", options = Map("header" -> "true"))
     )
     assertDatasetEquals(actual, expected)
@@ -77,7 +78,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    val actual   = new CsvReader(spark).read(
+    val actual   = reader.read(
       Csv(s"$workspace/input3/", options = Map("header" -> "true", "sep" -> "|"))
     )
     assertDatasetEquals(actual, expected)
@@ -98,7 +99,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = new CsvReader(spark).read(
+    val actual = reader.read(
       Csv(
         csv = s"$workspace/input4/",
         schema = Some("h1 INT, h2 STRING, h3 STRING"),
@@ -124,7 +125,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val actual = new CsvReader(spark).read(
+    val actual = reader.read(
       Csv(
         csv = s"$workspace/input5/",
         schema = Some("h1 INT, h2 STRING, h3 STRING,_corrupt_record STRING"),
