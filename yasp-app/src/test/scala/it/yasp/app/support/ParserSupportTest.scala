@@ -2,7 +2,7 @@ package it.yasp.app.support
 
 import io.circe.generic.auto._
 import it.yasp.app.err.YaspAppErrors.ParseYmlError
-import it.yasp.core.spark.model.CacheLayer.{Checkpoint, Memory, MemoryAndDisk}
+import it.yasp.core.spark.model.CacheLayer._
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.SessionType.Distributed
 import it.yasp.core.spark.model._
@@ -28,13 +28,14 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
           ),
           YaspSource(
             "id3",
-            Source.Jdbc("url", Some(BasicCredentials("x", "y")), Map("dbTable" -> "table"))
+            Source.Jdbc("url", Some(BasicCredentials("x", "y")), Map("dbTable" -> "table")),
+            cache = Some(Disk)
           ),
           YaspSource("id4", Source.Csv("z"), cache = Some(Checkpoint))
         ),
         Seq(
           YaspProcess("p1", Sql("my-query")),
-          YaspProcess("p2", Sql("my-query-2"))
+          YaspProcess("p2", Sql("my-query-2"), cache = Some(MemoryAndDiskSer))
         ),
         Seq(
           YaspSink("p1", Dest.Parquet("out-path-1")),
@@ -71,6 +72,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        password: y
         |      options:
         |        dbTable: table
+        |    cache: Disk
         |  - id: id4
         |    source:
         |      csv: z
@@ -82,6 +84,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |  - id: p2
         |    process:
         |      query: my-query-2
+        |    cache: MemoryAndDiskSer
         |  sinks:
         |  - id: p1
         |    dest:

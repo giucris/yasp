@@ -3,7 +3,7 @@ inThisBuild(
     organization := "yasp",
     licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
     version      := "0.0.1",
-    scalaVersion := "2.11.12",
+    scalaVersion := "2.12.15",
     scalacOptions ++= Settings.scalaCompilerSettings,
     developers   := List(
       Developer(
@@ -18,9 +18,9 @@ inThisBuild(
 lazy val dependencies = new {
   val scoptV      = "4.0.1"
   val apacheTextV = "1.9"
-  val circeV      = "0.10.1"
-  val sparkV      = "2.4.7"
-  val sparkXmlV   = "0.8.0"
+  val circeV      = "0.12.0"
+  val sparkV      = "3.3.0"
+  val sparkXmlV   = "0.14.0"
   val scalaTestV  = "3.2.10"
   val scalaMockV  = "5.1.0"
   val h2dbV       = "1.4.200"
