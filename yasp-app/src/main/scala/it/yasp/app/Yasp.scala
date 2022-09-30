@@ -1,6 +1,11 @@
 package it.yasp.app
 
 import it.yasp.app.args.YaspArgs._
+import it.yasp.core.spark.model.Process.Sql
+import it.yasp.core.spark.model.{Dest, Session, Source}
+import it.yasp.core.spark.model.SessionType.Local
+import it.yasp.service.YaspService
+import it.yasp.service.model.{YaspExecution, YaspPlan, YaspProcess, YaspSink, YaspSource}
 
 /** Yasp
   *

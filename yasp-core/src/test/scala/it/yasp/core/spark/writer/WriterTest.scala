@@ -1,6 +1,6 @@
 package it.yasp.core.spark.writer
 
-import it.yasp.core.spark.model.Dest.{Csv, Jdbc, Json, Parquet}
+import it.yasp.core.spark.model.Dest.Format
 import it.yasp.core.spark.writer.Writer.DestWriter
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -46,31 +46,32 @@ class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll 
   }
 
   test("write parquet") {
-    writer.write(df, Parquet(s"$workspace/parquet1/"))
+    writer.write(df, Format("parquet", options = Map("path" -> s"$workspace/parquet1/")))
     val actual = spark.read.parquet(s"$workspace/parquet1/")
     assertDatasetEquals(actual, df)
   }
 
   test("write csv") {
-    writer.write(df, Csv(s"$workspace/csv1/", Map("header" -> "true")))
+    writer.write(df, Format("csv", options = Map("header" -> "true","path" -> s"$workspace/csv1/")))
     val actual = spark.read.options(Map("header" -> "true")).csv(s"$workspace/csv1/")
     assertDatasetEquals(actual, df)
   }
 
   test("write json") {
-    writer.write(df, Json(s"$workspace/json1/"))
+    writer.write(df, Format("json", options = Map("path" -> s"$workspace/json1/")))
     val actual = spark.read.json(s"$workspace/json1/")
     assertDatasetEquals(actual, df)
   }
 
   test("write jdbc") {
-    writer.write(df, Jdbc(connUrl1, None, Map("dbTable" -> "my_test_table"), None))
-    val expectedDf = df
+    writer.write(df, Format("jdbc",Map("url"->connUrl1,"dbTable" -> "my_test_table"), None))
+
+    val dfWithMetadata = df
       .withMetadata("h0", new MetadataBuilder().putLong("scale", 0).build())
       .withMetadata("h1", new MetadataBuilder().putLong("scale", 0).build())
       .withMetadata("h2", new MetadataBuilder().putLong("scale", 0).build())
     val actual = spark.read.jdbc(connUrl1, "my_test_table", new Properties())
-    assertDatasetEquals(actual, expectedDf)
+    assertDatasetEquals(actual, dfWithMetadata)
   }
 
 }

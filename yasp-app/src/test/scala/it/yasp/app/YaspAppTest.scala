@@ -67,7 +67,9 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
         |  sinks:
         |    - id: user_with_address
         |      dest:
-        |        parquet: yasp-app/src/test/resources/YaspApp/test1/output/
+        |        format: parquet
+        |        options:
+        |          path: yasp-app/src/test/resources/YaspApp/test1/output/
         |""".stripMargin
     )
 
@@ -137,7 +139,9 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
           |  sinks:
           |    - id: user_with_address_file
           |      dest:
-          |        parquet: yasp-app/src/test/resources/YaspApp/test2/output/
+          |        format: parquet
+          |        options:
+          |          path: yasp-app/src/test/resources/YaspApp/test2/output/
           |""".stripMargin
       )
     )

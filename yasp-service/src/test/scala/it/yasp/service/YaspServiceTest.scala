@@ -1,8 +1,9 @@
 package it.yasp.service
 
+import it.yasp.core.spark.model.Dest.Format
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.SessionType.Local
-import it.yasp.core.spark.model.{Dest, Session, Source}
+import it.yasp.core.spark.model.{Session, Source}
 import it.yasp.service.model._
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
@@ -88,7 +89,7 @@ class YaspServiceTest
             )
           ),
           sinks = Seq(
-            YaspSink("data_3", Dest.Parquet(s"$workspace/parquet-out/"))
+            YaspSink("data_3", Format("parquet",options=Map("path"->s"$workspace/parquet-out/")))
           )
         )
       )

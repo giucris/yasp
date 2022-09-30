@@ -44,11 +44,12 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
           YaspProcess("p2", Sql("my-query-2"))
         ),
         Seq(
-          YaspSink("p1", Dest.Parquet("out-path-1")),
-          YaspSink("p3", Dest.Parquet("out-path-2", partitionBy = Seq("col1", "col2")))
+          YaspSink("p1", Dest.Format("parquet",Map("path"->"out-path-1"))),
+          YaspSink("p3", Dest.Format("parquet",Map("path"->"out-path-2"), partitionBy = Seq("col1", "col2")))
         )
       )
     )
+
     val actual   = parseYaml[YaspExecution](
       """
         |session:
@@ -97,10 +98,14 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |  sinks:
         |  - id: p1
         |    dest:
-        |      parquet: out-path-1
+        |      format: parquet
+        |      options:
+        |        path: out-path-1
         |  - id: p3
         |    dest:
-        |      parquet: out-path-2
+        |      format: parquet
+        |      options:
+        |        path: out-path-2
         |      partitionBy:
         |        - col1
         |        - col2

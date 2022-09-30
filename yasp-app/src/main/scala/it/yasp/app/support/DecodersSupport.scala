@@ -1,7 +1,6 @@
 package it.yasp.app.support
 
 import cats.syntax.functor._
-import io.circe.Decoder.Result
 import io.circe.generic.auto._
 import io.circe.{Decoder, HCursor, KeyDecoder}
 import it.yasp.core.spark.model.CacheLayer._
@@ -81,10 +80,7 @@ trait DecodersSupport {
     */
   implicit def destDecoder: Decoder[Dest] =
     List[Decoder[Dest]](
-      Decoder[Dest.Csv].widen,
-      Decoder[Dest.Json].widen,
-      Decoder[Dest.Parquet].widen,
-      Decoder[Dest.Jdbc].widen
+      Decoder[Dest.Format].widen
     ).reduceLeft(_ or _)
 
   /** A Process circe Decoder
