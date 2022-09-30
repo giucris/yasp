@@ -112,6 +112,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterA
   test("read with header custom sep schema and corrupt record") {
     createFile(s"$workspace/input5/file1.csv", Seq("h1|h2|h3", "1|b|c"))
     createFile(s"$workspace/input5/file2.csv", Seq("h1|h2|h3", "x|x|x"))
+
     val expected = spark.createDataset(Seq(Row(1, "b", "c", null), Row(null, "x", "x", "x|x|x")))(
       RowEncoder(
         StructType(
@@ -135,6 +136,7 @@ class CsvReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterA
         )
       )
     )
+
     assertDatasetEquals(actual, expected)
   }
 

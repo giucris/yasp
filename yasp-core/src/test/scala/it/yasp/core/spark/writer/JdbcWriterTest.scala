@@ -24,7 +24,12 @@ class JdbcWriterTest extends AnyFunSuite with SparkTestSuite {
 
   val df: Dataset[Row] = spark
     .createDataset(
-      Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4"))
+      Seq(
+        Row(1, "name1"),
+        Row(2, "name2"),
+        Row(3, "name3"),
+        Row(4, "name4")
+      )
     )(
       RowEncoder(
         StructType(

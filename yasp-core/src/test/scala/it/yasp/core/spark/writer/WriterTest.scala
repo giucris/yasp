@@ -15,12 +15,13 @@ import java.sql.DriverManager.{getConnection, registerDriver}
 import java.util.Properties
 
 class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
-  registerDriver(new org.h2.Driver)
 
-  val writer                   = new DestWriter()
-  private val workspace        = "yasp-core/src/test/resources/WriterTest"
-  private val connUrl1: String = "jdbc:h2:mem:dbx"
-  val connection: Connection   = getConnection(connUrl1)
+  val writer                         = new DestWriter()
+  private val workspace              = "yasp-core/src/test/resources/WriterTest"
+  private val connUrl1: String       = "jdbc:h2:mem:dbw"
+
+  registerDriver(new org.h2.Driver)
+  val conn1: Connection = getConnection(connUrl1)
 
   private val df: Dataset[Row] = spark.createDataset(Seq(Row("a", "b", "c")))(
     RowEncoder(
@@ -36,7 +37,6 @@ class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll 
 
   override protected def beforeAll(): Unit = {
     TestUtils.cleanFolder(workspace)
-
     super.beforeAll()
   }
 
@@ -69,7 +69,7 @@ class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll 
       .withMetadata("h0", new MetadataBuilder().putLong("scale", 0).build())
       .withMetadata("h1", new MetadataBuilder().putLong("scale", 0).build())
       .withMetadata("h2", new MetadataBuilder().putLong("scale", 0).build())
-    val actual     = spark.read.jdbc(connUrl1, "my_test_table", new Properties())
+    val actual = spark.read.jdbc(connUrl1, "my_test_table", new Properties())
     assertDatasetEquals(actual, expectedDf)
   }
 
