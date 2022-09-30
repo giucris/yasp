@@ -4,7 +4,7 @@ import it.yasp.core.spark.model.{BasicCredentials, Dest}
 import it.yasp.core.spark.writer.Writer.JdbcWriter
 import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
-import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
+import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Dataset, Row}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -22,18 +22,21 @@ class JdbcWriterTest extends AnyFunSuite with SparkTestSuite {
   val conn1: Connection = getConnection(connUrl1)
   val conn2: Connection = getConnection(connUrl2, "usr", "pwd")
 
-  val df: Dataset[Row] = spark.createDataset(
-    Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4"))
-  )(
-    RowEncoder(
-      StructType(
-        Seq(
-          StructField("ID", IntegerType, nullable = true),
-          StructField("NAME", StringType, nullable = true)
+  val df: Dataset[Row] = spark
+    .createDataset(
+      Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4"))
+    )(
+      RowEncoder(
+        StructType(
+          Seq(
+            StructField("ID", IntegerType, nullable = true),
+            StructField("NAME", StringType, nullable = true)
+          )
         )
       )
     )
-  )
+    .withMetadata("ID", new MetadataBuilder().putLong("scale", 0).build())
+    .withMetadata("NAME", new MetadataBuilder().putLong("scale", 0).build())
 
   test("write database table") {
     writer.write(df, Dest.Jdbc(connUrl1, None, Map("dbTable" -> "my_test_table"), None))

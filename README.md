@@ -14,7 +14,7 @@ no-code/less-code approach.
 With Yasp you can configure an ETL/ELT job that fetch data from a multiple source execute multiple transformation and
 write in multiple destination
 
-It is written in **Scala (2.11.12)** on top of **Apache Spark (2.4.7)** and managed as an **SBT (1.4.9)** multi module
+It is written in **Scala (2.12.15)** on top of **Apache Spark (3.3.0)** and managed as an **SBT (1.4.9)** multi module
 project.
 
 ## Getting Started
