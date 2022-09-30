@@ -26,92 +26,19 @@ trait Reader[A <: Source] {
 
 object Reader {
 
-  private[reader] trait SparkReadSupport {
-    protected def read(
-        spark: SparkSession,
-        format: String,
-        options: Map[String, String],
-        schema: Option[String]
-    ): Dataset[Row] =
-      schema.map(spark.read.schema).getOrElse(spark.read).format(format).options(options).load()
-  }
-
-  /** CsvReader an instance of Reader[Csv]
-    * @param spark:
-    *   A [[SparkSession]] instance
+  /**
+    * A FormatReader.
+    * Will use the standard spark approach to read a dataset starting from a configured format
+    * @param spark: SparkSession that will be used to read the Format Source
     */
-  class CsvReader(spark: SparkSession) extends Reader[Csv] with SparkReadSupport {
-    override def read(source: Csv): Dataset[Row] =
-      read(spark, format = "csv", source.options ++ Map("path" -> source.csv), source.schema)
-  }
-
-  /** JsonReader an instance of Reader[Json]
-    * @param spark:
-    *   A [[SparkSession]] instance
-    */
-  class JsonReader(spark: SparkSession) extends Reader[Json] with SparkReadSupport {
-    override def read(source: Json): Dataset[Row] =
-      read(spark, format = "json", source.options ++ Map("path" -> source.json), source.schema)
-  }
-
-  /** ParquetReader an instance of Reader[Parquet]
-    * @param spark:
-    *   A [[SparkSession]] instance
-    */
-  class ParquetReader(spark: SparkSession) extends Reader[Parquet] with SparkReadSupport {
-    override def read(source: Parquet): Dataset[Row] = {
-      val opts = Map(
-        "path"        -> source.parquet,
-        "mergeSchema" -> source.mergeSchema.getOrElse(false).toString
-      )
-      read(spark, format = "parquet", opts, None)
-    }
-  }
-
-  /** JdbcReader an instance of Reader[Jdbc]
-    * @param spark:
-    *   A [[SparkSession]] instance
-    */
-  class JdbcReader(spark: SparkSession) extends Reader[Jdbc] with SparkReadSupport {
-    override def read(source: Jdbc): Dataset[Row] = {
-      val opts = source.options ++ Map(
-        "url"      -> source.jdbcUrl,
-        "user"     -> source.jdbcAuth.map(_.username).getOrElse(""),
-        "password" -> source.jdbcAuth.map(_.password).getOrElse("")
-      )
-      read(spark, format = "jdbc", opts, None)
-    }
-  }
-
-  /** AvroReader an instance of Reader[Avro]
-    * @param spark:
-    *   A [[SparkSession]] instance
-    */
-  class AvroReader(spark: SparkSession) extends Reader[Avro] with SparkReadSupport {
-    override def read(source: Avro): Dataset[Row] = {
-      val opts = source.options ++ Map("path" -> source.avro)
-      read(spark, format = "avro", opts, None)
-    }
-  }
-
-  /** XmlReader an instance of Reader[Xml]
-    * @param spark:
-    *   A [[SparkSession]] instance
-    */
-  class XmlReader(spark: SparkSession) extends Reader[Xml] with SparkReadSupport {
-    override def read(source: Xml): Dataset[Row] = {
-      val opts = source.options ++ Map("path" -> source.xml)
-      read(spark, format = "xml", opts.filterKeys(_ != "schema"), opts.get("schema"))
-    }
-  }
-
-  /** OrcReader an instance of Reader[Orc]
-    * @param spark
-    *   A [[SparkSession]] instance
-    */
-  class OrcReader(spark: SparkSession) extends Reader[Orc] with SparkReadSupport {
-    override def read(source: Orc): Dataset[Row] =
-      read(spark, format = "orc", Map("path" -> source.orc), None)
+  class FormatReader(spark: SparkSession) extends Reader[Format] {
+    override def read(source: Format): Dataset[Row] =
+      source.schema
+        .map(spark.read.schema)
+        .getOrElse(spark.read)
+        .format(source.format)
+        .options(source.options)
+        .load()
   }
 
   //TODO Something that retrieve automatically the relative Reader[A] should be implemented. Instead of doing it with an exhaustive pattern matching. probably shapeless could help on this
@@ -123,13 +50,7 @@ object Reader {
   class SourceReader(spark: SparkSession) extends Reader[Source] {
     override def read(source: Source): Dataset[Row] =
       source match {
-        case s: Csv     => new CsvReader(spark).read(s)
-        case s: Parquet => new ParquetReader(spark).read(s)
-        case s: Json    => new JsonReader(spark).read(s)
-        case s: Avro    => new AvroReader(spark).read(s)
-        case s: Xml     => new XmlReader(spark).read(s)
-        case s: Jdbc    => new JdbcReader(spark).read(s)
-        case s: Orc     => new OrcReader(spark).read(s)
+        case s: Format  => new FormatReader(spark).read(s)
       }
   }
 

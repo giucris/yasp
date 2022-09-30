@@ -58,11 +58,12 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
       )
     )
     val actual   = reader.read(
-      Csv(
-        csv = s"$workspace/singleCsv/file1.csv",
+      Format(
+        "csv",
         options = Map(
           "header" -> "false",
-          "sep"    -> ","
+          "sep"    -> ",",
+          "path"   -> s"$workspace/singleCsv/file1.csv"
         )
       )
     )
@@ -89,7 +90,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
       )
     )
 
-    val actual = reader.read(Json(s"$workspace/json/json1.json"))
+    val actual = reader.read(Format("json", options = Map("path" -> s"$workspace/json/json1.json")))
 
     assertDatasetEquals(actual, expected)
   }
@@ -122,7 +123,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
           )
         )
       )
-    val actual   = reader.read(Parquet(s"$workspace/parquet1/"))
+    val actual   = reader.read(Format("parquet", options = Map("path" -> s"$workspace/parquet1/")))
     assertDatasetEquals(actual, expected)
   }
 
@@ -149,7 +150,9 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
     )
 
     val actual =
-      reader.read(Xml(s"$workspace/xml/file.xml", Map("rowTag" -> "root")))
+      reader.read(
+        Format("xml", options = Map("path" -> s"$workspace/xml/file.xml", "rowTag" -> "root"))
+      )
     assertDatasetEquals(actual, expected)
   }
 
@@ -172,7 +175,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
       )
     )
     expected.write.format("avro").save(s"$workspace/avro/fileWithoutSchema/")
-    val actual   = reader.read(Avro(s"$workspace/avro/fileWithoutSchema/"))
+    val actual   = reader.read(Format("avro", options= Map("path" -> s"$workspace/avro/fileWithoutSchema/")))
 
     assertDatasetEquals(actual, expected)
   }
@@ -195,7 +198,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
       .withMetadata("NAME", new MetadataBuilder().putLong("scale", 0).build())
 
     val actual = reader.read(
-      Jdbc(jdbcUrl = connUrl1, jdbcAuth = None, Map("dbTable" -> "my_table"))
+      Format("jdbc", options = Map("url"-> connUrl1, "dbTable" -> "my_table"))
     )
     assertDatasetEquals(actual, expected)
   }
@@ -217,7 +220,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
 
     expected.write.orc(s"$workspace/orc/")
 
-    val actual = reader.read(Orc(s"$workspace/orc/"))
+    val actual = reader.read(Format("orc", options = Map("path"-> s"$workspace/orc/")))
     assertDatasetEquals(actual, expected)
   }
 

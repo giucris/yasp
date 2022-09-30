@@ -57,22 +57,24 @@ class YaspServiceTest
           sources = Seq(
             YaspSource(
               "data_1",
-              Source.Csv(
-                csv = s"$workspace/csv-data-source-1/file1.csv",
+              Source.Format(
+                "csv",
                 options = Map(
                   "header" -> "true",
-                  "sep"    -> ","
+                  "sep"    -> ",",
+                  "path" -> s"$workspace/csv-data-source-1/file1.csv"
                 )
               ),
               cache = None
             ),
             YaspSource(
               "data_2",
-              Source.Csv(
-                csv = s"$workspace/csv-data-source-2/file1.csv",
+              Source.Format(
+                "csv",
                 options = Map(
                   "header" -> "true",
-                  "sep"    -> ","
+                  "sep"    -> ",",
+                  "path" -> s"$workspace/csv-data-source-2/file1.csv"
                 )
               ),
               cache = None

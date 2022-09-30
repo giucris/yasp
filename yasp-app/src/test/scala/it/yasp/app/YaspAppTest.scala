@@ -47,14 +47,17 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
         |  sources:
         |    - id: users
         |      source:
-        |        csv: yasp-app/src/test/resources/YaspApp/test1/source/user.csv
+        |        format: csv
         |        options:
+        |          path: yasp-app/src/test/resources/YaspApp/test1/source/user.csv
         |          header: 'true'
         |          sep: ','
         |      cache: Memory
         |    - id: addresses
         |      source:
-        |        json: yasp-app/src/test/resources/YaspApp/test1/source/addresses.jsonl
+        |        format: json
+        |        options:
+        |          path: yasp-app/src/test/resources/YaspApp/test1/source/addresses.jsonl
         |  processes:
         |    - id: user_with_address
         |      process:
@@ -116,14 +119,17 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
           |  sources:
           |    - id: users_file
           |      source:
-          |        csv: yasp-app/src/test/resources/YaspApp/test2/source/user.csv
+          |        format: csv
           |        options:
           |          header: 'true'
           |          sep: ','
+          |          path: yasp-app/src/test/resources/YaspApp/test2/source/user.csv
           |      cache: Memory
           |    - id: addresses_file
           |      source:
-          |        json: yasp-app/src/test/resources/YaspApp/test2/source/addresses.jsonl
+          |        format: json
+          |        options:
+          |         path: yasp-app/src/test/resources/YaspApp/test2/source/addresses.jsonl
           |  processes:
           |    - id: user_with_address_file
           |      process:

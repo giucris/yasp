@@ -1,6 +1,7 @@
 package it.yasp.app.support
 
 import cats.syntax.functor._
+import io.circe.Decoder.Result
 import io.circe.generic.auto._
 import io.circe.{Decoder, HCursor, KeyDecoder}
 import it.yasp.core.spark.model.CacheLayer._
@@ -40,13 +41,12 @@ trait DecodersSupport {
     * @return
     *   Decoder[SessionType]
     */
-  implicit def sessionTypeDecoder: Decoder[SessionType] = (c: HCursor) =>
-    for {
-      value <- c.as[String].right
-    } yield value match {
-      case "Local"       => Local
-      case "Distributed" => Distributed
-    }
+  implicit def sessionTypeDecoder: Decoder[SessionType] = (c: HCursor) => for {
+    value <- c.as[String].right
+  } yield value match {
+    case "Local" => Local
+    case "Distributed" => Distributed
+  }
 
   /** A CacheLayer circe Decoder
     *
@@ -55,17 +55,16 @@ trait DecodersSupport {
     * @return
     *   Decoder[CacheLayer]
     */
-  implicit def cacheLayerDecoder: Decoder[CacheLayer] = (c: HCursor) =>
-    for {
-      value <- c.as[String].right
-    } yield value match {
-      case "Memory"           => Memory
-      case "Disk"             => Disk
-      case "MemoryAndDisk"    => MemoryAndDisk
-      case "MemorySer"        => MemorySer
-      case "MemoryAndDiskSer" => MemoryAndDiskSer
-      case "Checkpoint"       => Checkpoint
-    }
+  implicit def cacheLayerDecoder: Decoder[CacheLayer] = (c: HCursor) => for {
+    value <- c.as[String].right
+  } yield value match {
+    case "Memory" => Memory
+    case "Disk" => Disk
+    case "MemoryAndDisk" => MemoryAndDisk
+    case "MemorySer" => MemorySer
+    case "MemoryAndDiskSer" => MemoryAndDiskSer
+    case "Checkpoint" => Checkpoint
+  }
 
   /** A Source circe Decoder
     * @return
@@ -73,13 +72,7 @@ trait DecodersSupport {
     */
   implicit def sourceDecoder: Decoder[Source] =
     List[Decoder[Source]](
-      Decoder[Source.Csv].widen,
-      Decoder[Source.Json].widen,
-      Decoder[Source.Avro].widen,
-      Decoder[Source.Xml].widen,
-      Decoder[Source.Orc].widen,
-      Decoder[Source.Parquet].widen,
-      Decoder[Source.Jdbc].widen
+      Decoder[Source.Format].widen
     ).reduceLeft(_ or _)
 
   /** A Dest circe Decoder
