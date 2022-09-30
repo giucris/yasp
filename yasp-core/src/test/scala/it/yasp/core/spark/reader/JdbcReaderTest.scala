@@ -6,7 +6,7 @@ import it.yasp.core.spark.reader.Reader.JdbcReader
 import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
-import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
+import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -44,36 +44,44 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfter
   }
 
   test("read database table") {
-    val expected = spark.createDataset(
-      Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4"))
-    )(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("ID", IntegerType, nullable = true),
-            StructField("NAME", StringType, nullable = true)
+    val expected = spark
+      .createDataset(
+        Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4"))
+      )(
+        RowEncoder(
+          StructType(
+            Seq(
+              StructField("ID", IntegerType, nullable = true),
+              StructField("NAME", StringType, nullable = true)
+            )
           )
         )
       )
-    )
-    val actual   = reader.read(Jdbc(connUrl1, options = Map("dbTable" -> "my_table")))
+      .withMetadata("ID", new MetadataBuilder().putLong("scale", 0).build())
+      .withMetadata("NAME", new MetadataBuilder().putLong("scale", 0).build())
+
+    val actual = reader.read(Jdbc(connUrl1, options = Map("dbTable" -> "my_table")))
     assertDatasetEquals(actual, expected)
   }
 
   test("read database table with BasicCredentials") {
-    val expected = spark.createDataset(
-      Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4"))
-    )(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("ID", IntegerType, nullable = true),
-            StructField("NAME", StringType, nullable = true)
+    val expected = spark
+      .createDataset(
+        Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4"))
+      )(
+        RowEncoder(
+          StructType(
+            Seq(
+              StructField("ID", IntegerType, nullable = true),
+              StructField("NAME", StringType, nullable = true)
+            )
           )
         )
       )
-    )
-    val actual   = reader.read(
+      .withMetadata("ID", new MetadataBuilder().putLong("scale", 0).build())
+      .withMetadata("NAME", new MetadataBuilder().putLong("scale", 0).build())
+
+    val actual = reader.read(
       Jdbc(
         jdbcUrl = connUrl2,
         jdbcAuth = Some(BasicCredentials("usr", "pwd")),
@@ -84,15 +92,17 @@ class JdbcReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfter
   }
 
   test("read database query with credentials") {
-    val expected = spark.createDataset(Seq(Row(1)))(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("ID", IntegerType, nullable = true)
+    val expected = spark
+      .createDataset(Seq(Row(1)))(
+        RowEncoder(
+          StructType(
+            Seq(
+              StructField("ID", IntegerType, nullable = true)
+            )
           )
         )
       )
-    )
+      .withMetadata("ID", new MetadataBuilder().putLong("scale", 0).build())
 
     val actual = reader.read(
       Jdbc(

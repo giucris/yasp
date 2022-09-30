@@ -6,7 +6,7 @@ import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes.LongType
-import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
+import org.apache.spark.sql.types._
 import org.h2.Driver
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
@@ -35,13 +35,15 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
     super.beforeAll()
   }
 
-  private def executeStatement(conn: Connection, stmt: String): Unit = {
-    val statement = conn.createStatement
-    statement.execute(stmt)
-    statement.close()
+  override protected def afterAll(): Unit = {
+    TestUtils.cleanFolder(workspace)
+    executeStatement(conn1, "DROP TABLE my_table")
+    executeStatement(conn1, "SHUTDOWN")
+    super.afterAll()
   }
 
   val reader = new SourceReader(spark)
+
   test("read csv") {
     TestUtils.createFile(s"$workspace/singleCsv/file1.csv", Seq("h1,h2,h3", "a,b,c"))
     val expected = spark.createDataset(Seq(Row("h1", "h2", "h3"), Row("a", "b", "c")))(
@@ -176,19 +178,23 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
   }
 
   test("read jdbc") {
-    val expected = spark.createDataset(
-      Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4"))
-    )(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("ID", IntegerType, nullable = true),
-            StructField("NAME", StringType, nullable = true)
+    val expected = spark
+      .createDataset(
+        Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4"))
+      )(
+        RowEncoder(
+          StructType(
+            Seq(
+              StructField("ID", IntegerType, nullable = true),
+              StructField("NAME", StringType, nullable = true)
+            )
           )
         )
       )
-    )
-    val actual   = reader.read(
+      .withMetadata("ID", new MetadataBuilder().putLong("scale", 0).build())
+      .withMetadata("NAME", new MetadataBuilder().putLong("scale", 0).build())
+
+    val actual = reader.read(
       Jdbc(jdbcUrl = connUrl1, jdbcAuth = None, Map("dbTable" -> "my_table"))
     )
     assertDatasetEquals(actual, expected)
@@ -215,10 +221,9 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
     assertDatasetEquals(actual, expected)
   }
 
-  override protected def afterAll(): Unit = {
-    TestUtils.cleanFolder(workspace)
-    executeStatement(conn1, "DROP TABLE my_table")
-    executeStatement(conn1, "SHUTDOWN")
-    super.afterAll()
+  private def executeStatement(conn: Connection, stmt: String): Unit = {
+    val statement = conn.createStatement
+    statement.execute(stmt)
+    statement.close()
   }
 }
