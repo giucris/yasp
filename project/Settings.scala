@@ -1,6 +1,6 @@
 import sbt.Compile
 import sbt.Keys.compile
-import wartremover.WartRemover.autoImport.{wartremoverErrors, Wart, Warts}
+import wartremover.WartRemover.autoImport.{Wart, Warts, wartremoverErrors}
 
 object Settings {
 
