@@ -80,7 +80,6 @@ class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll 
       expectedDf,
       Format("jdbc", Map("url" -> dbConnUrl, "dbTable" -> "my_test_table"), None)
     )
-
     val dfWithMetadata = expectedDf
       .withMetadata("id", new MetadataBuilder().putLong("scale", 0).build())
       .withMetadata("field1", new MetadataBuilder().putLong("scale", 0).build())
