@@ -17,10 +17,10 @@ import java.sql.DriverManager.{getConnection, registerDriver}
 class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
   registerDriver(new org.h2.Driver)
 
-  val reader: SourceReader     = new SourceReader(spark)
-  val workspace                = "yasp-core/src/test/resources/SourceReaderTest"
-  val connUrl1: String         = "jdbc:h2:mem:dbs"
-  val conn1: Connection        = getConnection(connUrl1)
+  val reader: SourceReader = new SourceReader(spark)
+  val workspace            = "yasp-core/src/test/resources/SourceReaderTest"
+  val connUrl1: String     = "jdbc:h2:mem:dbs"
+  val conn1: Connection    = getConnection(connUrl1)
 
   val expectedDf: Dataset[Row] = spark.createDataset(Seq(Row(1, "x"), Row(2, "y")))(
     RowEncoder(
@@ -69,9 +69,10 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
     )
     val actual = reader.read(
       Format(
-        format= "json",
-        schema= Some("id INT, field1 STRING"),
-        options = Map("path" -> s"$workspace/json/json1.json"))
+        format = "json",
+        schema = Some("id INT, field1 STRING"),
+        options = Map("path" -> s"$workspace/json/json1.json")
+      )
     )
 
     assertDatasetEquals(actual, expectedDf)
@@ -79,7 +80,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
 
   test("read parquet") {
     expectedDf.write.parquet(s"$workspace/parquet1/")
-    val actual   = reader.read(Format("parquet", options = Map("path" -> s"$workspace/parquet1/")))
+    val actual = reader.read(Format("parquet", options = Map("path" -> s"$workspace/parquet1/")))
     assertDatasetEquals(actual, expectedDf)
   }
 

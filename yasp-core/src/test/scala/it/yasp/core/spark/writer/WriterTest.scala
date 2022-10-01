@@ -17,10 +17,11 @@ import java.util.Properties
 class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
   registerDriver(new org.h2.Driver)
 
-  val writer                   = new DestWriter()
-  val workspace                = "yasp-core/src/test/resources/WriterTest"
-  val dbConnUrl: String        = "jdbc:h2:mem:dbw2"
-  val conn1: Connection        = getConnection(dbConnUrl)
+  val writer            = new DestWriter()
+  val workspace         = "yasp-core/src/test/resources/WriterTest"
+  val dbConnUrl: String = "jdbc:h2:mem:dbw2"
+  val conn1: Connection = getConnection(dbConnUrl)
+
   val expectedDf: Dataset[Row] = spark.createDataset(Seq(Row(1, "x"), Row(2, "y")))(
     RowEncoder(
       StructType(
