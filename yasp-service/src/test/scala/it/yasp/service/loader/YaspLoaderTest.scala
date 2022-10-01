@@ -27,7 +27,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     inSequence(
       Seq(
         (reader.read _)
-          .expects(Source.Format("parquet",options = Map("path"->"x")))
+          .expects(Source.Format("parquet", options = Map("path" -> "x")))
           .once()
           .returns(
             spark.createDataset(Seq(Row("b")))(
@@ -40,14 +40,16 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       )
     )
 
-    yaspLoader.load(YaspSource("tbl", Source.Format("parquet",options = Map("path"->"x")), cache = None))
+    yaspLoader.load(
+      YaspSource("tbl", Source.Format("parquet", options = Map("path" -> "x")), cache = None)
+    )
   }
 
   test("load will read cache and register source") {
     inSequence(
       Seq(
         (reader.read _)
-          .expects(Source.Format("parquet",options = Map("path"->"x")))
+          .expects(Source.Format("parquet", options = Map("path" -> "x")))
           .once()
           .returns(
             spark.createDataset(Seq(Row("a")))(
@@ -68,14 +70,20 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       )
     )
 
-    yaspLoader.load(YaspSource("tbl", Source.Format("parquet",options = Map("path"->"x")), cache = Some(Memory)))
+    yaspLoader.load(
+      YaspSource(
+        "tbl",
+        Source.Format("parquet", options = Map("path" -> "x")),
+        cache = Some(Memory)
+      )
+    )
   }
 
   test("load will read repartition cache and register a source") {
     inSequence(
       Seq(
         (reader.read _)
-          .expects(Source.Format("parquet",options = Map("path"->"x")))
+          .expects(Source.Format("parquet", options = Map("path" -> "x")))
           .once()
           .returns(
             spark.createDataset(Seq(Row("a")))(
@@ -104,7 +112,14 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       )
     )
 
-    yaspLoader.load(YaspSource("tbl", Source.Format("parquet",options = Map("path"->"x")), Some(100), Some(Memory)))
+    yaspLoader.load(
+      YaspSource(
+        "tbl",
+        Source.Format("parquet", options = Map("path" -> "x")),
+        Some(100),
+        Some(Memory)
+      )
+    )
   }
 
 }
