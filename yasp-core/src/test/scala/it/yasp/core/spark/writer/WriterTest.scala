@@ -19,7 +19,7 @@ class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll 
 
   val writer                   = new DestWriter()
   val workspace                = "yasp-core/src/test/resources/WriterTest"
-  val dbConnUrl: String        = "jdbc:h2:mem:dbw"
+  val dbConnUrl: String        = "jdbc:h2:mem:dbw2"
   val conn1: Connection        = getConnection(dbConnUrl)
   val expectedDf: Dataset[Row] = spark.createDataset(Seq(Row(1, "x"), Row(2, "y")))(
     RowEncoder(
@@ -80,11 +80,14 @@ class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll 
       expectedDf,
       Format("jdbc", Map("url" -> dbConnUrl, "dbTable" -> "my_test_table"), None)
     )
-    val dfWithMetadata = expectedDf
+
+    val expected = expectedDf
       .withMetadata("id", new MetadataBuilder().putLong("scale", 0).build())
       .withMetadata("field1", new MetadataBuilder().putLong("scale", 0).build())
-    val actual         = spark.read.jdbc(dbConnUrl, "my_test_table", new Properties())
-    assertDatasetEquals(actual, dfWithMetadata)
+
+    val actual = spark.read.jdbc(dbConnUrl, "my_test_table", new Properties())
+
+    assertDatasetEquals(actual, expected)
   }
 
 }

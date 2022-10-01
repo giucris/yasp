@@ -16,7 +16,6 @@ import java.sql.Connection
 import java.sql.DriverManager.{getConnection, registerDriver}
 
 class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
-
   registerDriver(new org.h2.Driver)
 
   val reader: FormatReader     = new FormatReader(spark)

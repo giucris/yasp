@@ -2,12 +2,12 @@ package it.yasp.core.spark.reader
 
 import it.yasp.core.spark.model.Source._
 import it.yasp.core.spark.reader.Reader._
-import it.yasp.testkit.{SparkTestSuite, TestUtils}
-import org.apache.spark.sql.Row
+import it.yasp.testkit.SparkTestSuite
+import it.yasp.testkit.TestUtils._
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
-import org.apache.spark.sql.types.DataTypes.LongType
+import org.apache.spark.sql.types.DataTypes.{IntegerType, StringType}
 import org.apache.spark.sql.types._
-import org.h2.Driver
+import org.apache.spark.sql.{Dataset, Row}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -15,219 +15,72 @@ import java.sql.Connection
 import java.sql.DriverManager.{getConnection, registerDriver}
 
 class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
+  registerDriver(new org.h2.Driver)
 
-  private val workspace        = "yasp-core/src/test/resources/SourceReaderTest"
-  private val connUrl1: String = "jdbc:h2:mem:db3"
+  val reader: SourceReader     = new SourceReader(spark)
+  val workspace                = "yasp-core/src/test/resources/SourceReaderTest"
+  val connUrl1: String         = "jdbc:h2:mem:dbs"
+  val conn1: Connection        = getConnection(connUrl1)
 
-  registerDriver(new Driver)
-  private val conn1: Connection = getConnection(connUrl1)
+  val expectedDf: Dataset[Row] = spark.createDataset(Seq(Row(1, "x"), Row(2, "y")))(
+    RowEncoder(
+      StructType(
+        Seq(
+          StructField("id", IntegerType, nullable = true),
+          StructField("field1", StringType, nullable = true)
+        )
+      )
+    )
+  )
 
   override protected def beforeAll(): Unit = {
-    TestUtils.cleanFolder(workspace)
-    executeStatement(
-      conn = conn1,
-      stmt = "CREATE TABLE my_table (id INT,name VARCHAR(20),PRIMARY KEY (id))"
-    )
-    executeStatement(
-      conn = conn1,
-      stmt = "INSERT INTO my_table VALUES (1, 'name1'), (2,'name2'), (3,'name3'),(4,'name4')"
-    )
+    cleanFolder(workspace)
     super.beforeAll()
   }
 
   override protected def afterAll(): Unit = {
-    TestUtils.cleanFolder(workspace)
-    executeStatement(conn1, "DROP TABLE my_table")
-    executeStatement(conn1, "SHUTDOWN")
+    cleanFolder(workspace)
     super.afterAll()
   }
 
-  val reader = new SourceReader(spark)
-
   test("read csv") {
-    TestUtils.createFile(s"$workspace/singleCsv/file1.csv", Seq("h1,h2,h3", "a,b,c"))
-    val expected = spark.createDataset(Seq(Row("h1", "h2", "h3"), Row("a", "b", "c")))(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("_c0", StringType, nullable = true),
-            StructField("_c1", StringType, nullable = true),
-            StructField("_c2", StringType, nullable = true)
-          )
-        )
-      )
-    )
-    val actual   = reader.read(
+    createFile(s"$workspace/csv/file1.csv", Seq("id,field1", "1,x", "2,y"))
+    val actual = reader.read(
       Format(
-        "csv",
+        format = "csv",
+        schema = Some("id INT, field1 STRING"),
         options = Map(
-          "header" -> "false",
+          "header" -> "true",
           "sep"    -> ",",
-          "path"   -> s"$workspace/singleCsv/file1.csv"
+          "path"   -> s"$workspace/csv/file1.csv"
         )
       )
     )
-    assertDatasetEquals(actual, expected)
+    assertDatasetEquals(actual, expectedDf)
   }
 
   test("read json") {
-    TestUtils.createFile(
+    createFile(
       filePath = s"$workspace/json/json1.json",
       rows = Seq(
-        "{\"a\":\"abc\",\"b\":1}",
-        "{\"a\":\"def\",\"c\":2}"
+        "{\"id\":1,\"field1\":\"x\"}",
+        "{\"id\":2,\"field1\":\"y\"}"
       )
     )
-    val expected = spark.createDataset(Seq(Row("abc", 1L, null), Row("def", null, 2L)))(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("a", StringType),
-            StructField("b", LongType),
-            StructField("c", LongType)
-          )
-        )
-      )
+    val actual = reader.read(
+      Format(
+        format= "json",
+        schema= Some("id INT, field1 STRING"),
+        options = Map("path" -> s"$workspace/json/json1.json"))
     )
 
-    val actual = reader.read(Format("json", options = Map("path" -> s"$workspace/json/json1.json")))
-
-    assertDatasetEquals(actual, expected)
+    assertDatasetEquals(actual, expectedDf)
   }
 
   test("read parquet") {
-    spark
-      .createDataset(Seq(Row("a", "b", "c")))(
-        RowEncoder(
-          StructType(
-            Seq(
-              StructField("h0", StringType, nullable = true),
-              StructField("h1", StringType, nullable = true),
-              StructField("h2", StringType, nullable = true)
-            )
-          )
-        )
-      )
-      .write
-      .parquet(s"$workspace/parquet1/")
-
-    val expected = spark
-      .createDataset(Seq(Row("a", "b", "c")))(
-        RowEncoder(
-          StructType(
-            Seq(
-              StructField("h0", StringType, nullable = true),
-              StructField("h1", StringType, nullable = true),
-              StructField("h2", StringType, nullable = true)
-            )
-          )
-        )
-      )
+    expectedDf.write.parquet(s"$workspace/parquet1/")
     val actual   = reader.read(Format("parquet", options = Map("path" -> s"$workspace/parquet1/")))
-    assertDatasetEquals(actual, expected)
+    assertDatasetEquals(actual, expectedDf)
   }
 
-  test("read xml") {
-    TestUtils.createFile(
-      s"$workspace/xml/file.xml",
-      Seq(
-        "<root>",
-        "<field1>value1</field1>",
-        "<field2>value2</field2>",
-        "</root>"
-      )
-    )
-
-    val expected = spark.createDataset(Seq(Row("value1", "value2")))(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("field1", StringType),
-            StructField("field2", StringType)
-          )
-        )
-      )
-    )
-
-    val actual =
-      reader.read(
-        Format("xml", options = Map("path" -> s"$workspace/xml/file.xml", "rowTag" -> "root"))
-      )
-    assertDatasetEquals(actual, expected)
-  }
-
-  test("read avro") {
-    val expected = spark.createDataset(
-      Seq(
-        Row("data2", 1, 2, 3),
-        Row("data1", 1, null, 2)
-      )
-    )(
-      RowEncoder(
-        StructType(
-          Seq(
-            StructField("d", StringType, nullable = true),
-            StructField("a", IntegerType, nullable = true),
-            StructField("b", IntegerType, nullable = true),
-            StructField("c", IntegerType, nullable = true)
-          )
-        )
-      )
-    )
-    expected.write.format("avro").save(s"$workspace/avro/fileWithoutSchema/")
-    val actual   =
-      reader.read(Format("avro", options = Map("path" -> s"$workspace/avro/fileWithoutSchema/")))
-
-    assertDatasetEquals(actual, expected)
-  }
-
-  test("read jdbc") {
-    val expected = spark
-      .createDataset(
-        Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4"))
-      )(
-        RowEncoder(
-          StructType(
-            Seq(
-              StructField("ID", IntegerType, nullable = true),
-              StructField("NAME", StringType, nullable = true)
-            )
-          )
-        )
-      )
-      .withMetadata("ID", new MetadataBuilder().putLong("scale", 0).build())
-      .withMetadata("NAME", new MetadataBuilder().putLong("scale", 0).build())
-
-    val actual = reader.read(
-      Format("jdbc", options = Map("url" -> connUrl1, "dbTable" -> "my_table"))
-    )
-    assertDatasetEquals(actual, expected)
-  }
-
-  test("read orc") {
-    val expected = spark
-      .createDataset(Seq(Row("d", "e", "f", "g")))(
-        RowEncoder(
-          StructType(
-            Seq(
-              StructField("h0", StringType, nullable = true),
-              StructField("h1", StringType, nullable = true),
-              StructField("h2", StringType, nullable = true),
-              StructField("h3", StringType, nullable = true)
-            )
-          )
-        )
-      )
-
-    expected.write.orc(s"$workspace/orc/")
-
-    val actual = reader.read(Format("orc", options = Map("path" -> s"$workspace/orc/")))
-    assertDatasetEquals(actual, expected)
-  }
-
-  private def executeStatement(conn: Connection, stmt: String): Unit = {
-    val statement = conn.createStatement
-    statement.execute(stmt)
-    statement.close()
-  }
 }
