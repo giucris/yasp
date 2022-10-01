@@ -9,11 +9,25 @@ import it.yasp.app.args.YaspArgs._
   */
 object Yasp {
 
-  def main(args: Array[String]): Unit =
+  private val banner =
+    """
+      | _     _
+      || |   | |
+      || |___| | _____   ___  ____
+      ||_____  |(____ | /___)|  _ \
+      | _____| |/ ___ ||___ || |_| |
+      |(_______|\_____|(___/ |  __/
+      |                      |_|
+      |Yet Another SPark framework
+      |""".stripMargin
+
+  def main(args: Array[String]): Unit = {
+    println(banner)
     parse(args).map(c => YaspApp.fromFile(c.filePath)) match {
       case Some(Right(_)) => sys.exit()
       case Some(Left(_))  => sys.exit(1)
       case None           => sys.exit(2)
     }
+  }
 
 }

@@ -1,5 +1,6 @@
 package it.yasp.service.loader
 
+import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.model.Source
 import it.yasp.core.spark.operators.Operators
 import it.yasp.core.spark.reader.Reader
@@ -35,8 +36,9 @@ object YaspLoader {
       reader: Reader[Source],
       operators: Operators,
       registry: Registry
-  ) extends YaspLoader {
+  ) extends YaspLoader with StrictLogging {
     override def load(source: YaspSource): Unit = {
+      logger.info(s"Source: $source")
       val ds1 = reader.read(source.source)
       val ds2 = source.partitions.map(operators.repartition(ds1, _)).getOrElse(ds1)
       val ds3 = source.cache.map(operators.cache(ds2, _)).getOrElse(ds2)

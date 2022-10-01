@@ -1,5 +1,6 @@
 package it.yasp.app.support
 
+import com.typesafe.scalalogging.StrictLogging
 import it.yasp.app.err.YaspAppErrors.InterpolationError
 import org.apache.commons.text.StringSubstitutor
 
@@ -9,7 +10,7 @@ import scala.collection.JavaConverters.mapAsJavaMapConverter
   *
   * Provide a method to handle variable
   */
-trait VariablesSupport {
+trait VariablesSupport extends StrictLogging {
 
   /** Interpolate system environment variable with a provided value
     * @param value:
@@ -21,6 +22,7 @@ trait VariablesSupport {
     */
   def interpolate(value: String, values: Map[String, String]): Either[InterpolationError, String] =
     try {
+      logger.info("Substitute variable values")
       val subs = new StringSubstitutor(values.asJava).setEnableUndefinedVariableException(true)
       Right(subs.replace(value))
     } catch { case t: Throwable => Left(InterpolationError(value, t)) }

@@ -1,5 +1,6 @@
 package it.yasp.core.spark.factory
 
+import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.model.Session
 import it.yasp.core.spark.model.SessionType.{Distributed, Local}
 import org.apache.spark.SparkConf
@@ -9,7 +10,7 @@ import org.apache.spark.sql.SparkSession
   *
   * Provide a create method to build SparkSession starting from Session model
   */
-class SessionFactory {
+class SessionFactory extends StrictLogging {
 
   private val LOCAL_MASTER = "local[*]"
 
@@ -39,11 +40,13 @@ class SessionFactory {
     *     .getOrCreate()
     * }}}
     */
-  def create(session: Session): SparkSession =
+  def create(session: Session): SparkSession = {
+    logger.info(s"Create SparkSession as: $session")
     session match {
       case Session(Local, name, c)       => builder(name, c).master(LOCAL_MASTER).getOrCreate()
       case Session(Distributed, name, c) => builder(name, c).getOrCreate()
     }
+  }
 
   private def builder(appName: String, config: Map[String, String]): SparkSession.Builder =
     SparkSession

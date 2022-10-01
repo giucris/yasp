@@ -1,5 +1,6 @@
 package it.yasp.core.spark.operators
 
+import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.model.CacheLayer
 import it.yasp.core.spark.model.CacheLayer._
 import org.apache.spark.sql.{Dataset, Row}
@@ -38,8 +39,9 @@ object Operators {
 
   /** DefaultCache implementation
     */
-  class DefaultOperators extends Operators {
-    override def cache(ds: Dataset[Row], layer: CacheLayer): Dataset[Row] =
+  class DefaultOperators extends Operators with StrictLogging {
+    override def cache(ds: Dataset[Row], layer: CacheLayer): Dataset[Row] = {
+      logger.info(s"Apply cache layer: $layer")
       layer match {
         case Memory           => ds.persist(StorageLevel.MEMORY_ONLY)
         case Disk             => ds.persist(StorageLevel.DISK_ONLY)
@@ -48,8 +50,11 @@ object Operators {
         case MemoryAndDiskSer => ds.persist(StorageLevel.MEMORY_AND_DISK_SER)
         case Checkpoint       => ds.checkpoint()
       }
+    }
 
-    override def repartition(ds: Dataset[Row], partition: Int): Dataset[Row] =
+    override def repartition(ds: Dataset[Row], partition: Int): Dataset[Row] = {
+      logger.info(s"Apply repartition: $partition")
       ds.repartition(partition)
+    }
   }
 }
