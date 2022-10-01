@@ -73,13 +73,7 @@ trait DecodersSupport {
     */
   implicit def sourceDecoder: Decoder[Source] =
     List[Decoder[Source]](
-      Decoder[Source.Csv].widen,
-      Decoder[Source.Json].widen,
-      Decoder[Source.Avro].widen,
-      Decoder[Source.Xml].widen,
-      Decoder[Source.Orc].widen,
-      Decoder[Source.Parquet].widen,
-      Decoder[Source.Jdbc].widen
+      Decoder[Source.Format].widen
     ).reduceLeft(_ or _)
 
   /** A Dest circe Decoder
@@ -88,10 +82,7 @@ trait DecodersSupport {
     */
   implicit def destDecoder: Decoder[Dest] =
     List[Decoder[Dest]](
-      Decoder[Dest.Csv].widen,
-      Decoder[Dest.Json].widen,
-      Decoder[Dest.Parquet].widen,
-      Decoder[Dest.Jdbc].widen
+      Decoder[Dest.Format].widen
     ).reduceLeft(_ or _)
 
   /** A Process circe Decoder

@@ -75,17 +75,21 @@ object MyUsersByCitiesReport {
          |  sources:
          |    - id: users
          |      source:
-         |        csv: users.csv
+         |        format: csv
+         |          options: 
+         |            path: users.csv
          |    - id: addresses
          |      source:
-         |        json: addresses.jsonl
+         |      format: json
+         |        options: 
+         |          path: addresses.jsonl
          |    - id: cities
          |      source:
-         |        url: my-db-url
-         |        credentials:
-         |          username: ${db_username}
+         |      format: jdbc
+         |        options: 
+         |          url: my-db-url
+         |          user: ${db_username}
          |          password: ${db_password}
-         |        options:
          |          dbTable: my-table
          |  processes:
          |    - id: user_with_address
@@ -98,8 +102,10 @@ object MyUsersByCitiesReport {
          |  sinks:
          |    - id: user_with_address
          |      dest:
-         |        parquet: user_with_address
-         |        partitionBy:
+         |        format: parquet
+         |        options: 
+         |          path: user_with_address
+         |        partitionBy: 
          |          - country_id
          |""".stripMargin
     )
@@ -211,9 +217,9 @@ object MyUsersByCitiesReport {
         session = Session(Local, "my-app-name", Map.empty),
         plan = YaspPlan(
           sources = Seq(
-            YaspSource("users", Csv(path = "users/", Some(Map("header" -> "true"))), partitions = None, cache = None),
-            YaspSource("addresses", Json(path = "addresses/", None), partitions = None, cache = None),
-            YaspSource("cities", Parquet(parquet = "cities/", mergeSchema = false), partitions = None, cache = None)
+            YaspSource("users", Source.Format("csv",options=Map("path"-> "users/","header" -> "true")), partitions = None, cache = None),
+            YaspSource("addresses", Source.Format("json",options=Map("path"->"addresses/")), partitions = None, cache = None),
+            YaspSource("cities", Source.Format("parquet",options=Map("path"->"cities/", "mergeSchema" ->"false")), partitions = None, cache = None)
           ),
           processes = Seq(
             YaspProcess("users_addresses", Sql("SELECT u.*,a.address,a.city_id FROM users u JOIN addresses a ON u.address_id=a.id"), partitions = None, cache = None),
@@ -221,7 +227,7 @@ object MyUsersByCitiesReport {
             YaspProcess("users_by_city", Sql("SELECT city,count(*) FROM users_addresses_cities GROUP BY city"), partitions = None, cache = None)
           ),
           sinks = Seq(
-            YaspSink("users_by_city", Dest.Parquet(s"user-by-city", partitionBy(Seq("city"))))
+            YaspSink("users_by_city", Dest.Format("parquet",Map("path"->s"user-by-city"), partitionBy=Seq("city")))
           )
         )
       )
@@ -241,110 +247,13 @@ Reader, Processor, Writer and Cache.
 
 #### Source
 
-There are a lot of `Source` that you can use with Yasp. Each `Source` define how Yasp will use spark to read it via the
-specific `Reader`
-
-##### Csv
+Currently Yasp Core support only Format source.
 
 ```scala
-case class Csv(
-  csv:String, 
-  schema: Option[String],
-  options:Option[Map[String,String]]
-) extends Source
-```
-
-Examples:
-
-```scala
-//Define a basic csv
-Csv(csv="my-csv-path",None)
-
-//Define a csv with header
-Csv(csv="my-csv-path",Some(Map("header"->"true")))
-
-//Define a csv with custom separator
-Csv(csv="my-csv-path",Some(Map("sep"->";")))
-
-//Define a csv with custom separator and user defined schema
-Csv(csv="my-csv-path",Some("field1 INT, field2 STRING"),Some(Map("sep"->"\t")))
-```
-
-##### Json
-
-```scala
-case class Json(
-  json:String, 
-  schema: Option[Schema],
-  options:Option[Map[String,String]]
-) extends Source
-```
-
-Examples:
-
-```scala
-//Define a basic json
-Json(json="my-csv-path",None,None)
-
-//Define a json with primitives as string
-Json(json="my-csv-path",None,Some(Map("primitivesAsString"->"true")))
-
-//Define a json with a user provided schema
-Json(json="my-csv-path",Some("field1 INT, field2 STRING"),Some(Map("sep"->"\t")))
-```
-
-##### Parquet
-
-```scala
-case class Parquet(
-  parquet: String,
-  mergeSchema: Boolean
-) extends Source
-```
-
-Examples:
-
-```scala
-//Define a basic parquet
-Parquet(parquet="my-csv-path",false)
-
-//Define a basic parquet source with merge schema
-Parquet(parquet="my-csv-path",true)
-```
-
-##### Orc
-
-```scala
-case class Orc(
-  orc: String
-) extends Source
-```
-
-##### Avro
-
-```scala
-case class Avro(
-  avro: String,
-  options: Option[Map[String, String]]
-) extends Source
-```
-
-##### Xml
-
-```scala
-case class Xml(
-  xml: String,
-  options: Option[Map[String, String]]
-) extends Source
-```
-
-##### Jdbc
-
-```scala
-case class Jdbc(
-  jdbcUrl: String,
-  jdbcAuth: Option[BasicCredentials],
-  options: Option[Map[String, String]]
+final case class Format(
+      format: String,
+      schema: Option[String] = None,
+      options: Map[String, String] = Map.empty
 ) extends Source
 ```
 
@@ -362,14 +271,16 @@ case class Sql(
 
 #### Dest
 
-Define a destination
+Currently Yasp support only the Format destination.
 
-##### Parquet
+##### Format
 
 ```scala
-case class Parquet(
-  parquet: String, // path of the destination
-  partitionBy: Option[Seq[String]] // Optional Seq of column name to use for partition
+final case class Format(
+    format:String,
+    options:Map[String,String],
+    mode:Option[String] = None,
+    partitionBy: Seq[String] = Seq.empty
 ) extends Dest
 ```
 

@@ -1,8 +1,9 @@
 package it.yasp.service
 
+import it.yasp.core.spark.model.Dest.Format
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.SessionType.Local
-import it.yasp.core.spark.model.{Dest, Session, Source}
+import it.yasp.core.spark.model.{Session, Source}
 import it.yasp.service.model._
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
@@ -57,22 +58,24 @@ class YaspServiceTest
           sources = Seq(
             YaspSource(
               "data_1",
-              Source.Csv(
-                csv = s"$workspace/csv-data-source-1/file1.csv",
+              Source.Format(
+                "csv",
                 options = Map(
                   "header" -> "true",
-                  "sep"    -> ","
+                  "sep"    -> ",",
+                  "path"   -> s"$workspace/csv-data-source-1/file1.csv"
                 )
               ),
               cache = None
             ),
             YaspSource(
               "data_2",
-              Source.Csv(
-                csv = s"$workspace/csv-data-source-2/file1.csv",
+              Source.Format(
+                "csv",
                 options = Map(
                   "header" -> "true",
-                  "sep"    -> ","
+                  "sep"    -> ",",
+                  "path"   -> s"$workspace/csv-data-source-2/file1.csv"
                 )
               ),
               cache = None
@@ -86,7 +89,10 @@ class YaspServiceTest
             )
           ),
           sinks = Seq(
-            YaspSink("data_3", Dest.Parquet(s"$workspace/parquet-out/"))
+            YaspSink(
+              "data_3",
+              Format("parquet", options = Map("path" -> s"$workspace/parquet-out/"))
+            )
           )
         )
       )
