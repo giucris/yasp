@@ -18,32 +18,48 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         Seq(
           YaspSource(
             "id1",
-            Source.Csv("x", None, Map("header" -> "false", "sep" -> ",")),
+            Source.Format("csv", options = Map("path" -> "x", "header" -> "false", "sep" -> ",")),
             cache = Some(Memory)
           ),
           YaspSource(
             "id2",
-            Source.Parquet("x"),
+            Source.Format("parquet", options = Map("path" -> "x")),
             cache = Some(MemoryAndDisk)
           ),
           YaspSource(
             "id3",
-            Source.Jdbc("url", Some(BasicCredentials("x", "y")), Map("dbTable" -> "table")),
+            Source.Format(
+              "jdbc",
+              options = Map("url" -> "url", "user" -> "x", "password" -> "y", "dbTable" -> "table")
+            ),
             cache = Some(Disk)
           ),
-          YaspSource("id4", Source.Csv("z"), cache = Some(Checkpoint))
+          YaspSource(
+            "id4",
+            Source.Format("csv", options = Map("path" -> "z")),
+            cache = Some(Checkpoint)
+          ),
+          YaspSource(
+            "id5",
+            Source.Format("csv", options = Map("path" -> "k")),
+            cache = Some(MemorySer)
+          )
         ),
         Seq(
           YaspProcess("p1", Sql("my-query")),
           YaspProcess("p2", Sql("my-query-2"), cache = Some(MemoryAndDiskSer))
         ),
         Seq(
-          YaspSink("p1", Dest.Parquet("out-path-1")),
-          YaspSink("p3", Dest.Parquet("out-path-2", partitionBy = Seq("col1", "col2")))
+          YaspSink("p1", Dest.Format("parquet", Map("path" -> "out-path-1"))),
+          YaspSink(
+            "p3",
+            Dest.Format("parquet", Map("path" -> "out-path-2"), partitionBy = Seq("col1", "col2"))
+          )
         )
       )
     )
-    val actual   = parseYaml[YaspExecution](
+
+    val actual = parseYaml[YaspExecution](
       """
         |session:
         |  kind: Distributed
@@ -55,28 +71,39 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |  sources:
         |  - id: id1
         |    source:
-        |      csv: x
+        |      format: csv
         |      options:
+        |        path: x
         |        header: 'false'
         |        sep: ','
         |    cache: Memory
         |  - id: id2
         |    source:
-        |      parquet: x
+        |      format: parquet
+        |      options:
+        |        path: x
         |    cache: MemoryAndDisk
         |  - id: id3
         |    source:
-        |      jdbcUrl: url
-        |      jdbcAuth:
-        |        username: x
-        |        password: y
+        |      format: jdbc
         |      options:
+        |        url: url
+        |        user: x
+        |        password: y
         |        dbTable: table
         |    cache: Disk
         |  - id: id4
         |    source:
-        |      csv: z
+        |      format: csv
+        |      options:
+        |        path: z
         |    cache: Checkpoint
+        |  - id: id5
+        |    source:
+        |      format: csv
+        |      options:
+        |        path: k
+        |    cache: MemorySer
         |  processes:
         |  - id: p1
         |    process:
@@ -88,10 +115,14 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |  sinks:
         |  - id: p1
         |    dest:
-        |      parquet: out-path-1
+        |      format: parquet
+        |      options:
+        |        path: out-path-1
         |  - id: p3
         |    dest:
-        |      parquet: out-path-2
+        |      format: parquet
+        |      options:
+        |        path: out-path-2
         |      partitionBy:
         |        - col1
         |        - col2
