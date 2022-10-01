@@ -40,12 +40,13 @@ trait DecodersSupport {
     * @return
     *   Decoder[SessionType]
     */
-  implicit def sessionTypeDecoder: Decoder[SessionType] = (c: HCursor) => for {
-    value <- c.as[String].right
-  } yield value match {
-    case "Local" => Local
-    case "Distributed" => Distributed
-  }
+  implicit def sessionTypeDecoder: Decoder[SessionType] = (c: HCursor) =>
+    for {
+      value <- c.as[String].right
+    } yield value match {
+      case "Local"       => Local
+      case "Distributed" => Distributed
+    }
 
   /** A CacheLayer circe Decoder
     *
@@ -54,16 +55,17 @@ trait DecodersSupport {
     * @return
     *   Decoder[CacheLayer]
     */
-  implicit def cacheLayerDecoder: Decoder[CacheLayer] = (c: HCursor) => for {
-    value <- c.as[String].right
-  } yield value match {
-    case "Memory" => Memory
-    case "Disk" => Disk
-    case "MemoryAndDisk" => MemoryAndDisk
-    case "MemorySer" => MemorySer
-    case "MemoryAndDiskSer" => MemoryAndDiskSer
-    case "Checkpoint" => Checkpoint
-  }
+  implicit def cacheLayerDecoder: Decoder[CacheLayer] = (c: HCursor) =>
+    for {
+      value <- c.as[String].right
+    } yield value match {
+      case "Memory"           => Memory
+      case "Disk"             => Disk
+      case "MemoryAndDisk"    => MemoryAndDisk
+      case "MemorySer"        => MemorySer
+      case "MemoryAndDiskSer" => MemoryAndDiskSer
+      case "Checkpoint"       => Checkpoint
+    }
 
   /** A Source circe Decoder
     * @return
