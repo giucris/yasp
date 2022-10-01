@@ -21,7 +21,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
 
   val reader: FormatReader     = new FormatReader(spark)
   val workspace: String        = "yasp-core/src/test/resources/FormatReaderTest"
-  val dbConnUrl: String        = "jdbc:h2:mem:db1"
+  val dbConnUrl: String        = "jdbc:h2:mem:dbr"
   val dbConn: Connection       = getConnection(dbConnUrl, "usr", "pwd")
   val expectedDf: Dataset[Row] = spark.createDataset(Seq(Row(1, "x"), Row(2, "y")))(
     RowEncoder(
