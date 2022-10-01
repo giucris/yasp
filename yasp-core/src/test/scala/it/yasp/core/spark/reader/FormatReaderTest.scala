@@ -6,7 +6,7 @@ import it.yasp.testkit.TestUtils.createFile
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes._
-import org.apache.spark.sql.types.{IntegerType, MetadataBuilder, StringType, StructField, StructType}
+import org.apache.spark.sql.types.{IntegerType => _, LongType => _, StringType => _, _}
 import org.apache.spark.sql.{Row, SaveMode}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
@@ -18,7 +18,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
 
   val reader: FormatReader = new FormatReader(spark)
 
-  private val workspace = "yasp-core/src/test/resources/FormatReaderTest"
+  private val workspace        = "yasp-core/src/test/resources/FormatReaderTest"
   private val connUrl1: String = "jdbc:h2:mem:db1"
   private val connUrl2: String = "jdbc:h2:mem:db2"
 
@@ -401,7 +401,9 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
       )
     )
 
-    val actual = reader.read(Format("xml",options=Map("path"->s"$workspace/xml/input1/file.xml", "rowTag" -> "root")))
+    val actual = reader.read(
+      Format("xml", options = Map("path" -> s"$workspace/xml/input1/file.xml", "rowTag" -> "root"))
+    )
     assertDatasetEquals(actual, expected)
   }
 
