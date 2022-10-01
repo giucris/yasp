@@ -38,6 +38,11 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
             "id4",
             Source.Format("csv", options = Map("path" -> "z")),
             cache = Some(Checkpoint)
+          ),
+          YaspSource(
+            "id5",
+            Source.Format("csv", options = Map("path" -> "k")),
+            cache = Some(MemorySer)
           )
         ),
         Seq(
@@ -93,6 +98,12 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |      options:
         |        path: z
         |    cache: Checkpoint
+        |  - id: id5
+        |    source:
+        |      format: csv
+        |      options:
+        |        path: k
+        |    cache: MemorySer
         |  processes:
         |  - id: p1
         |    process:
