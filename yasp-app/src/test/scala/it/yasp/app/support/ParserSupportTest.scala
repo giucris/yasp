@@ -86,7 +86,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        user: x
         |        password: y
         |        dbTable: table
-        |     cache: Disk
+        |    cache: Disk
         |  - id: id4
         |    source:
         |      format: csv
