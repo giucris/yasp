@@ -25,7 +25,7 @@ lazy val dependencies = new {
   val scalaMockV            = "5.1.0"
   val h2dbV                 = "1.4.200"
   val typeSafeScalaLoggingV = "3.9.5"
-  val logbackV              = "1.4.1"
+  val logbackV              = "1.3.1"
 
   val apacheText           = "org.apache.commons"          % "commons-text"    % apacheTextV
   val scopt                = "com.github.scopt"           %% "scopt"           % scoptV
