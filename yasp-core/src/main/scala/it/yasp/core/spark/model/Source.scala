@@ -6,7 +6,7 @@ sealed trait Source extends Product with Serializable
 
 object Source {
 
-  /** A Format Source Model. Mainly based to the spark format reader.
+  /** A Format Source Model. Mainly based on the spark format reader.
     * @param format:
     *   Kind of format
     * @param schema:
