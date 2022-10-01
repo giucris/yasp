@@ -19,12 +19,11 @@ object YaspApp extends FileSupport with ParserSupport with VariablesSupport with
     * @return
     *   Unit
     */
-  def fromFile(filePath: String): Either[YaspAppErrors, Unit] = {
+  def fromFile(filePath: String): Either[YaspAppErrors, Unit] =
     for {
       content <- read(filePath)
       _       <- fromYaml(content)
     } yield ()
-  }
 
   /** Load a YaspExecution from a yml content.
     *
@@ -45,8 +44,7 @@ object YaspApp extends FileSupport with ParserSupport with VariablesSupport with
     } yield ()
   }
 
-  private def exec(yaspExecution: YaspExecution): Either[YaspExecutionError, Unit] = {
+  private def exec(yaspExecution: YaspExecution): Either[YaspExecutionError, Unit] =
     try Right(YaspService().run(yaspExecution))
     catch { case t: Throwable => Left(YaspExecutionError(yaspExecution, t)) }
-  }
 }

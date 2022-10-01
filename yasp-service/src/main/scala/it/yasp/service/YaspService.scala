@@ -40,7 +40,8 @@ object YaspService {
   class DefaultYaspService(
       sessionFactory: SessionFactory,
       yaspExecutorFactory: YaspExecutorFactory
-  ) extends YaspService with StrictLogging {
+  ) extends YaspService
+      with StrictLogging {
 
     override def run(yaspExecution: YaspExecution): Unit = {
       logger.info(s"Execute YaspService with YaspExecution: $yaspExecution")

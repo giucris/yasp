@@ -22,14 +22,15 @@ trait FileSupport extends StrictLogging {
       logger.info(s"Load file: $filePath")
       val source = Source.fromFile(filePath, "UTF-8")
       try Right(source.mkString.trim)
-      catch { case t: Throwable =>
+      catch {
+        case t: Throwable =>
+          t.printStackTrace()
+          Left(ReadFileError(filePath, t))
+      } finally source.close()
+    } catch {
+      case t: Throwable =>
         t.printStackTrace()
         Left(ReadFileError(filePath, t))
-      }
-      finally source.close()
-    } catch { case t: Throwable =>
-      t.printStackTrace()
-      Left(ReadFileError(filePath, t))
     }
 
 }

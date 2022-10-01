@@ -39,7 +39,8 @@ object YaspExecutor {
       loader: YaspLoader,
       processor: YaspProcessor,
       writer: YaspWriter
-  ) extends YaspExecutor with StrictLogging {
+  ) extends YaspExecutor
+      with StrictLogging {
 
     override def exec(yaspPlan: YaspPlan): Unit = {
       logger.info(s"Execute Yasp plan: $yaspPlan")

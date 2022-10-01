@@ -36,7 +36,8 @@ object YaspLoader {
       reader: Reader[Source],
       operators: Operators,
       registry: Registry
-  ) extends YaspLoader with StrictLogging {
+  ) extends YaspLoader
+      with StrictLogging {
     override def load(source: YaspSource): Unit = {
       logger.info(s"Source: $source")
       val ds1 = reader.read(source.source)

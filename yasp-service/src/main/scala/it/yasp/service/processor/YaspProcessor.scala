@@ -36,7 +36,8 @@ object YaspProcessor {
       processor: Processor[Process],
       operators: Operators,
       registry: Registry
-  ) extends YaspProcessor with StrictLogging{
+  ) extends YaspProcessor
+      with StrictLogging {
     override def process(process: YaspProcess): Unit = {
       logger.info(s"Process: $process")
       val ds1 = processor.execute(process.process)
