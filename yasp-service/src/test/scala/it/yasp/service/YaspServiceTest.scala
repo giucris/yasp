@@ -63,7 +63,7 @@ class YaspServiceTest
                 options = Map(
                   "header" -> "true",
                   "sep"    -> ",",
-                  "path" -> s"$workspace/csv-data-source-1/file1.csv"
+                  "path"   -> s"$workspace/csv-data-source-1/file1.csv"
                 )
               ),
               cache = None
@@ -75,7 +75,7 @@ class YaspServiceTest
                 options = Map(
                   "header" -> "true",
                   "sep"    -> ",",
-                  "path" -> s"$workspace/csv-data-source-2/file1.csv"
+                  "path"   -> s"$workspace/csv-data-source-2/file1.csv"
                 )
               ),
               cache = None
@@ -89,7 +89,10 @@ class YaspServiceTest
             )
           ),
           sinks = Seq(
-            YaspSink("data_3", Format("parquet",options=Map("path"->s"$workspace/parquet-out/")))
+            YaspSink(
+              "data_3",
+              Format("parquet", options = Map("path" -> s"$workspace/parquet-out/"))
+            )
           )
         )
       )

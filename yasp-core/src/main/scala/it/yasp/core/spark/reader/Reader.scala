@@ -26,10 +26,10 @@ trait Reader[A <: Source] {
 
 object Reader {
 
-  /**
-    * A FormatReader.
-    * Will use the standard spark approach to read a dataset starting from a configured format
-    * @param spark: SparkSession that will be used to read the Format Source
+  /** A FormatReader. Will use the standard spark approach to read a dataset starting from a
+    * configured format
+    * @param spark:
+    *   SparkSession that will be used to read the Format Source
     */
   class FormatReader(spark: SparkSession) extends Reader[Format] {
     override def read(source: Format): Dataset[Row] =
@@ -50,7 +50,7 @@ object Reader {
   class SourceReader(spark: SparkSession) extends Reader[Source] {
     override def read(source: Source): Dataset[Row] =
       source match {
-        case s: Format  => new FormatReader(spark).read(s)
+        case s: Format => new FormatReader(spark).read(s)
       }
   }
 
