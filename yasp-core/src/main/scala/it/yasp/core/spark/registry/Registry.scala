@@ -1,5 +1,6 @@
 package it.yasp.core.spark.registry
 
+import com.typesafe.scalalogging.StrictLogging
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 /** Registry trait
@@ -27,12 +28,16 @@ object Registry {
 
   /** DefaultRegistry will register the table as TempView
     */
-  class DefaultRegistry(spark: SparkSession) extends Registry {
+  class DefaultRegistry(spark: SparkSession) extends Registry with StrictLogging {
 
-    override def register(dataset: Dataset[Row], name: String): Unit =
+    override def register(dataset: Dataset[Row], name: String): Unit = {
+      logger.info(s"Register data: $name")
       dataset.createTempView(name)
+    }
 
-    override def retrieve(name: String): Dataset[Row] =
+    override def retrieve(name: String): Dataset[Row] = {
+      logger.info(s"Retrieve data: $name")
       spark.table(name)
+    }
   }
 }

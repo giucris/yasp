@@ -1,5 +1,6 @@
 package it.yasp.service.executor
 
+import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.operators.Operators.DefaultOperators
 import it.yasp.core.spark.processor.Processor.ProcessProcessor
 import it.yasp.core.spark.reader.Reader.SourceReader
@@ -15,7 +16,7 @@ import org.apache.spark.sql.SparkSession
   *
   * Provide a method to create a YaspService at runtime
   */
-class YaspExecutorFactory {
+class YaspExecutorFactory extends StrictLogging {
 
   /** Create a YaspService
     *
@@ -25,6 +26,7 @@ class YaspExecutorFactory {
     *   A [[YaspExecutor]]
     */
   def create(spark: SparkSession): YaspExecutor = {
+    logger.info("Create YaspExecutor instance")
     val registry    = new DefaultRegistry(spark)
     val dataHandler = new DefaultOperators()
     new DefaultYaspExecutor(

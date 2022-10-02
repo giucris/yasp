@@ -1,5 +1,6 @@
 package it.yasp.service
 
+import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.factory.SessionFactory
 import it.yasp.service.executor.YaspExecutorFactory
 import it.yasp.service.model.YaspExecution
@@ -39,9 +40,11 @@ object YaspService {
   class DefaultYaspService(
       sessionFactory: SessionFactory,
       yaspExecutorFactory: YaspExecutorFactory
-  ) extends YaspService {
+  ) extends YaspService
+      with StrictLogging {
 
     override def run(yaspExecution: YaspExecution): Unit = {
+      logger.info(s"Execute YaspService with YaspExecution: $yaspExecution")
       val session = sessionFactory.create(yaspExecution.session)
       yaspExecutorFactory.create(session).exec(yaspExecution.plan)
     }

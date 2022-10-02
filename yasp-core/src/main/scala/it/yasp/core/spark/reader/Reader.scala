@@ -1,5 +1,6 @@
 package it.yasp.core.spark.reader
 
+import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.model.Source
 import it.yasp.core.spark.model.Source._
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
@@ -31,14 +32,16 @@ object Reader {
     * @param spark:
     *   SparkSession that will be used to read the Format Source
     */
-  class FormatReader(spark: SparkSession) extends Reader[Format] {
-    override def read(source: Format): Dataset[Row] =
+  class FormatReader(spark: SparkSession) extends Reader[Format] with StrictLogging {
+    override def read(source: Format): Dataset[Row] = {
+      logger.info(s"Read Format: $source")
       source.schema
         .map(spark.read.schema)
         .getOrElse(spark.read)
         .format(source.format)
         .options(source.options)
         .load()
+    }
   }
 
   //TODO Something that retrieve automatically the relative Reader[A] should be implemented. Instead of doing it with an exhaustive pattern matching. probably shapeless could help on this

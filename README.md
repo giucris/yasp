@@ -1,4 +1,4 @@
-# yasp
+# Yasp
 
 [![ci](https://github.com/giucris/yasp/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/giucris/yasp/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/giucris/yasp/branch/main/graph/badge.svg?token=H3T07AGY1S)](https://codecov.io/gh/giucris/yasp)
 

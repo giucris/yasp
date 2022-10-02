@@ -1,5 +1,6 @@
 package it.yasp.core.spark.writer
 
+import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.model.Dest
 import it.yasp.core.spark.model.Dest.Format
 import org.apache.spark.sql.DataFrame
@@ -23,8 +24,9 @@ trait Writer[A <: Dest] {
 
 object Writer {
 
-  class FormatWriter extends Writer[Format] {
+  class FormatWriter extends Writer[Format] with StrictLogging {
     override def write(dataFrame: DataFrame, dest: Format): Unit = {
+      logger.info(s"Write Format: $dest")
       val wr1 = dataFrame.write.format(dest.format).options(dest.options)
       val wr2 = dest.mode.map(wr1.mode).getOrElse(wr1)
       val wr3 = if (dest.partitionBy.isEmpty) wr2 else wr2.partitionBy(dest.partitionBy: _*)

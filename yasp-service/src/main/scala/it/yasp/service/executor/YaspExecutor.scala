@@ -1,5 +1,6 @@
 package it.yasp.service.executor
 
+import com.typesafe.scalalogging.StrictLogging
 import it.yasp.service.loader.YaspLoader
 import it.yasp.service.model.YaspPlan
 import it.yasp.service.processor.YaspProcessor
@@ -38,9 +39,11 @@ object YaspExecutor {
       loader: YaspLoader,
       processor: YaspProcessor,
       writer: YaspWriter
-  ) extends YaspExecutor {
+  ) extends YaspExecutor
+      with StrictLogging {
 
     override def exec(yaspPlan: YaspPlan): Unit = {
+      logger.info(s"Execute Yasp plan: $yaspPlan")
       yaspPlan.sources.foreach(loader.load)
       yaspPlan.processes.foreach(processor.process)
       yaspPlan.sinks.foreach(writer.write)
