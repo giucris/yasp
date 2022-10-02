@@ -1,7 +1,7 @@
 package it.yasp.app.support
 
 import com.typesafe.scalalogging.StrictLogging
-import it.yasp.app.err.YaspAppErrors.InterpolationError
+import it.yasp.app.err.YaspError.InterpolationError
 import org.apache.commons.text.StringSubstitutor
 
 import scala.collection.JavaConverters.mapAsJavaMapConverter

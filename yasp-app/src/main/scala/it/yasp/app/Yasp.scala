@@ -1,5 +1,6 @@
 package it.yasp.app
 
+import com.typesafe.scalalogging.StrictLogging
 import it.yasp.app.args.YaspArgs._
 
 /** Yasp
@@ -7,7 +8,7 @@ import it.yasp.app.args.YaspArgs._
   * An executable Yasp application. Process input args, that accept a yml file location, and create
   * a YaspApp using the fromFile funcitons, create the relative YaspExecution and execute it.
   */
-object Yasp {
+object Yasp extends StrictLogging {
 
   private val banner =
     """
@@ -23,11 +24,15 @@ object Yasp {
 
   def main(args: Array[String]): Unit = {
     println(banner)
-    parse(args).map(c => YaspApp.fromFile(c.filePath)) match {
-      case Some(Right(_)) => sys.exit()
-      case Some(Left(_))  => sys.exit(1)
-      case None           => sys.exit(2)
-    }
+    parse(args)
+      .flatMap(conf => YaspApp.fromFile(conf.filePath))
+      .fold(
+        error => {
+          logger.error("Yasp Error: ", error)
+          throw error
+        },
+        _ => logger.info("Yasp Success.")
+      )
   }
 
 }

@@ -3,7 +3,7 @@ package it.yasp.app.support
 import cats.implicits._
 import com.typesafe.scalalogging.StrictLogging
 import io.circe.Decoder
-import it.yasp.app.err.YaspAppErrors.ParseYmlError
+import it.yasp.app.err.YaspError.ParseYmlError
 
 /** Provide a method to parse a yml content
   */

@@ -1,7 +1,7 @@
 package it.yasp.app.support
 
 import com.typesafe.scalalogging.StrictLogging
-import it.yasp.app.err.YaspAppErrors.ReadFileError
+import it.yasp.app.err.YaspError.ReadFileError
 
 import scala.io.Source
 

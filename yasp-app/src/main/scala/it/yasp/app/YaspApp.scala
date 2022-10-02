@@ -2,8 +2,8 @@ package it.yasp.app
 
 import com.typesafe.scalalogging.StrictLogging
 import io.circe.generic.auto._
-import it.yasp.app.err.YaspAppErrors
-import it.yasp.app.err.YaspAppErrors.YaspExecutionError
+import it.yasp.app.err.YaspError
+import it.yasp.app.err.YaspError.YaspExecutionError
 import it.yasp.app.support.{FileSupport, ParserSupport, VariablesSupport}
 import it.yasp.service.YaspService
 import it.yasp.service.model.YaspExecution
@@ -19,7 +19,7 @@ object YaspApp extends FileSupport with ParserSupport with VariablesSupport with
     * @return
     *   Unit
     */
-  def fromFile(filePath: String): Either[YaspAppErrors, Unit] =
+  def fromFile(filePath: String): Either[YaspError, Unit] =
     for {
       content <- read(filePath)
       _       <- fromYaml(content)
@@ -34,13 +34,13 @@ object YaspApp extends FileSupport with ParserSupport with VariablesSupport with
     *   YaspExecution in yml format
     * @return
     */
-  def fromYaml(content: String): Either[YaspAppErrors, Unit] = {
+  def fromYaml(content: String): Either[YaspError, Unit] = {
     logger.info(s"Initialize Yasp Application from yaml content:\n$content")
     for {
       contentWithEnv <- interpolate(content, sys.env)
       yaspExecution  <- parseYaml[YaspExecution](contentWithEnv)
       _              <- exec(yaspExecution)
-      _ = logger.info(s"YaspApplication completed successful.")
+      _ = logger.info(s"Yasp Application completed successful.")
     } yield ()
   }
 

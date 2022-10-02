@@ -1,6 +1,6 @@
 package it.yasp.app.support
 
-import it.yasp.app.err.YaspAppErrors.InterpolationError
+import it.yasp.app.err.YaspError.InterpolationError
 import org.scalatest.funsuite.AnyFunSuite
 
 class VariablesSupportTest extends AnyFunSuite with VariablesSupport {

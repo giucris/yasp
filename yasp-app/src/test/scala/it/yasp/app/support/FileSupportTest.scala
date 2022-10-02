@@ -1,6 +1,6 @@
 package it.yasp.app.support
 
-import it.yasp.app.err.YaspAppErrors.ReadFileError
+import it.yasp.app.err.YaspError.ReadFileError
 import it.yasp.testkit.TestUtils._
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
@@ -23,7 +23,7 @@ class FileSupportTest extends AnyFunSuite with FileSupport with BeforeAndAfterAl
     assert(read(s"$workspace/testFile.txt") == Right("my file"))
   }
 
-  test("read return Left error, file not readable"){
+  test("read return Left error, file not readable") {
     createFile(s"$workspace/testFile2.txt", Seq.empty)
     assert(read(s"$workspace/testFile2.txt") == Right(""))
   }
