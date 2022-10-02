@@ -13,7 +13,7 @@ sealed abstract class YaspError(val message: String, val cause: Throwable)
 object YaspError {
 
   final case class YaspArgsError(
-      args: Array[String]
+      args: Seq[String]
   ) extends YaspError(s"Unable to pars args", new IllegalArgumentException(args.mkString(",")))
 
   /** ReadFileError model
