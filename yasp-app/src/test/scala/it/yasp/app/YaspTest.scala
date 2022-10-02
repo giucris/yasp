@@ -72,7 +72,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |  conf: {}
            |plan:
            |  sources:
-           |    - id: users
+           |    - id: test_x
            |      source:
            |        format: csv
            |        options:
@@ -81,7 +81,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |          sep: ','
            |      cache: Memory
            |  sinks:
-           |    - id: users
+           |    - id: test_y
            |      dest:
            |        format: json
            |        options:

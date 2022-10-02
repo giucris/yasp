@@ -18,6 +18,10 @@
         <appender-ref ref="CONSOLE"/>
     </logger>
 
+    <logger name="org.apache.spark" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
     <logger name="io.netty" level="ERROR" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>

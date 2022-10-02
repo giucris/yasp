@@ -39,37 +39,37 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
     )
 
     YaspApp.fromYaml(
-      """session:
+      s"""session:
         |  kind: Local
         |  name: example-app
         |  conf: {}
         |plan:
         |  sources:
-        |    - id: users
+        |    - id: customer
         |      source:
         |        format: csv
         |        options:
-        |          path: yasp-app/src/test/resources/YaspApp/test1/source/user.csv
+        |          path: $workspace/test1/source/user.csv
         |          header: 'true'
         |          sep: ','
         |      cache: Memory
-        |    - id: addresses
+        |    - id: customer_addresses
         |      source:
         |        format: json
         |        options:
-        |          path: yasp-app/src/test/resources/YaspApp/test1/source/addresses.jsonl
+        |          path: $workspace/test1/source/addresses.jsonl
         |  processes:
-        |    - id: user_with_address
+        |    - id: customer_with_address
         |      process:
         |        query: >-
-        |          SELECT u.name,u.surname,a.address
-        |          FROM users u JOIN addresses a ON u.id = a.user_id
+        |          SELECT c.name,c.surname,a.address
+        |          FROM customer c JOIN customer_addresses a ON c.id = a.user_id
         |  sinks:
-        |    - id: user_with_address
+        |    - id: customer_with_address
         |      dest:
         |        format: parquet
         |        options:
-        |          path: yasp-app/src/test/resources/YaspApp/test1/output/
+        |          path: $workspace/test1/output/
         |""".stripMargin
     )
 
@@ -113,35 +113,35 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
     createFile(
       filePath = s"$workspace/test2/execution/example.yml",
       rows = Seq(
-        """session:
+        s"""session:
           |  kind: Local
           |  name: example-app
           |  conf: {}
           |plan:
           |  sources:
-          |    - id: users_file
+          |    - id: users_table
           |      source:
           |        format: csv
           |        options:
           |          header: 'true'
           |          sep: ','
-          |          path: yasp-app/src/test/resources/YaspApp/test2/source/user.csv
+          |          path: $workspace/test2/source/user.csv
           |      cache: Memory
-          |    - id: addresses_file
+          |    - id: addresses_table
           |      source:
           |        format: json
           |        options:
-          |         path: yasp-app/src/test/resources/YaspApp/test2/source/addresses.jsonl
+          |         path: $workspace/test2/source/addresses.jsonl
           |  processes:
-          |    - id: user_with_address_file
+          |    - id: user_with_address_table
           |      process:
-          |        query: SELECT u.name,u.surname,a.address FROM users_file u JOIN addresses_file a ON u.id = a.user_id
+          |        query: SELECT u.name,u.surname,a.address FROM users_table u JOIN addresses_table a ON u.id = a.user_id
           |  sinks:
-          |    - id: user_with_address_file
+          |    - id: user_with_address_table
           |      dest:
           |        format: parquet
           |        options:
-          |          path: yasp-app/src/test/resources/YaspApp/test2/output/
+          |          path: $workspace/test2/output/
           |""".stripMargin
       )
     )
@@ -168,4 +168,5 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
 
     assertDatasetEquals(actual, expected)
   }
+
 }
