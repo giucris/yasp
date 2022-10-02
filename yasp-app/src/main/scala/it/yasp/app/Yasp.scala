@@ -22,6 +22,7 @@ object Yasp extends StrictLogging {
       |Yet Another SPark framework
       |""".stripMargin
 
+  @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   def main(args: Array[String]): Unit = {
     println(banner)
     parse(args)
