@@ -1,7 +1,7 @@
 package it.yasp.app.support
 
 import io.circe.generic.auto._
-import it.yasp.app.err.YaspAppErrors.ParseYmlError
+import it.yasp.app.err.YaspError.ParseYmlError
 import it.yasp.core.spark.model.CacheLayer._
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.SessionType.Distributed

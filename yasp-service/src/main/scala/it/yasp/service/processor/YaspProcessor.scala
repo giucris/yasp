@@ -1,5 +1,6 @@
 package it.yasp.service.processor
 
+import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.model.Process
 import it.yasp.core.spark.operators.Operators
 import it.yasp.core.spark.processor.Processor
@@ -35,8 +36,10 @@ object YaspProcessor {
       processor: Processor[Process],
       operators: Operators,
       registry: Registry
-  ) extends YaspProcessor {
+  ) extends YaspProcessor
+      with StrictLogging {
     override def process(process: YaspProcess): Unit = {
+      logger.info(s"Process: $process")
       val ds1 = processor.execute(process.process)
       val ds2 = process.partitions.map(operators.repartition(ds1, _)).getOrElse(ds1)
       val ds3 = process.cache.map(operators.cache(ds2, _)).getOrElse(ds2)

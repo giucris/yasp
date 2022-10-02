@@ -16,28 +16,32 @@ inThisBuild(
   )
 )
 lazy val dependencies = new {
-  val scoptV      = "4.0.1"
-  val apacheTextV = "1.9"
-  val circeV      = "0.12.0"
-  val sparkV      = "3.3.0"
-  val sparkXmlV   = "0.14.0"
-  val scalaTestV  = "3.2.10"
-  val scalaMockV  = "5.1.0"
-  val h2dbV       = "1.4.200"
+  val scoptV                = "4.0.1"
+  val apacheTextV           = "1.9"
+  val circeV                = "0.12.0"
+  val sparkV                = "3.3.0"
+  val sparkXmlV             = "0.14.0"
+  val scalaTestV            = "3.2.10"
+  val scalaMockV            = "5.1.0"
+  val h2dbV                 = "1.4.200"
+  val typeSafeScalaLoggingV = "3.9.5"
+  val logbackV              = "1.3.1"
 
-  val apacheText     = "org.apache.commons" % "commons-text"  % apacheTextV
-  val scopt          = "com.github.scopt"  %% "scopt"         % scoptV
-  val circeCore      = "io.circe"          %% "circe-core"    % circeV
-  val circeGeneric   = "io.circe"          %% "circe-generic" % circeV
-  val circeParser    = "io.circe"          %% "circe-parser"  % circeV
-  val circeParserYml = "io.circe"          %% "circe-yaml"    % circeV
-  val sparkSql       = "org.apache.spark"  %% "spark-sql"     % sparkV
-  val sparkAvro      = "org.apache.spark"  %% "spark-avro"    % sparkV
-  val sparkXml       = "com.databricks"    %% "spark-xml"     % sparkXmlV
-  val scalactic      = "org.scalactic"     %% "scalactic"     % scalaTestV
-  val scalaTest      = "org.scalatest"     %% "scalatest"     % scalaTestV
-  val scalaMock      = "org.scalamock"     %% "scalamock"     % scalaMockV
-  val h2db           = "com.h2database"     % "h2"            % h2dbV
+  val apacheText           = "org.apache.commons"          % "commons-text"    % apacheTextV
+  val scopt                = "com.github.scopt"           %% "scopt"           % scoptV
+  val circeCore            = "io.circe"                   %% "circe-core"      % circeV
+  val circeGeneric         = "io.circe"                   %% "circe-generic"   % circeV
+  val circeParser          = "io.circe"                   %% "circe-parser"    % circeV
+  val circeParserYml       = "io.circe"                   %% "circe-yaml"      % circeV
+  val sparkSql             = "org.apache.spark"           %% "spark-sql"       % sparkV
+  val sparkAvro            = "org.apache.spark"           %% "spark-avro"      % sparkV
+  val sparkXml             = "com.databricks"             %% "spark-xml"       % sparkXmlV
+  val typeSafeScalaLogging = "com.typesafe.scala-logging" %% "scala-logging"   % typeSafeScalaLoggingV
+  val logback              = "ch.qos.logback"              % "logback-classic" % logbackV
+  val scalactic            = "org.scalactic"              %% "scalactic"       % scalaTestV
+  val scalaTest            = "org.scalatest"              %% "scalatest"       % scalaTestV
+  val scalaMock            = "org.scalamock"              %% "scalamock"       % scalaMockV
+  val h2db                 = "com.h2database"              % "h2"              % h2dbV
 
 }
 
@@ -64,6 +68,8 @@ lazy val core    = (project in file("yasp-core"))
       dependencies.sparkAvro,
       dependencies.sparkXml,
       dependencies.scalactic,
+      dependencies.typeSafeScalaLogging,
+      dependencies.logback,
       dependencies.scalaTest % Test,
       dependencies.scalaMock % Test,
       dependencies.h2db      % Test

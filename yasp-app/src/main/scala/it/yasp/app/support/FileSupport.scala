@@ -1,6 +1,7 @@
 package it.yasp.app.support
 
-import it.yasp.app.err.YaspAppErrors.ReadFileError
+import com.typesafe.scalalogging.StrictLogging
+import it.yasp.app.err.YaspError.ReadFileError
 
 import scala.io.Source
 
@@ -8,7 +9,7 @@ import scala.io.Source
   *
   * Provide a method to read a file content
   */
-trait FileSupport {
+trait FileSupport extends StrictLogging {
 
   /** Read a file on the provided path
     * @param filePath:
@@ -18,6 +19,7 @@ trait FileSupport {
     */
   def read(filePath: String): Either[ReadFileError, String] =
     try {
+      logger.info(s"Load file: $filePath")
       val source = Source.fromFile(filePath, "UTF-8")
       try Right(source.mkString.trim)
       catch { case t: Throwable => Left(ReadFileError(filePath, t)) }
