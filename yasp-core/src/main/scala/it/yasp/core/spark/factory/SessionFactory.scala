@@ -1,6 +1,7 @@
 package it.yasp.core.spark.factory
 
 import com.typesafe.scalalogging.StrictLogging
+import it.yasp.core.spark.err.YaspCoreError.CreateSessionError
 import it.yasp.core.spark.model.Session
 import it.yasp.core.spark.model.SessionType.{Distributed, Local}
 import org.apache.spark.SparkConf
@@ -40,12 +41,12 @@ class SessionFactory extends StrictLogging {
     *     .getOrCreate()
     * }}}
     */
-  def create(session: Session): SparkSession = {
-    logger.info(s"Create SparkSession as: $session")
-    session match {
-      case Session(Local, name, c)       => builder(name, c).master(LOCAL_MASTER).getOrCreate()
-      case Session(Distributed, name, c) => builder(name, c).getOrCreate()
-    }
+  def create(session: Session): Either[CreateSessionError, SparkSession] = {
+    logger.info(s"Creating SparkSession as: $session")
+    try session match {
+      case Session(Local, name, c)       => Right(builder(name, c).master(LOCAL_MASTER).getOrCreate())
+      case Session(Distributed, name, c) => Right(builder(name, c).getOrCreate())
+    } catch { case t: Throwable => Left(CreateSessionError(session, t)) }
   }
 
   private def builder(appName: String, config: Map[String, String]): SparkSession.Builder =

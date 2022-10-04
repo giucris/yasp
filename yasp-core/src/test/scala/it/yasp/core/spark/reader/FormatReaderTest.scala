@@ -60,7 +60,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         options = Map("path" -> s"$workspace/avro/input1/")
       )
     )
-    assertDatasetEquals(actual, expectedDf)
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
 
   test("read csv with header") {
@@ -73,7 +73,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         options = Map("header" -> "true", "path" -> s"$workspace/csv/input1/")
       )
     )
-    assertDatasetEquals(actual, expectedDf.withColumn("id", col("id").cast(StringType)))
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf.withColumn("id", col("id").cast(StringType)))
   }
 
   test("read csv with header and custom sep") {
@@ -87,7 +87,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         Map("header" -> "true", "sep" -> "|", "path" -> s"$workspace/csv/input2/")
       )
     )
-    assertDatasetEquals(actual, expectedDf.withColumn("id", col("id").cast(StringType)))
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf.withColumn("id", col("id").cast(StringType)))
   }
 
   test("read csv with header custom sep and schema") {
@@ -101,7 +101,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         Map("header" -> "true", "sep" -> "|", "path" -> s"$workspace/csv/input3/")
       )
     )
-    assertDatasetEquals(actual, expectedDf)
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
 
   test("read json with schema") {
@@ -120,7 +120,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         options = Map("path" -> s"$workspace/json/input1/")
       )
     )
-    assertDatasetEquals(actual, expectedDf)
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
 
   test("read orc") {
@@ -128,7 +128,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
     val actual = reader.read(
       Format(format = "orc", options = Map("path" -> s"$workspace/orc/input1/"))
     )
-    assertDatasetEquals(actual, expectedDf)
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
 
   test("read parquet") {
@@ -139,7 +139,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         options = Map("path" -> s"$workspace/parquet/input1//")
       )
     )
-    assertDatasetEquals(actual, expectedDf)
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
 
   test("read xml") {
@@ -163,7 +163,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         options = Map("path" -> s"$workspace/xml/input1/file.xml", "rowTag" -> "root")
       )
     )
-    assertDatasetEquals(actual, expectedDf)
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
 
   test("read jdbc table") {
@@ -182,7 +182,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         )
       )
     )
-    assertDatasetEquals(actual, expected)
+    assertDatasetEquals(actual.getOrElse(fail()), expected)
   }
 
   private def executeStatement(conn: Connection, stmt: String): Unit = {

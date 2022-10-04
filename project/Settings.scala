@@ -5,22 +5,23 @@ import wartremover.WartRemover.autoImport.{wartremoverErrors, Wart, Warts}
 object Settings {
 
   lazy val scalaCompilerSettings = Seq(
-    "-deprecation",
-    "-feature",
-    "-unchecked",
-    "-Xlint:_,-missing-interpolator",
-    "-Ywarn-dead-code",
-    "-encoding",
-    "UTF-8",
-    "-Xfatal-warnings",
-    "-Ywarn-inaccessible",
-    "-Ywarn-unused-import",
-    "-Ywarn-infer-any",
-    "-target:jvm-1.8",
-    "-language:implicitConversions",
-    "-language:higherKinds",
-    "-language:existentials",
-    "-language:postfixOps"
+   "-deprecation",
+   "-feature",
+   "-unchecked",
+   "-Xlint:_,-missing-interpolator",
+   "-encoding",
+   "UTF-8",
+   "-Xfatal-warnings",
+   "-Ypartial-unification",
+   "-Ywarn-dead-code",
+   "-Ywarn-inaccessible",
+   "-Ywarn-unused-import",
+   "-Ywarn-infer-any",
+   "-target:jvm-1.8",
+   "-language:implicitConversions",
+   "-language:higherKinds",
+   "-language:existentials",
+   "-language:postfixOps"
   )
 
   lazy val wartRemoverSettings = Seq(
@@ -30,7 +31,8 @@ object Settings {
       Wart.NonUnitStatements,
       Wart.Equals,
       Wart.Option2Iterable,
-      Wart.TraversableOps
+      Wart.TraversableOps,
+      Wart.Any
     )
   )
 

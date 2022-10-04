@@ -1,6 +1,7 @@
 package it.yasp.core.spark.reader
 
 import com.typesafe.scalalogging.StrictLogging
+import it.yasp.core.spark.err.YaspCoreError.ReadError
 import it.yasp.core.spark.model.Source
 import it.yasp.core.spark.model.Source._
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
@@ -21,7 +22,7 @@ trait Reader[A <: Source] {
     * @return
     *   a [[Dataset]] of [[Row]]
     */
-  def read(source: A): Dataset[Row]
+  def read(source: A): Either[ReadError, Dataset[Row]]
 
 }
 
@@ -30,17 +31,19 @@ object Reader {
   /** A FormatReader. Will use the standard spark approach to read a dataset starting from a
     * configured format
     * @param spark:
-    *   SparkSession that will be used to read the Format Source
+    *   [[SparkSession]] that will be used to read the Format Source
     */
   class FormatReader(spark: SparkSession) extends Reader[Format] with StrictLogging {
-    override def read(source: Format): Dataset[Row] = {
-      logger.info(s"Read Format: $source")
-      source.schema
-        .map(spark.read.schema)
-        .getOrElse(spark.read)
-        .format(source.format)
-        .options(source.options)
-        .load()
+    override def read(source: Format): Either[ReadError, Dataset[Row]] = {
+      logger.info(s"Reading Format: $source")
+      try Right {
+        source.schema
+          .map(spark.read.schema)
+          .getOrElse(spark.read)
+          .format(source.format)
+          .options(source.options)
+          .load()
+      } catch { case t: Throwable => Left(ReadError(source, t)) }
     }
   }
 
@@ -51,7 +54,7 @@ object Reader {
     *   A [[SparkSession]] instance
     */
   class SourceReader(spark: SparkSession) extends Reader[Source] {
-    override def read(source: Source): Dataset[Row] =
+    override def read(source: Source): Either[ReadError, Dataset[Row]] =
       source match {
         case s: Format => new FormatReader(spark).read(s)
       }

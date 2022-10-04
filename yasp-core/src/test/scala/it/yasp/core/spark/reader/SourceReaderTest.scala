@@ -56,7 +56,7 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         )
       )
     )
-    assertDatasetEquals(actual, expectedDf)
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
 
   test("read json") {
@@ -75,13 +75,13 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
       )
     )
 
-    assertDatasetEquals(actual, expectedDf)
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
 
   test("read parquet") {
     expectedDf.write.parquet(s"$workspace/parquet1/")
     val actual = reader.read(Format("parquet", options = Map("path" -> s"$workspace/parquet1/")))
-    assertDatasetEquals(actual, expectedDf)
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
 
 }
