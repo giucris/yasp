@@ -1,6 +1,6 @@
 package it.yasp.core.spark.model
 
-/** CacheLayer SumType
+/** CacheLayer
   */
 sealed trait CacheLayer extends Product with Serializable
 
