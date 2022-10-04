@@ -39,8 +39,8 @@ object YaspApp extends FileSupport with ParserSupport with VariablesSupport with
     logger.info(s"Initialize Yasp Application from yaml content:\n$content")
     for {
       contentWithEnv <- interpolate(content, sys.env)
-      yaspExecution <- parseYaml[YaspExecution](contentWithEnv)
-      _ <- YaspService().run(yaspExecution).leftMap(e => YaspExecutionError(yaspExecution, e))
+      yaspExecution  <- parseYaml[YaspExecution](contentWithEnv)
+      _              <- YaspService().run(yaspExecution).leftMap(e => YaspExecutionError(yaspExecution, e))
       _ = logger.info(s"Yasp Application completed successful.")
     } yield ()
   }

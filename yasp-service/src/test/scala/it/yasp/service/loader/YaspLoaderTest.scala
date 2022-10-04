@@ -120,7 +120,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       YaspSource(
         "tbl",
         Source.Format("parquet", options = Map("path" -> "x")),
-        partitions=Some(10)
+        partitions = Some(10)
       )
     )
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspLoaderError])
@@ -140,7 +140,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       YaspSource(
         "tbl",
         Source.Format("parquet", options = Map("path" -> "x")),
-        cache=Some(Memory)
+        cache = Some(Memory)
       )
     )
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspLoaderError])

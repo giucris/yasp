@@ -22,7 +22,7 @@ trait YaspService {
     * @param yaspExecution:
     *   A [[it.yasp.service.model.YaspExecution]] instance to run
     */
-  def run(yaspExecution: YaspExecution): Either[YaspServiceError,Unit]
+  def run(yaspExecution: YaspExecution): Either[YaspServiceError, Unit]
 }
 
 object YaspService {
@@ -46,7 +46,7 @@ object YaspService {
   ) extends YaspService
       with StrictLogging {
 
-    override def run(yaspExecution: YaspExecution): Either[YaspServiceError,Unit] = {
+    override def run(yaspExecution: YaspExecution): Either[YaspServiceError, Unit] = {
       logger.info(s"Execute YaspService with YaspExecution: $yaspExecution")
       for {
         session <- sessionFactory.create(yaspExecution.session).leftMap(YaspInitError)

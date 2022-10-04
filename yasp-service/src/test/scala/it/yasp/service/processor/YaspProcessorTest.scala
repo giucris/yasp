@@ -94,9 +94,9 @@ class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory
     (operators.repartition _)
       .expects(*, 10)
       .once()
-      .returns(Left(RepartitionOperationError(10,new IllegalArgumentException())))
+      .returns(Left(RepartitionOperationError(10, new IllegalArgumentException())))
 
-    val actual = yaspProcessor.process(YaspProcess("x", Sql("x"),partitions=Some(10)))
+    val actual = yaspProcessor.process(YaspProcess("x", Sql("x"), partitions = Some(10)))
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspProcessError])
   }
 
@@ -108,9 +108,9 @@ class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory
     (operators.cache _)
       .expects(*, *)
       .once()
-      .returns(Left(CacheOperationError(Memory,new IllegalArgumentException())))
+      .returns(Left(CacheOperationError(Memory, new IllegalArgumentException())))
 
-    val actual = yaspProcessor.process(YaspProcess("x", Sql("x"),cache=Some(Memory)))
+    val actual = yaspProcessor.process(YaspProcess("x", Sql("x"), cache = Some(Memory)))
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspProcessError])
   }
 
@@ -122,7 +122,7 @@ class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory
     (registry.register _)
       .expects(*, *)
       .once()
-      .returns(Left(RegisterTableError("x",new IllegalArgumentException())))
+      .returns(Left(RegisterTableError("x", new IllegalArgumentException())))
 
     val actual = yaspProcessor.process(YaspProcess("x", Sql("x")))
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspProcessError])

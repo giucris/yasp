@@ -6,14 +6,13 @@ import it.yasp.core.spark.model.Process
 import it.yasp.core.spark.model.Process.Sql
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
-/**
-  * Processor trait
-  * Provide a method to execute a [[Process]]
-  * @tparam A: type of [[Process]]
+/** Processor trait Provide a method to execute a [[Process]]
+  * @tparam A:
+  *   type of [[Process]]
   */
 trait Processor[A <: Process] {
-  /**
-    * Execute the provided process
+
+  /** Execute the provided process
     * @param process:
     * @return
     */
@@ -22,10 +21,10 @@ trait Processor[A <: Process] {
 
 object Processor {
 
-  /**
-    * Sql processor instance
+  /** Sql processor instance
     *
-    * @param spark: A [[SparkSession]] instance
+    * @param spark:
+    *   A [[SparkSession]] instance
     */
   class SqlProcessor(spark: SparkSession) extends Processor[Sql] with StrictLogging {
     override def execute(process: Sql): Either[ProcessError, Dataset[Row]] = {

@@ -46,7 +46,7 @@ class YaspWriterTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     (registry.retrieve _)
       .expects(*)
       .once()
-      .returns(Left(RetrieveTableError("x",new IllegalArgumentException())))
+      .returns(Left(RetrieveTableError("x", new IllegalArgumentException())))
 
     val actual = yaspWriter.write(YaspSink("id", Format("parquet", Map("path" -> "path"))))
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspWriterError])
@@ -62,7 +62,7 @@ class YaspWriterTest extends AnyFunSuite with SparkTestSuite with MockFactory {
         (writer.write _)
           .expects(*, *)
           .once()
-          .returns(Left(WriteError(Dest.Format("x",Map.empty),new IllegalArgumentException())))
+          .returns(Left(WriteError(Dest.Format("x", Map.empty), new IllegalArgumentException())))
       )
     )
     val actual = yaspWriter.write(YaspSink("id", Format("parquet", Map("path" -> "path"))))
