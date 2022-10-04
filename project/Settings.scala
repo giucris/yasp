@@ -9,10 +9,11 @@ object Settings {
     "-feature",
     "-unchecked",
     "-Xlint:_,-missing-interpolator",
-    "-Ywarn-dead-code",
     "-encoding",
     "UTF-8",
     "-Xfatal-warnings",
+    "-Ypartial-unification",
+    "-Ywarn-dead-code",
     "-Ywarn-inaccessible",
     "-Ywarn-unused-import",
     "-Ywarn-infer-any",
@@ -30,7 +31,8 @@ object Settings {
       Wart.NonUnitStatements,
       Wart.Equals,
       Wart.Option2Iterable,
-      Wart.TraversableOps
+      Wart.TraversableOps,
+      Wart.Any
     )
   )
 

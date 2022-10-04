@@ -1,7 +1,10 @@
 package it.yasp.service
 
+import cats.implicits._
 import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.factory.SessionFactory
+import it.yasp.service.err.YaspServiceError
+import it.yasp.service.err.YaspServiceError.YaspInitError
 import it.yasp.service.executor.YaspExecutorFactory
 import it.yasp.service.model.YaspExecution
 
@@ -19,7 +22,7 @@ trait YaspService {
     * @param yaspExecution:
     *   A [[it.yasp.service.model.YaspExecution]] instance to run
     */
-  def run(yaspExecution: YaspExecution)
+  def run(yaspExecution: YaspExecution): Either[YaspServiceError, Unit]
 }
 
 object YaspService {
@@ -43,10 +46,13 @@ object YaspService {
   ) extends YaspService
       with StrictLogging {
 
-    override def run(yaspExecution: YaspExecution): Unit = {
+    override def run(yaspExecution: YaspExecution): Either[YaspServiceError, Unit] = {
       logger.info(s"Execute YaspService with YaspExecution: $yaspExecution")
-      val session = sessionFactory.create(yaspExecution.session)
-      yaspExecutorFactory.create(session).exec(yaspExecution.plan)
+      for {
+        session <- sessionFactory.create(yaspExecution.session).leftMap(YaspInitError)
+        executor = yaspExecutorFactory.create(session)
+        _ <- executor.exec(yaspExecution.plan)
+      } yield ()
     }
 
   }

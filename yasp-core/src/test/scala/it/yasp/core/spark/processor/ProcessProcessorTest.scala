@@ -28,6 +28,6 @@ class ProcessProcessorTest extends AnyFunSuite with SparkTestSuite {
     val expected = spark.createDataset(Seq(Row(1), Row(2), Row(3), Row(4)))(
       RowEncoder(StructType(Seq(StructField("ID", IntegerType, nullable = true))))
     )
-    assertDatasetEquals(actual, expected)
+    assertDatasetEquals(actual.getOrElse(fail()), expected)
   }
 }

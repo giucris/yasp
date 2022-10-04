@@ -1,6 +1,7 @@
 package it.yasp.core.spark.registry
 
 import com.typesafe.scalalogging.StrictLogging
+import it.yasp.core.spark.err.YaspCoreError.{RegisterTableError, RetrieveTableError}
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 /** Registry trait
@@ -13,7 +14,7 @@ trait Registry {
     * @param name:
     *   DataFrame name
     */
-  def register(dataset: Dataset[Row], name: String): Unit
+  def register(dataset: Dataset[Row], name: String): Either[RegisterTableError, Unit]
 
   /** Retrieve a dataset
     * @param name:
@@ -21,7 +22,7 @@ trait Registry {
     * @return
     *   a Dataset
     */
-  def retrieve(name: String): Dataset[Row]
+  def retrieve(name: String): Either[RetrieveTableError, Dataset[Row]]
 }
 
 object Registry {
@@ -30,14 +31,18 @@ object Registry {
     */
   class DefaultRegistry(spark: SparkSession) extends Registry with StrictLogging {
 
-    override def register(dataset: Dataset[Row], name: String): Unit = {
-      logger.info(s"Register data: $name")
-      dataset.createTempView(name)
+    override def register(dataset: Dataset[Row], name: String): Either[RegisterTableError, Unit] = {
+      logger.info(s"Registering dataset as temp view with table name: $name")
+      try {
+        dataset.createTempView(name)
+        Right(())
+      } catch { case t: Throwable => Left(RegisterTableError(name, t)) }
     }
 
-    override def retrieve(name: String): Dataset[Row] = {
-      logger.info(s"Retrieve data: $name")
-      spark.table(name)
+    override def retrieve(name: String): Either[RetrieveTableError, Dataset[Row]] = {
+      logger.info(s"Retrieving table as dataset with table name: $name")
+      try Right(spark.table(name))
+      catch { case t: Throwable => Left(RetrieveTableError(name, t)) }
     }
   }
 }

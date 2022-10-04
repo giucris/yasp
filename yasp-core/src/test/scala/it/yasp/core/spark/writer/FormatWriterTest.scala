@@ -1,5 +1,6 @@
 package it.yasp.core.spark.writer
 
+import it.yasp.core.spark.err.YaspCoreError.WriteError
 import it.yasp.core.spark.model.Dest.Format
 import it.yasp.core.spark.writer.Writer.FormatWriter
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
@@ -305,5 +306,13 @@ class FormatWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
       .withMetadata("field1", new MetadataBuilder().putLong("scale", 0).build())
 
     assertDatasetEquals(actual, expected)
+  }
+
+  test("write return WriterError with bad format") {
+    val actual = writer.write(
+      expectedDf,
+      Format("xyz", Map("x" -> "y"))
+    )
+    assert(actual.left.getOrElse(fail()).isInstanceOf[WriteError])
   }
 }

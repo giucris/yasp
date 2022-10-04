@@ -15,9 +15,11 @@ inThisBuild(
     )
   )
 )
+
 lazy val dependencies = new {
   val scoptV                = "4.0.1"
   val apacheTextV           = "1.9"
+  val catsV                 = "2.0.0"
   val circeV                = "0.12.0"
   val sparkV                = "3.3.0"
   val sparkXmlV             = "0.14.0"
@@ -29,6 +31,7 @@ lazy val dependencies = new {
 
   val apacheText           = "org.apache.commons"          % "commons-text"    % apacheTextV
   val scopt                = "com.github.scopt"           %% "scopt"           % scoptV
+  val catsCore             = "org.typelevel"              %% "cats-core"       % catsV
   val circeCore            = "io.circe"                   %% "circe-core"      % circeV
   val circeGeneric         = "io.circe"                   %% "circe-generic"   % circeV
   val circeParser          = "io.circe"                   %% "circe-parser"    % circeV
@@ -82,6 +85,7 @@ lazy val service = (project in file("yasp-service"))
     name := "yasp-service",
     Settings.wartRemoverSettings,
     libraryDependencies ++= Seq(
+      dependencies.catsCore,
       dependencies.scalactic,
       dependencies.scalaTest % Test,
       dependencies.scalaMock % Test,
@@ -97,6 +101,7 @@ lazy val app     = (project in file("yasp-app"))
     libraryDependencies ++= Seq(
       dependencies.scopt,
       dependencies.apacheText,
+      dependencies.catsCore,
       dependencies.circeCore,
       dependencies.circeGeneric,
       dependencies.circeParser,
