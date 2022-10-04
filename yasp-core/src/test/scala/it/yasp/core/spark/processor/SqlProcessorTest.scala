@@ -12,6 +12,7 @@ import org.scalatest.funsuite.AnyFunSuite
 class SqlProcessorTest extends AnyFunSuite with SparkTestSuite {
 
   val sqlProcessor = new SqlProcessor(spark)
+
   val baseDf: Dataset[Row] = spark
     .createDataset(Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4")))(
       RowEncoder(
@@ -34,7 +35,7 @@ class SqlProcessorTest extends AnyFunSuite with SparkTestSuite {
   }
 
   test("process return ProcessError") {
-    val actual   = sqlProcessor.execute(Sql("select ID from process_table_x"))
+    val actual = sqlProcessor.execute(Sql("select ID from process_table_x"))
     assert(actual.left.getOrElse(fail()).isInstanceOf[ProcessError])
   }
 

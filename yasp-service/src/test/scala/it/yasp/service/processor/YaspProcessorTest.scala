@@ -1,6 +1,11 @@
 package it.yasp.service.processor
 
-import it.yasp.core.spark.err.YaspCoreError.{CacheOperationError, ProcessError, RegisterTableError, RepartitionOperationError}
+import it.yasp.core.spark.err.YaspCoreError.{
+  CacheOperationError,
+  ProcessError,
+  RegisterTableError,
+  RepartitionOperationError
+}
 import it.yasp.core.spark.model.CacheLayer.Memory
 import it.yasp.core.spark.model.Process
 import it.yasp.core.spark.model.Process.Sql

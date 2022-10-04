@@ -311,7 +311,7 @@ class FormatWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
   test("write return WriterError with bad format") {
     val actual = writer.write(
       expectedDf,
-      Format("xyz",Map("x"->"y"))
+      Format("xyz", Map("x" -> "y"))
     )
     assert(actual.left.getOrElse(fail()).isInstanceOf[WriteError])
   }

@@ -20,8 +20,8 @@ trait Writer[A <: Dest] {
     * @param dest:
     *   A [[Dest]] instance
     * @return
-    *   Right() if write action works fine
-    *   Left(WriteError) if something goes wrong during writing data
+    *   Right() if write action works fine Left(WriteError) if something goes wrong during writing
+    *   data
     */
   def write(dataFrame: DataFrame, dest: A): Either[WriteError, Unit]
 }

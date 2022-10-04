@@ -73,7 +73,10 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         options = Map("header" -> "true", "path" -> s"$workspace/csv/input1/")
       )
     )
-    assertDatasetEquals(actual.getOrElse(fail()), expectedDf.withColumn("id", col("id").cast(StringType)))
+    assertDatasetEquals(
+      actual.getOrElse(fail()),
+      expectedDf.withColumn("id", col("id").cast(StringType))
+    )
   }
 
   test("read csv with header and custom sep") {
@@ -87,7 +90,10 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         Map("header" -> "true", "sep" -> "|", "path" -> s"$workspace/csv/input2/")
       )
     )
-    assertDatasetEquals(actual.getOrElse(fail()), expectedDf.withColumn("id", col("id").cast(StringType)))
+    assertDatasetEquals(
+      actual.getOrElse(fail()),
+      expectedDf.withColumn("id", col("id").cast(StringType))
+    )
   }
 
   test("read csv with header custom sep and schema") {
