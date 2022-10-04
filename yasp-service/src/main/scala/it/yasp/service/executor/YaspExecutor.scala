@@ -1,6 +1,8 @@
 package it.yasp.service.executor
 
+import cats.implicits._
 import com.typesafe.scalalogging.StrictLogging
+import it.yasp.service.err.YaspServiceError
 import it.yasp.service.loader.YaspLoader
 import it.yasp.service.model.YaspPlan
 import it.yasp.service.processor.YaspProcessor
@@ -19,7 +21,7 @@ trait YaspExecutor {
     * @param yaspPlan:
     *   a [[YaspPlan]] instance to execute
     */
-  def exec(yaspPlan: YaspPlan)
+  def exec(yaspPlan: YaspPlan): Either[YaspServiceError, Unit]
 }
 
 object YaspExecutor {
@@ -42,11 +44,13 @@ object YaspExecutor {
   ) extends YaspExecutor
       with StrictLogging {
 
-    override def exec(yaspPlan: YaspPlan): Unit = {
+    override def exec(yaspPlan: YaspPlan): Either[YaspServiceError, Unit] = {
       logger.info(s"Execute Yasp plan: $yaspPlan")
-      yaspPlan.sources.foreach(loader.load)
-      yaspPlan.processes.foreach(processor.process)
-      yaspPlan.sinks.foreach(writer.write)
+      for {
+        _ <- yaspPlan.sources.toList.traverse(loader.load)
+        _ <- yaspPlan.processes.toList.traverse(processor.process)
+        _ <- yaspPlan.sinks.toList.traverse(writer.write)
+      } yield ()
     }
 
   }

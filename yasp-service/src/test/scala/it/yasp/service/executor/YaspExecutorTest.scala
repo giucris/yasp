@@ -30,10 +30,12 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
               cache = None
             )
           )
-          .once(),
+          .once()
+          .returns(Right(())),
         (writer.write _)
           .expects(YaspSink("id1", Format("parquet", Map("url" -> "destPath"))))
           .once()
+          .returns(Right(()))
       )
     )
 
@@ -63,13 +65,16 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
               cache = None
             )
           )
-          .once(),
+          .once()
+          .returns(Right(())),
         (processor.process _)
           .expects(YaspProcess("id2", Sql("my-sql"), cache = None))
-          .once(),
+          .once()
+          .returns(Right(())),
         (writer.write _)
           .expects(YaspSink("id2", Format("parquet", Map("url" -> "destPath"))))
           .once()
+          .returns(Right(()))
       )
     )
 
@@ -99,7 +104,8 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
               cache = None
             )
           )
-          .once(),
+          .once()
+          .returns(Right(())),
         (loader.load _)
           .expects(
             YaspSource(
@@ -109,19 +115,24 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
               cache = None
             )
           )
-          .once(),
+          .once()
+          .returns(Right(())),
         (processor.process _)
           .expects(YaspProcess("id3", Sql("my-sql-1"), cache = None))
-          .once(),
+          .once()
+          .returns(Right(())),
         (processor.process _)
           .expects(YaspProcess("id4", Sql("my-sql-2"), cache = None))
-          .once(),
+          .once()
+          .returns(Right(())),
         (writer.write _)
           .expects(YaspSink("id4", Format("parquet", Map("path" -> "destPath1"))))
-          .once(),
+          .once()
+          .returns(Right(())),
         (writer.write _)
           .expects(YaspSink("id3", Format("parquet", Map("path" -> "destPath2"))))
           .once()
+          .returns(Right(()))
       )
     )
 

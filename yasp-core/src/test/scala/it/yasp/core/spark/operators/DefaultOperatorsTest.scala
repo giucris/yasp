@@ -1,5 +1,6 @@
 package it.yasp.core.spark.operators
 
+import it.yasp.core.spark.err.YaspCoreError.RepartitionOperationError
 import it.yasp.core.spark.model.CacheLayer._
 import it.yasp.core.spark.operators.Operators.DefaultOperators
 import it.yasp.testkit.SparkTestSuite
@@ -15,7 +16,7 @@ class DefaultOperatorsTest extends AnyFunSuite with SparkTestSuite {
   val operators = new DefaultOperators()
 
   test("cache with Memory") {
-    val ds1 = spark.createDataset(Seq(Row("a", "b", "c")))(
+    val ds1    = spark.createDataset(Seq(Row("a", "b", "c")))(
       RowEncoder(
         StructType(
           Seq(
@@ -26,11 +27,12 @@ class DefaultOperatorsTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    assert(operators.cache(ds1, Memory).storageLevel == StorageLevel.MEMORY_ONLY)
+    val actual = operators.cache(ds1, Memory).map(_.storageLevel)
+    assert(actual == Right(StorageLevel.MEMORY_ONLY))
   }
 
   test("cache with Disk") {
-    val ds2 = spark.createDataset(Seq(Row("d", "e", "f")))(
+    val ds2    = spark.createDataset(Seq(Row("d", "e", "f")))(
       RowEncoder(
         StructType(
           Seq(
@@ -41,11 +43,12 @@ class DefaultOperatorsTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    assert(operators.cache(ds2, Disk).storageLevel == StorageLevel.DISK_ONLY)
+    val actual = operators.cache(ds2, Disk).map(_.storageLevel)
+    assert(actual == Right(StorageLevel.DISK_ONLY))
   }
 
   test("cache with MemoryAndDisk") {
-    val ds3 = spark.createDataset(Seq(Row("g", "h", "i")))(
+    val ds3    = spark.createDataset(Seq(Row("g", "h", "i")))(
       RowEncoder(
         StructType(
           Seq(
@@ -56,11 +59,12 @@ class DefaultOperatorsTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    assert(operators.cache(ds3, MemoryAndDisk).storageLevel == StorageLevel.MEMORY_AND_DISK)
+    val actual = operators.cache(ds3, MemoryAndDisk).map(_.storageLevel)
+    assert(actual == Right(StorageLevel.MEMORY_AND_DISK))
   }
 
   test("cache with MemorySer") {
-    val ds4 = spark.createDataset(Seq(Row("l", "m", "n")))(
+    val ds4    = spark.createDataset(Seq(Row("l", "m", "n")))(
       RowEncoder(
         StructType(
           Seq(
@@ -71,11 +75,12 @@ class DefaultOperatorsTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    assert(operators.cache(ds4, MemorySer).storageLevel == StorageLevel.MEMORY_ONLY_SER)
+    val actual = operators.cache(ds4, MemorySer).map(_.storageLevel)
+    assert(actual == Right(StorageLevel.MEMORY_ONLY_SER))
   }
 
   test("cache with MemoryAndDiskSer") {
-    val ds5 = spark.createDataset(Seq(Row("o", "p", "q")))(
+    val ds5    = spark.createDataset(Seq(Row("o", "p", "q")))(
       RowEncoder(
         StructType(
           Seq(
@@ -86,14 +91,23 @@ class DefaultOperatorsTest extends AnyFunSuite with SparkTestSuite {
         )
       )
     )
-    assert(operators.cache(ds5, MemoryAndDiskSer).storageLevel == StorageLevel.MEMORY_AND_DISK_SER)
+    val actual = operators.cache(ds5, MemoryAndDiskSer).map(_.storageLevel)
+    assert(actual == Right(StorageLevel.MEMORY_AND_DISK_SER))
   }
 
   test("repartition") {
     val ds6    = spark.createDataset(Seq(Row("a"), Row("b"), Row("c"), Row("d"), Row("e"), Row("f")))(
       RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
     )
-    val actual = operators.repartition(ds6, 2)
-    assert(actual.rdd.getNumPartitions == 2)
+    val actual = operators.repartition(ds6, 2).map(_.rdd.getNumPartitions)
+    assert(actual == Right(2))
+  }
+
+  test("repartition return RepartitionOperationError") {
+    val ds6    = spark.createDataset(Seq(Row("a"), Row("b"), Row("c"), Row("d"), Row("e"), Row("f")))(
+      RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
+    )
+    val actual = operators.repartition(ds6, 0)
+    assert(actual.left.getOrElse(fail()).isInstanceOf[RepartitionOperationError])
   }
 }
