@@ -1,6 +1,6 @@
 package it.yasp.core.spark.model
 
-/** Source Sum type
+/** Source Sumtype
   */
 sealed trait Source extends Product with Serializable
 
