@@ -1,5 +1,3 @@
-# Contributing
-
 Contributions make the open source community amazing so any kind of **Contribution are greatly appreciated**.
 
 You can contribute in three possible way:

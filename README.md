@@ -305,7 +305,7 @@ final case class Format(
 
 ## Contact
 
-- Giuseppe 
+- Giuseppe
   Cristiano [Twitter](https://twitter.com/giucristiano89) [Linkedin](https://www.linkedin.com/in/giuseppe-cristiano-developer/)
 
 ## Acknowledgements
