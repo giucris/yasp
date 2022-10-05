@@ -13,7 +13,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
 
   test("parse return Right") {
     val expected = YaspExecution(
-      Session(Distributed, "my-app-name", Map("key-1" -> "value", "key-2" -> "value")),
+      Session(Distributed, "my-app-name", Map("key-1" -> "value", "key-2" -> "value"), Some("xyz")),
       YaspPlan(
         Seq(
           YaspSource(
@@ -64,6 +64,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |session:
         |  kind: Distributed
         |  name: my-app-name
+        |  checkPointLocation: xyz
         |  conf:
         |    key-1: value
         |    key-2: value

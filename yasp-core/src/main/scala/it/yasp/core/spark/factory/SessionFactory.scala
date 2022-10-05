@@ -3,7 +3,6 @@ package it.yasp.core.spark.factory
 import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.err.YaspCoreError.CreateSessionError
 import it.yasp.core.spark.model.Session
-import it.yasp.core.spark.model.SessionType.{Distributed, Local}
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 
@@ -13,47 +12,73 @@ import org.apache.spark.sql.SparkSession
   */
 class SessionFactory extends StrictLogging {
 
-  private val LOCAL_MASTER = "local[*]"
-
   /** Crate a SparkSession
     *
     * @param session
-    *   : A [[Session]] product type that describe how to build the SparkSession
+    *   : A [[Session]] that define how to build a SparkSession
     * @return
-    *   A [[SparkSession]] created as described on the [[Session]] provided as arguments.
+    *   The [[SparkSession]] created as described.
     *
-    * Given a 'Session(Local,appName,conf)' build a SparkSession as follow:
+    * Given a 'Session(Local,appName,conf,None)' build a SparkSession as follow:
     * {{{
     *   SparkSession
     *     .builder()
     *     .appName(appName)
-    *     .config(new SparkConf().setAll(config))
+    *     .config(new SparkConf().setAll(conf))
     *     .master("local[*]")
     *     .getOrCreate()
     * }}}
     *
-    * Given a Session(Distributed, appName,config) create a SparkSession as follow:
+    * Given a Session(Distributed, appName,conf,None) create a SparkSession as follow:
     * {{{
     *   SparkSession
     *     .builder()
     *     .appName(appName)
-    *     .config(new SparkConf().setAll(config))
+    *     .config(new SparkConf().setAll(conf))
     *     .getOrCreate()
+    * }}}
+    *
+    * Given a Session(_,_,_,checkPointDir) create a SparkSession as follow:
+    * {{{
+    *   val spark = SparkSession
+    *     .builder()
+    *     // other builder config
+    *     .getOrCreate()
+    *
+    *   spark.sparkContext.setCheckpointDir(checkPointDir)
     * }}}
     */
   def create(session: Session): Either[CreateSessionError, SparkSession] = {
     logger.info(s"Creating SparkSession as: $session")
-    try session match {
-      case Session(Local, name, c)       => Right(builder(name, c).master(LOCAL_MASTER).getOrCreate())
-      case Session(Distributed, name, c) => Right(builder(name, c).getOrCreate())
+    try Right {
+      createSession(
+        sessionBuilder(session.name, session.conf),
+        session.master,
+        session.checkPointLocation
+      )
     } catch { case t: Throwable => Left(CreateSessionError(session, t)) }
   }
 
-  private def builder(appName: String, config: Map[String, String]): SparkSession.Builder =
+  private def sessionBuilder(appName: String, config: Map[String, String]): SparkSession.Builder =
     SparkSession
       .builder()
       .appName(appName)
       .config(new SparkConf().setAll(config))
+
+  private def createSession(
+      sessionBuilder: SparkSession.Builder,
+      master: Option[String],
+      checkPointDir: Option[String]
+  ): SparkSession = {
+    val session = master.fold(sessionBuilder)(sessionBuilder.master).getOrCreate()
+    checkPointDir.fold(session)(setCheckPointDir(session, _))
+  }
+
+  private def setCheckPointDir(sparkSession: SparkSession, checkPointDir: String): SparkSession = {
+    logger.info(s"Configuring checkpoint directory to: $checkPointDir")
+    sparkSession.sparkContext.setCheckpointDir(checkPointDir)
+    sparkSession
+  }
 
 }
 
