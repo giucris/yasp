@@ -291,14 +291,11 @@ final case class Format(
 * Add data quality process
 * Add Structured Streaming Execution
 
-### Code of conduct
+### Contribution and Code of conduct
 
-* Respect the code base and all the project style
-* Avoid massive refactors
-* Avoid meaningless class names, functions and variables
-* Avoid write more than 5/10 lines of logic within a function, often due to poor single responsibility principles
-* Avoid duplicated lines of codes
-* Provide the relative test cases for your feature/bug-fix
+See relative file for more information: 
+* [Contributing](CONTRIBUTING.md)
+* [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ## Contact
 
