@@ -45,9 +45,9 @@ class SessionFactory extends StrictLogging {
     logger.info(s"Creating SparkSession as: $session")
     try session match {
       case Session(Local, name, c, checkpointDir)       =>
-        Right(createSession(builder(name, c).master(LOCAL_MASTER), checkpointDir))
+        Right(createSession(builder(name, c), Some(LOCAL_MASTER), checkpointDir))
       case Session(Distributed, name, c, checkpointDir) =>
-        Right(createSession(builder(name, c), checkpointDir))
+        Right(createSession(builder(name, c), None, checkpointDir))
     } catch { case t: Throwable => Left(CreateSessionError(session, t)) }
   }
 
@@ -59,9 +59,10 @@ class SessionFactory extends StrictLogging {
 
   private def createSession(
       sessionBuilder: SparkSession.Builder,
+      master: Option[String],
       checkPointDir: Option[String]
   ): SparkSession = {
-    val session = sessionBuilder.getOrCreate()
+    val session = master.fold(sessionBuilder)(sessionBuilder.master).getOrCreate()
     checkPointDir.fold(session)(setCheckPointDir(session, _))
   }
 
