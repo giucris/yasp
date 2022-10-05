@@ -20,9 +20,18 @@ final case class Session(
 
 object Session {
 
-  implicit class SparkSessionOps(session: Session) {
+  /**
+    * Implicit class for SessionOps
+    * @param session: [[Session]]
+    */
+  implicit class SessionOps(session: Session) {
     private val LOCAL_MASTER = "local[*]"
 
+    /** Provide an Optional value for master configuration.
+      *
+      * @return
+      *   Some(local[*]) if session is Local None otherwise
+      */
     def master: Option[String] =
       session.kind match {
         case SessionType.Local       => Some(LOCAL_MASTER)
