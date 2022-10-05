@@ -17,3 +17,16 @@ final case class Session(
     conf: Map[String, String] = Map.empty,
     checkPointLocation: Option[String] = None
 )
+
+object Session {
+
+  implicit class SparkSessionOps(session: Session) {
+    private val LOCAL_MASTER = "local[*]"
+
+    def master: Option[String] =
+      session.kind match {
+        case SessionType.Local       => Some(LOCAL_MASTER)
+        case SessionType.Distributed => None
+      }
+  }
+}
