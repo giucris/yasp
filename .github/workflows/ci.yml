@@ -1,7 +1,7 @@
-name: ci
+name: test
 on: [ push ]
 jobs:
-  ci:
+  test:
     runs-on: ubuntu-latest
     env:
       JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
@@ -34,3 +34,19 @@ jobs:
           find $HOME/.ivy2/cache                       -name "ivydata-*.properties" -delete || true
           find $HOME/.cache/coursier/v1                -name "ivydata-*.properties" -delete || true
           find $HOME/.sbt                              -name "*.lock"               -delete || true
+  build:
+    needs: [test]
+    runs-on: ubuntu-latest
+    env:
+      JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+      JVM_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: setup jdk
+        uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: 8
+      - name: build
+        run: sbt assembly

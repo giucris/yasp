@@ -1,17 +1,15 @@
-inThisBuild(
-  Seq(
-    organization := "yasp",
-    licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
-    version      := "0.0.1",
-    scalaVersion := "2.12.15",
-    scalacOptions ++= Settings.scalaCompilerSettings,
-    developers   := List(
-      Developer(
-        "giucris",
-        "Giuseppe Cristiano",
-        "giucristiano89@gmail.com",
-        url("https://github.com/giucris")
-      )
+val commonSettings = Seq(
+  organization := "it.yasp",
+  licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
+  version      := "0.0.1",
+  scalaVersion := "2.12.15",
+  scalacOptions ++= Settings.scalaCompilerOptions,
+  developers   := List(
+    Developer(
+      "giucris",
+      "Giuseppe Cristiano",
+      "giucristiano89@gmail.com",
+      url("https://github.com/giucris")
     )
   )
 )
@@ -49,12 +47,17 @@ lazy val dependencies = new {
 }
 
 lazy val root = (project in file("."))
+  .disablePlugins(AssemblyPlugin)
+  .settings(commonSettings)
+  .settings(Settings.wartRemover)
   .aggregate(testKit, core, service, app)
 
 lazy val testKit = (project in file("yasp-testkit"))
+  .disablePlugins(AssemblyPlugin)
+  .settings(commonSettings)
   .settings(
     name := "yasp-testkit",
-    Settings.wartRemoverSettings,
+    Settings.wartRemover,
     libraryDependencies ++= Seq(
       dependencies.sparkSql,
       dependencies.scalactic,
@@ -63,9 +66,11 @@ lazy val testKit = (project in file("yasp-testkit"))
   )
 
 lazy val core    = (project in file("yasp-core"))
+  .disablePlugins(AssemblyPlugin)
+  .settings(commonSettings)
   .settings(
     name := "yasp-core",
-    Settings.wartRemoverSettings,
+    Settings.wartRemover,
     libraryDependencies ++= Seq(
       dependencies.sparkSql,
       dependencies.sparkAvro,
@@ -81,9 +86,11 @@ lazy val core    = (project in file("yasp-core"))
   .dependsOn(testKit % Test)
 
 lazy val service = (project in file("yasp-service"))
+  .disablePlugins(AssemblyPlugin)
+  .settings(commonSettings)
   .settings(
     name := "yasp-service",
-    Settings.wartRemoverSettings,
+    Settings.wartRemover,
     libraryDependencies ++= Seq(
       dependencies.catsCore,
       dependencies.scalactic,
@@ -95,9 +102,11 @@ lazy val service = (project in file("yasp-service"))
   .dependsOn(core, testKit % Test)
 
 lazy val app     = (project in file("yasp-app"))
+  .settings(commonSettings)
   .settings(
     name := "yasp-app",
-    Settings.wartRemoverSettings,
+    Settings.wartRemover,
+    Settings.appAssembly,
     libraryDependencies ++= Seq(
       dependencies.scopt,
       dependencies.apacheText,
