@@ -20,9 +20,9 @@ final case class Session(
 
 object Session {
 
-  /**
-    * Implicit class for SessionOps
-    * @param session: [[Session]]
+  /** Implicit class for SessionOps
+    * @param session:
+    *   [[Session]]
     */
   implicit class SessionOps(session: Session) {
     private val LOCAL_MASTER = "local[*]"
