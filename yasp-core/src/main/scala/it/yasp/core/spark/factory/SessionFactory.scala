@@ -18,27 +18,37 @@ class SessionFactory extends StrictLogging {
   /** Crate a SparkSession
     *
     * @param session
-    *   : A [[Session]] product type that describe how to build the SparkSession
+    *   : A [[Session]] that define how to build a SparkSession
     * @return
-    *   A [[SparkSession]] created as described on the [[Session]] provided as arguments.
+    *   The [[SparkSession]] created as described.
     *
-    * Given a 'Session(Local,appName,conf)' build a SparkSession as follow:
+    * Given a 'Session(Local,appName,conf,None)' build a SparkSession as follow:
     * {{{
     *   SparkSession
     *     .builder()
     *     .appName(appName)
-    *     .config(new SparkConf().setAll(config))
+    *     .config(new SparkConf().setAll(conf))
     *     .master("local[*]")
     *     .getOrCreate()
     * }}}
     *
-    * Given a Session(Distributed, appName,config) create a SparkSession as follow:
+    * Given a Session(Distributed, appName,conf,None) create a SparkSession as follow:
     * {{{
     *   SparkSession
     *     .builder()
     *     .appName(appName)
-    *     .config(new SparkConf().setAll(config))
+    *     .config(new SparkConf().setAll(conf))
     *     .getOrCreate()
+    * }}}
+    *
+    * Given a Session(_,_,_,checkPointDir) create a SparkSession as follow:
+    * {{{
+    *   val spark = SparkSession
+    *     .builder()
+    *     // other builder config
+    *     .getOrCreate()
+    *
+    *   spark.sparkContext.setCheckpointDir(checkPointDir)
     * }}}
     */
   def create(session: Session): Either[CreateSessionError, SparkSession] = {
