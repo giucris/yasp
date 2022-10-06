@@ -57,6 +57,7 @@ class SessionFactory extends StrictLogging {
         .withMaster(session.master)
         .withSparkConf(session.conf)
         .withHiveSupport(session.withHiveSupport)
+        .withDeltaSupport(session.withDeltaSupport)
         .getOrCreate()
         .withCheckPointDir(session.withCheckpointDir)
     )

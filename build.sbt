@@ -21,6 +21,7 @@ lazy val dependencies = new {
   val circeV                = "0.12.0"
   val sparkV                = "3.3.0"
   val sparkXmlV             = "0.14.0"
+  val deltaV                = "2.1.0"
   val scalaTestV            = "3.2.10"
   val scalaMockV            = "5.1.0"
   val h2dbV                 = "1.4.200"
@@ -37,6 +38,7 @@ lazy val dependencies = new {
   val sparkSql             = "org.apache.spark"           %% "spark-sql"       % sparkV
   val sparkAvro            = "org.apache.spark"           %% "spark-avro"      % sparkV
   val sparkXml             = "com.databricks"             %% "spark-xml"       % sparkXmlV
+  val delta                = "io.delta"                   %% "delta-core"      % deltaV
   val typeSafeScalaLogging = "com.typesafe.scala-logging" %% "scala-logging"   % typeSafeScalaLoggingV
   val logback              = "ch.qos.logback"              % "logback-classic" % logbackV
   val scalactic            = "org.scalactic"              %% "scalactic"       % scalaTestV
@@ -75,6 +77,7 @@ lazy val core    = (project in file("yasp-core"))
       dependencies.sparkSql,
       dependencies.sparkAvro,
       dependencies.sparkXml,
+      dependencies.delta,
       dependencies.scalactic,
       dependencies.typeSafeScalaLogging,
       dependencies.logback,
