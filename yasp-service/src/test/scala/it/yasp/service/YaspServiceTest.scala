@@ -53,7 +53,7 @@ class YaspServiceTest
 
     YaspService().run(
       YaspExecution(
-        session = Session(Local, "my-app-name", Map.empty),
+        session = Session(Local, "my-app-name", None, None, None),
         plan = YaspPlan(
           sources = Seq(
             YaspSource(

@@ -84,4 +84,9 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
     assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
 
+  test("read hiveTable") {
+    expectedDf.write.saveAsTable(s"my_table_xxx")
+    val actual = reader.read(HiveTable("my_table_xxx"))
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
+  }
 }

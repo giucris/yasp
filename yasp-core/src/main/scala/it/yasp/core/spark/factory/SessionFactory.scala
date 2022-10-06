@@ -2,8 +2,8 @@ package it.yasp.core.spark.factory
 
 import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.err.YaspCoreError.CreateSessionError
+import it.yasp.core.spark.extensions.SparkExtensions.{SparkSessionBuilderOps, SparkSessionOps}
 import it.yasp.core.spark.model.Session
-import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 
 /** SessionFactory
@@ -50,34 +50,16 @@ class SessionFactory extends StrictLogging {
     */
   def create(session: Session): Either[CreateSessionError, SparkSession] = {
     logger.info(s"Creating SparkSession as: $session")
-    try Right {
-      createSession(
-        sessionBuilder(session.name, session.conf),
-        session.master,
-        session.checkPointLocation
-      )
-    } catch { case t: Throwable => Left(CreateSessionError(session, t)) }
-  }
-
-  private def sessionBuilder(appName: String, config: Map[String, String]): SparkSession.Builder =
-    SparkSession
-      .builder()
-      .appName(appName)
-      .config(new SparkConf().setAll(config))
-
-  private def createSession(
-      sessionBuilder: SparkSession.Builder,
-      master: Option[String],
-      checkPointDir: Option[String]
-  ): SparkSession = {
-    val session = master.fold(sessionBuilder)(sessionBuilder.master).getOrCreate()
-    checkPointDir.fold(session)(setCheckPointDir(session, _))
-  }
-
-  private def setCheckPointDir(sparkSession: SparkSession, checkPointDir: String): SparkSession = {
-    logger.info(s"Configuring checkpoint directory to: $checkPointDir")
-    sparkSession.sparkContext.setCheckpointDir(checkPointDir)
-    sparkSession
+    try Right(
+      SparkSession
+        .builder()
+        .appName(session.name)
+        .withSparkConf(session.conf)
+        .withHiveSupport(session.withHiveSupport)
+        .getOrCreate()
+        .withCheckPointDir(session.withCheckpointDir)
+    )
+    catch { case t: Throwable => Left(CreateSessionError(session, t)) }
   }
 
 }
@@ -85,4 +67,5 @@ class SessionFactory extends StrictLogging {
 object SessionFactory {
 
   def apply(): SessionFactory = new SessionFactory()
+
 }

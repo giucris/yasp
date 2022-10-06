@@ -13,7 +13,13 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
 
   test("parse return Right") {
     val expected = YaspExecution(
-      Session(Distributed, "my-app-name", Map("key-1" -> "value", "key-2" -> "value"), Some("xyz")),
+      Session(
+        kind = Distributed,
+        name = "my-app-name",
+        conf = Some(Map("key-1" -> "value", "key-2" -> "value")),
+        withHiveSupport = Some(true),
+        withCheckpointDir = Some("xyz")
+      ),
       YaspPlan(
         Seq(
           YaspSource(
@@ -64,7 +70,8 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |session:
         |  kind: Distributed
         |  name: my-app-name
-        |  checkPointLocation: xyz
+        |  withCheckpointDir: xyz
+        |  withHiveSupport: true
         |  conf:
         |    key-1: value
         |    key-2: value

@@ -8,19 +8,22 @@ package it.yasp.core.spark.model
   *   : Application name
   * @param conf:
   *   A [[Map]] of spark specific session configuration
-  * @param checkPointLocation:
+  * @param withHiveSupport:
+  *   An optional [[Boolean]] for enabling hive support
+  * @param withCheckpointDir:
   *   CheckPoint location that will be used by the spark application to store checkpointed dataset
   */
 final case class Session(
     kind: SessionType,
     name: String,
-    conf: Map[String, String] = Map.empty,
-    checkPointLocation: Option[String] = None
+    conf: Option[Map[String, String]],
+    withHiveSupport: Option[Boolean],
+    withCheckpointDir: Option[String]
 )
 
 object Session {
 
-  /** Implicit class for SessionOps
+  /** SessionOps
     * @param session:
     *   [[Session]]
     */
@@ -32,10 +35,9 @@ object Session {
       * @return
       *   Some(local[*]) if session is Local None otherwise
       */
-    def master: Option[String] =
-      session.kind match {
-        case SessionType.Local       => Some(LOCAL_MASTER)
-        case SessionType.Distributed => None
-      }
+    def master: Option[String] = session.kind match {
+      case SessionType.Local       => Some(LOCAL_MASTER)
+      case SessionType.Distributed => None
+    }
   }
 }
