@@ -12,15 +12,14 @@ object SparkExtensions {
     */
   implicit class SparkSessionBuilderOps(builder: SparkSession.Builder) extends StrictLogging {
 
-    /**
-      * Optionally set the Spark master
+    /** Optionally set the Spark master
       * @param master:
       *   Optional string value of the spark master
       * @return
-      *   if master isDefined return [[SparkSession.Builder]] with master configured otherwise return
-      *   [[SparkSession.Builder]] without any conf
+      *   if master isDefined return [[SparkSession.Builder]] with master configured otherwise
+      *   return [[SparkSession.Builder]] without any conf
       */
-    def withMaster(master:Option[String]): SparkSession.Builder =
+    def withMaster(master: Option[String]): SparkSession.Builder =
       master.fold(builder) { c =>
         logger.info(s"Configuring master to: $c")
         builder.master(c)
