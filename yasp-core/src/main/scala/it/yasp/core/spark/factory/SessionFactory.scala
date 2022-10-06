@@ -54,6 +54,7 @@ class SessionFactory extends StrictLogging {
       SparkSession
         .builder()
         .appName(session.name)
+        .withMaster(session.master)
         .withSparkConf(session.conf)
         .withHiveSupport(session.withHiveSupport)
         .getOrCreate()
