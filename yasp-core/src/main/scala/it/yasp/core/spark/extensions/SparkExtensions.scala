@@ -20,7 +20,7 @@ object SparkExtensions {
       *   [[SparkSession.Builder]] without any conf
       */
     def withSparkConf(conf: Option[Map[String, String]]): SparkSession.Builder =
-      conf.fold(builder) { c =>
+      conf.filter(_.nonEmpty).fold(builder) { c =>
         logger.info(s"Configuring SparkConf on SparkSessionBuilder with config: $conf")
         builder.config(new SparkConf().setAll(c))
       }
