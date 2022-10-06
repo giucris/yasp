@@ -11,6 +11,8 @@ object SparkExtensions {
     *   SparkSession.Builder
     */
   implicit class SparkSessionBuilderOps(builder: SparkSession.Builder) extends StrictLogging {
+    private val DELTA_SQL_EXTENSION = "io.delta.sql.DeltaSparkSessionExtension"
+    private val DELTA_SQL_CATALOG   = "org.apache.spark.sql.delta.catalog.DeltaCatalog"
 
     /** Optionally set the Spark master
       * @param master:
@@ -51,18 +53,18 @@ object SparkExtensions {
         builder.enableHiveSupport()
       }
 
+    /**
+      * Optionally enable Delta support adding standard delta configuration on SparkConf
+      * @param deltaSupport: Optional boolean
+      * @return if deltaSupport is Defined and is True return [[SparkSession.Builder]] otherwise return
+      *         [[SparkSession.Builder]] without any conf
+      */
     def withDeltaSupport(deltaSupport: Option[Boolean]): SparkSession.Builder =
       deltaSupport.filterNot(identity).fold(builder) { _ =>
-        logger.info(s"Updating SparkConf with DeltaLake config")
+        logger.info(s"Updating SparkConf with Delta config")
         builder
-          .config(
-            "spark.sql.extensions",
-            "io.delta.sql.DeltaSparkSessionExtension"
-          )
-          .config(
-            "spark.sql.catalog.spark_catalog",
-            "org.apache.spark.sql.delta.catalog.DeltaCatalog"
-          )
+          .config("spark.sql.extensions", DELTA_SQL_EXTENSION)
+          .config("spark.sql.catalog.spark_catalog", DELTA_SQL_CATALOG)
       }
   }
 
