@@ -46,7 +46,7 @@ object SparkExtensions {
       *   [[SparkSession.Builder]] without any conf
       */
     def withHiveSupport(hiveSupport: Option[Boolean]): SparkSession.Builder =
-      hiveSupport.filterNot(identity).fold(builder) { _ =>
+      hiveSupport.filter(identity).fold(builder) { _ =>
         logger.info(s"Enabling SparkSessionBuilder HiveSupport")
         builder.enableHiveSupport()
       }

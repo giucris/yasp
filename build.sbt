@@ -36,6 +36,7 @@ lazy val dependencies = new {
   val circeParserYml       = "io.circe"                   %% "circe-yaml"      % circeV
   val sparkSql             = "org.apache.spark"           %% "spark-sql"       % sparkV
   val sparkAvro            = "org.apache.spark"           %% "spark-avro"      % sparkV
+  val sparkHive            = "org.apache.spark"           %% "spark-hive"      % sparkV
   val sparkXml             = "com.databricks"             %% "spark-xml"       % sparkXmlV
   val typeSafeScalaLogging = "com.typesafe.scala-logging" %% "scala-logging"   % typeSafeScalaLoggingV
   val logback              = "ch.qos.logback"              % "logback-classic" % logbackV
@@ -75,6 +76,7 @@ lazy val core    = (project in file("yasp-core"))
       dependencies.sparkSql,
       dependencies.sparkAvro,
       dependencies.sparkXml,
+      dependencies.sparkHive,
       dependencies.scalactic,
       dependencies.typeSafeScalaLogging,
       dependencies.logback,
