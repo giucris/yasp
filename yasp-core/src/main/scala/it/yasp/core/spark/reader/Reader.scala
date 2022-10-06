@@ -38,13 +38,22 @@ object Reader {
       logger.info(s"Reading Format: $source")
       try Right {
         source.schema
-          .map(spark.read.schema)
-          .getOrElse(spark.read)
+          .fold(spark.read)(spark.read.schema)
           .format(source.format)
           .options(source.options)
           .load()
       } catch { case t: Throwable => Left(ReadError(source, t)) }
     }
+  }
+
+  /** A HiveTableReader. Will use the standard spark.table to retrieve an hive table
+    * @param spark:
+    *   [[SparkSession]] that will be used to read the Format Source
+    */
+  class HiveTableReader(spark: SparkSession) extends Reader[HiveTable] with StrictLogging {
+    override def read(source: HiveTable): Either[ReadError, Dataset[Row]] =
+      try Right(spark.read.table(source.table))
+      catch { case t: Throwable => Left(ReadError(source, t)) }
   }
 
   //TODO Something that retrieve automatically the relative Reader[A] should be implemented. Instead of doing it with an exhaustive pattern matching. probably shapeless could help on this
@@ -56,7 +65,8 @@ object Reader {
   class SourceReader(spark: SparkSession) extends Reader[Source] {
     override def read(source: Source): Either[ReadError, Dataset[Row]] =
       source match {
-        case s: Format => new FormatReader(spark).read(s)
+        case s: Format    => new FormatReader(spark).read(s)
+        case s: HiveTable => new HiveTableReader(spark).read(s)
       }
   }
 

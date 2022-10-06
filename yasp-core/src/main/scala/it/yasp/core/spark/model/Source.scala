@@ -20,4 +20,12 @@ object Source {
       options: Map[String, String] = Map.empty
   ) extends Source
 
+  /** A HiveTable Source Model. Mainly based on the spark.table reader.
+    * @param table:
+    *   Table name
+    */
+  final case class HiveTable(
+      table: String
+  ) extends Source
+
 }

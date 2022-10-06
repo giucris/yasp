@@ -3,6 +3,8 @@ package it.yasp.testkit
 import org.apache.spark.sql.SparkSession
 import org.scalatest.Suite
 
+import java.nio.file.Files
+
 /** A SharedSparkSession trait
   *
   * Provide a spark session for testing purpose. Setup the spark session on the beforeAll method and
@@ -15,10 +17,13 @@ trait SharedSparkSession {
 
 object SharedSparkSession {
   def init: SparkSession = {
-    val spark = SparkSession
+    val warehouseDir = Files.createTempDirectory("spark-test-warehouse")
+    val spark        = SparkSession
       .builder()
-      .appName("testSession")
+      .appName("test-session")
       .master("local[*]")
+      .config("spark.sql.shuffle.partitions", "1")
+      .config("spark.sql.warehouse.dir", warehouseDir.toUri.toString)
       .getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
     spark

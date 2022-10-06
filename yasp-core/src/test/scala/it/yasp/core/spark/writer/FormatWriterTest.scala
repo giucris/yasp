@@ -19,7 +19,7 @@ class FormatWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
   registerDriver(new org.h2.Driver)
 
   val writer: FormatWriter = new FormatWriter()
-  val workspace            = "yasp-core/src/test/resources/CsvWriterTest"
+  val workspace: String    = "yasp-core/src/test/resources/FormatWriterTest"
   val dbConnUrl: String    = "jdbc:h2:mem:dbw1"
   val dbConn: Connection   = getConnection(dbConnUrl, "usr", "pwd")
 
