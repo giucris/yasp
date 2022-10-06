@@ -286,12 +286,9 @@ final case class Format(
 
 ## Roadmap
 
-* Add a Changelog
 * Add BuiltIn Processor
-* Add Table format like Deltalake, Iceberg and Hudi as Source
-* Add Table format like Deltalake, Iceberg and Hudi Dest
+* Add support for Iceberg and Hudi as Source/Dest
 * Add data quality process
-* Add collection of metrics with SparkListener
 * Add Structured Streaming Execution
 
 ### Code of conduct
