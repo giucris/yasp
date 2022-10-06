@@ -53,11 +53,12 @@ object SparkExtensions {
         builder.enableHiveSupport()
       }
 
-    /**
-      * Optionally enable Delta support adding standard delta configuration on SparkConf
-      * @param deltaSupport: Optional boolean
-      * @return if deltaSupport is Defined and is True return [[SparkSession.Builder]] otherwise return
-      *         [[SparkSession.Builder]] without any conf
+    /** Optionally enable Delta support adding standard delta configuration on SparkConf
+      * @param deltaSupport:
+      *   Optional boolean
+      * @return
+      *   if deltaSupport is Defined and is True return [[SparkSession.Builder]] otherwise return
+      *   [[SparkSession.Builder]] without any conf
       */
     def withDeltaSupport(deltaSupport: Option[Boolean]): SparkSession.Builder =
       deltaSupport.filterNot(identity).fold(builder) { _ =>
