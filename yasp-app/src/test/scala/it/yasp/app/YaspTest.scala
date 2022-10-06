@@ -98,10 +98,15 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
     createFile(
       filePath = s"$workspace/plan/2/yasp.yaml",
       rows = Seq(
-        s"""session:
+        s"""
+        |session:
         |  kind: Local
         |  name: example-app
-        |  conf: {}
+        |  conf:
+        |    k: j
+        |    x: y
+        |  withHiveSupport: true
+        |  withCheckpointDir: checkpoint paht
         |plan:
         |  sources:
         |    - id: users
