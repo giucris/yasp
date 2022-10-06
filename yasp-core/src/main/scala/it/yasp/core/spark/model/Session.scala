@@ -35,9 +35,10 @@ object Session {
       * @return
       *   Some(local[*]) if session is Local None otherwise
       */
-    def master: Option[String] = session.kind match {
-      case SessionType.Local       => Some(LOCAL_MASTER)
-      case SessionType.Distributed => None
-    }
+    def master: Option[String] =
+      session.kind match {
+        case SessionType.Local       => Some(LOCAL_MASTER)
+        case SessionType.Distributed => None
+      }
   }
 }
