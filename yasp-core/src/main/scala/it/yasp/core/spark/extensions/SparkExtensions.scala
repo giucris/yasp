@@ -48,7 +48,7 @@ object SparkExtensions {
       *   [[SparkSession.Builder]] without any conf
       */
     def withHiveSupport(hiveSupport: Option[Boolean]): SparkSession.Builder =
-      hiveSupport.filterNot(identity).fold(builder) { _ =>
+      hiveSupport.filter(identity).fold(builder) { _ =>
         logger.info(s"Enabling SparkSessionBuilder HiveSupport")
         builder.enableHiveSupport()
       }
@@ -61,7 +61,7 @@ object SparkExtensions {
       *   [[SparkSession.Builder]] without any conf
       */
     def withDeltaSupport(deltaSupport: Option[Boolean]): SparkSession.Builder =
-      deltaSupport.filterNot(identity).fold(builder) { _ =>
+      deltaSupport.filter(identity).fold(builder) { _ =>
         logger.info(s"Updating SparkConf with Delta config")
         builder
           .config("spark.sql.extensions", DELTA_SQL_EXTENSION)
