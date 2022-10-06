@@ -50,6 +50,20 @@ object SparkExtensions {
         logger.info(s"Enabling SparkSessionBuilder HiveSupport")
         builder.enableHiveSupport()
       }
+
+    def withDeltaSupport(deltaSupport: Option[Boolean]): SparkSession.Builder =
+      deltaSupport.filterNot(identity).fold(builder) { _ =>
+        logger.info(s"Updating SparkConf with DeltaLake config")
+        builder
+          .config(
+            "spark.sql.extensions",
+            "io.delta.sql.DeltaSparkSessionExtension"
+          )
+          .config(
+            "spark.sql.catalog.spark_catalog",
+            "org.apache.spark.sql.delta.catalog.DeltaCatalog"
+          )
+      }
   }
 
   /** SparkSessionOps

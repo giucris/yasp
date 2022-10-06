@@ -16,9 +16,10 @@ package it.yasp.core.spark.model
 final case class Session(
     kind: SessionType,
     name: String,
-    conf: Option[Map[String, String]],
-    withHiveSupport: Option[Boolean],
-    withCheckpointDir: Option[String]
+    conf: Option[Map[String, String]] = None,
+    withHiveSupport: Option[Boolean] = None,
+    withDeltaSupport: Option[Boolean] = None,
+    withCheckpointDir: Option[String] = None
 )
 
 object Session {
