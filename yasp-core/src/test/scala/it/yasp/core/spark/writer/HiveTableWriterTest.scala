@@ -1,5 +1,6 @@
 package it.yasp.core.spark.writer
 
+import it.yasp.core.spark.err.YaspCoreError.WriteError
 import it.yasp.core.spark.model.Dest.HiveTable
 import it.yasp.core.spark.writer.Writer.HiveTableWriter
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
@@ -79,4 +80,16 @@ class HiveTableWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAnd
     assertDatasetEquals(actual, expectedDf)
   }
 
+  test("write hive return left") {
+    val actual = hiveTableWriter.write(
+      expectedDf,
+      HiveTable(
+        "not_exists_table",
+        Map("path" -> s"$workspace/xxxx"),
+        mode = Some("append"),
+        partitionBy = Seq("id")
+      )
+    )
+    assert(actual.left.getOrElse(fail()).isInstanceOf[WriteError])
+  }
 }

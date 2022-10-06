@@ -37,7 +37,7 @@ object Dest {
     */
   final case class HiveTable(
       table: String,
-      options: Map[String, String],
+      options: Map[String, String] = Map.empty,
       mode: Option[String] = None,
       partitionBy: Seq[String] = Seq.empty
   ) extends Dest

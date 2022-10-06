@@ -1,5 +1,6 @@
 package it.yasp.core.spark.reader
 
+import it.yasp.core.spark.err.YaspCoreError.ReadError
 import it.yasp.core.spark.model.Source.HiveTable
 import it.yasp.core.spark.reader.Reader.HiveTableReader
 import it.yasp.testkit.SparkTestSuite
@@ -28,5 +29,10 @@ class HiveTableReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAnd
     expectedDf.write.saveAsTable("my_hive_table_xy")
     val actual = hiveReader.read(HiveTable("my_hive_table_xy"))
     assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
+  }
+
+  test("read table return left") {
+    val actual = hiveReader.read(HiveTable("yyyy"))
+    assert(actual.left.getOrElse(fail()).isInstanceOf[ReadError])
   }
 }
