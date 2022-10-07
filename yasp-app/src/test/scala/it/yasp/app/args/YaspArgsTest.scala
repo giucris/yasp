@@ -5,7 +5,7 @@ import org.scalatest.funsuite.AnyFunSuite
 class YaspArgsTest extends AnyFunSuite {
 
   test("parse fail") {
-    assert(YaspArgs.parse(Array()).contains(YaspArgs()))
+    assert(YaspArgs.parse(Array()).isLeft)
   }
 
   test("parse -f") {
