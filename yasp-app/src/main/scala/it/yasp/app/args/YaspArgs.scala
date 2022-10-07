@@ -25,6 +25,7 @@ object YaspArgs {
       builder.head("Yasp", "0.0.1"),
       builder
         .opt[String]('f', "file")
+        .required()
         .action((x, c) => c.copy(filePath = x))
         .text("yasp yml configuration file path"),
       builder.help("help").text("Specify YaspExecution yml file path with -f option")
