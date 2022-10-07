@@ -73,13 +73,13 @@ lazy val core    = (project in file("yasp-core"))
     name := "yasp-core",
     Settings.wartRemover,
     libraryDependencies ++= Seq(
+      dependencies.scalactic,
+      dependencies.typeSafeScalaLogging,
+      dependencies.logback,
       dependencies.sparkSql,
       dependencies.sparkAvro,
       dependencies.sparkXml,
       dependencies.sparkHive,
-      dependencies.scalactic,
-      dependencies.typeSafeScalaLogging,
-      dependencies.logback,
       dependencies.scalaTest % Test,
       dependencies.scalaMock % Test,
       dependencies.h2db      % Test
