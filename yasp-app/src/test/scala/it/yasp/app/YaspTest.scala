@@ -106,6 +106,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
         |    k: j
         |    x: y
         |  withHiveSupport: true
+        |  withDeltaSupport: true
         |  withCheckpointDir: checkpoint paht
         |plan:
         |  sources:

@@ -191,6 +191,18 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
     assertDatasetEquals(actual.getOrElse(fail()), expected)
   }
 
+  test("read delta table") {
+    expectedDf.write.format("delta").save(s"$workspace/deltaTable1")
+    val actual = reader.read(Format("delta", options = Map("path" -> s"$workspace/deltaTable1")))
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
+  }
+
+  test("read delta table partitioned ") {
+    expectedDf.write.format("delta").partitionBy("id").save(s"$workspace/deltaTable2")
+    val actual = reader.read(Format("delta", options = Map("path" -> s"$workspace/deltaTable2")))
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
+  }
+
   private def executeStatement(conn: Connection, stmt: String): Unit = {
     val statement = conn.createStatement
     statement.execute(stmt)
