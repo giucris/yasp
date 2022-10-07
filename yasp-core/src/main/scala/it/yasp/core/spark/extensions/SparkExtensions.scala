@@ -3,6 +3,7 @@ package it.yasp.core.spark.extensions
 import com.typesafe.scalalogging.StrictLogging
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.internal.StaticSQLConf.SPARK_SESSION_EXTENSIONS
 
 object SparkExtensions {
 
@@ -11,8 +12,8 @@ object SparkExtensions {
     *   SparkSession.Builder
     */
   implicit class SparkSessionBuilderOps(builder: SparkSession.Builder) extends StrictLogging {
-    private val DELTA_SQL_EXTENSION = "io.delta.sql.DeltaSparkSessionExtension"
-    private val DELTA_SQL_CATALOG   = "org.apache.spark.sql.delta.catalog.DeltaCatalog"
+    private val DELTA_SESSION_EXTENSION = "io.delta.sql.DeltaSparkSessionExtension"
+    private val DELTA_CATALOG           = "org.apache.spark.sql.delta.catalog.DeltaCatalog"
 
     /** Optionally set the Spark master
       * @param master:
@@ -64,8 +65,8 @@ object SparkExtensions {
       deltaSupport.filter(identity).fold(builder) { _ =>
         logger.info(s"Updating SparkConf with Delta config")
         builder
-          .config("spark.sql.extensions", DELTA_SQL_EXTENSION)
-          .config("spark.sql.catalog.spark_catalog", DELTA_SQL_CATALOG)
+          .config(SPARK_SESSION_EXTENSIONS.key, DELTA_SESSION_EXTENSION)
+          .config("spark.sql.catalog.spark_catalog", DELTA_CATALOG)
       }
   }
 
