@@ -42,7 +42,7 @@ For devs:
 * yasp code test: `sbt clean test`
 * all in one: `bash ci.sh`
 
-**I am working to provide a first release that you can directly download**
+**NB: I'm working to provide a first release that you can directly download**
 
 To execute yasp you have to provide a single yaml file (json is fine too), that basically will contain all your Extract
 Transform and Load task.
