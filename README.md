@@ -94,27 +94,11 @@ plan:
 
 Take a look to the detailed user documentation for [Session](/docs/Session.md), [YaspExecution](/docs/YaspExecution.md), [YaspPlan](/docs/YaspPlan.md)
 
-### Supported sources
+### Source and Destination
 
-Currently Yasp support all default Spark format sources plus:
+Yasp support all default Spark sources and destination plus:
 * XML
 * Delta table 
-
-Take a look to the detailed user documentation for all the yasp source 
-
-### Supported transformation
-
-Currently Yasp support only SQL transformation
-
-Take a look to the detailed user documentation for all the yasp processor
-
-### Supported destination
-
-Currently Yasp support all default Spark format destination plus: 
-* XML
-* Delta table
-
-Take a look to the detailed user documentation for all the yasp destination
 
 ## Usage
 
