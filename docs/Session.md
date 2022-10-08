@@ -17,20 +17,19 @@ final case class Session(
     kind: SessionType,
     name: String,
     conf: Option[Map[String, String]] = None,
-    withHiveSupport: Option[Boolean] = None,
+    withHiveSupport: Option[Boolean]  = None,
     withDeltaSupport: Option[Boolean] = None,
     withCheckpointDir: Option[String] = None
 )
 ```
 
-
-* kind: valid values are **local** (for local runs) and **distributed** (for production run)
-* name: the spark app name
-* conf: Optional map, by default is considered empty, for spark session configuration
-* withHiveSupport: Optional flag, by default is considered false, for activate the Hive support
-* withDeltaSupport: Optional flag, by default is considered false, for activate Delta table support (i.e: **Delta catalog** and **Delta SparkSession extensions**)
-* withCheckpointDir: Optional string, by default is considered empty, for configuring the checkpoint directory
-
+Fields:
+* **kind** [**REQUIRED**]: Kind of SparkSession that will be created. Valid values are **local** and **distributed**, local for local usage and distributed for production usage.
+* **name** [**REQUIRED**]: Define the SparkSession app name
+* **conf** [**OPTIONAL**]: Map of strings, default is empty, for SparkSession configuration.
+* **withHiveSupport** [**OPTIONAL**]: Boolean flag, default is false, for activating the Hive support on the SparkSession.
+* **withDeltaSupport** [**OPTIONAL**]: Boolean flag, default is false, for activating Delta table support on the SparkSession (**Delta catalog** and **Delta SparkSessionExtensions**).
+* **withCheckpointDir** [**OPTIONAL**]: String, default is empty, for configuring the SparkContext checkpoint directory.
 
 An example of a full yaml configuration:
 

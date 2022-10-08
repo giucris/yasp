@@ -87,7 +87,7 @@ plan:
           path: path/to/out/csv/
 ```
 
-Take a look to the detailed user documentation [Session](/docs/Session.md), [YaspExecution](/docs/YaspExecution.md), [YaspPlan](/docs/YaspPlan.md)
+Take a look to the detailed user documentation for [Session](/docs/Session.md), [YaspExecution](/docs/YaspExecution.md), [YaspPlan](/docs/YaspPlan.md)
 
 ### Supported sources
 

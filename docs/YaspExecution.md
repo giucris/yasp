@@ -7,12 +7,13 @@ Currently is defined as follow:
 
 ```scala
 case class YaspExecution(
-    session: Session, // A Session instance
-    plan: YaspPlan // A YaspPlan Instance
+    session: Session,   // A Session instance
+    plan: YaspPlan      // A YaspPlan Instance
 )
 ```
 
-* session: A Session model
-* plan: A YaspPlan model
+* **session** [**REQUIRED**]: A Session instance
+* **plan** [**REQUIRED**]: A YaspPlan instance
+
 
 Take a look to the detailed user documentation for [Session](/docs/Session.md) and [YaspPlan](/docs/YaspPlan.md)
