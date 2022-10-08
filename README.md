@@ -94,12 +94,6 @@ plan:
 
 Take a look to the detailed user documentation for [Session](/docs/Session.md), [YaspExecution](/docs/YaspExecution.md), [YaspPlan](/docs/YaspPlan.md)
 
-### Source and Destination
-
-Yasp support all default Spark sources and destination plus:
-* XML
-* Delta table 
-
 ## Usage
 
 Currently you can use Yasp in three different way
