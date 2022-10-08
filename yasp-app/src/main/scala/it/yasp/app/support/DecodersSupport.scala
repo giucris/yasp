@@ -43,9 +43,9 @@ trait DecodersSupport {
   implicit def sessionTypeDecoder: Decoder[SessionType] = (c: HCursor) =>
     for {
       value <- c.as[String].right
-    } yield value match {
-      case "Local"       => Local
-      case "Distributed" => Distributed
+    } yield value.toUpperCase match {
+      case "LOCAL"       => Local
+      case "DISTRIBUTED" => Distributed
     }
 
   /** A CacheLayer circe Decoder
