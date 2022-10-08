@@ -90,9 +90,10 @@ or `pom.xml` file and then start using it.
 
 #### YaspExecution and YaspPlan
 
-The main component of the YaspService module are `YaspExecution`, `YaspPlan` and of course the `YaspService`.
+The main component of the YaspService module are `YaspExecution`, 
+`YaspPlan` and of course the `YaspService`.
 
-A YaspExecution is a model that define an e2e ETL job executed by the `YaspService`.
+
 
 A YaspExecution define a `Session` that will be used to create the `SparkSession` and a `YaspPlan` that describe all
 data operations within the job.

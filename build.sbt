@@ -53,7 +53,7 @@ lazy val root = (project in file("."))
   .disablePlugins(AssemblyPlugin)
   .settings(commonSettings)
   .settings(Settings.wartRemover)
-  .aggregate(testKit, core, service, app,example)
+  .aggregate(testKit, core, service, app)
 
 lazy val testKit = (project in file("yasp-testkit"))
   .disablePlugins(AssemblyPlugin)
@@ -127,12 +127,3 @@ lazy val app     = (project in file("yasp-app"))
     )
   )
   .dependsOn(service, testKit % Test)
-
-lazy val example = (project in file("yasp-example"))
-  .disablePlugins(AssemblyPlugin)
-  .settings(commonSettings)
-  .settings(
-    name := "yasp-app",
-    Settings.wartRemover
-  )
-  .dependsOn(app)
