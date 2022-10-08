@@ -4,7 +4,7 @@ import io.circe.generic.auto._
 import it.yasp.app.err.YaspError.ParseYmlError
 import it.yasp.core.spark.model.CacheLayer._
 import it.yasp.core.spark.model.Process.Sql
-import it.yasp.core.spark.model.SessionType.Distributed
+import it.yasp.core.spark.model.SessionType.{Distributed, Local}
 import it.yasp.core.spark.model._
 import it.yasp.service.model._
 import org.scalatest.funsuite.AnyFunSuite
@@ -134,6 +134,59 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |      partitionBy:
         |        - col1
         |        - col2
+        |""".stripMargin
+    )
+    assert(actual == Right(expected))
+  }
+
+  test("parse return Right with lower Session Kind string") {
+    val expected = YaspExecution(
+      Session(
+        kind = Local,
+        name = "my-app-name"
+      ),
+      YaspPlan(
+        Seq(
+          YaspSource(
+            "id1",
+            Source.Format("csv", options = Map("path" -> "x", "header" -> "false", "sep" -> ",")),
+            cache = Some(Memory)
+          )
+        ),
+        Seq(
+          YaspProcess("p1", Sql("my-query"))
+        ),
+        Seq(
+          YaspSink("p1", Dest.Format("parquet", Map("path" -> "out-path-1")))
+        )
+      )
+    )
+
+    val actual = parseYaml[YaspExecution](
+      """
+        |session:
+        |  kind: local
+        |  name: my-app-name
+        |plan:
+        |  sources:
+        |  - id: id1
+        |    source:
+        |      format: csv
+        |      options:
+        |        path: x
+        |        header: 'false'
+        |        sep: ','
+        |    cache: Memory
+        |  processes:
+        |  - id: p1
+        |    process:
+        |      query: my-query
+        |  sinks:
+        |  - id: p1
+        |    dest:
+        |      format: parquet
+        |      options:
+        |        path: out-path-1
         |""".stripMargin
     )
     assert(actual == Right(expected))
