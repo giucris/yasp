@@ -39,7 +39,6 @@ object YaspArgs {
             |A dry-run execution will execute all yasp process without running any spark action.
             |"""
         ),
-
       builder.help("help").text("Specify YaspExecution yml file path with -f option")
     )
     OParser.parse(parser, args, YaspArgs()).toRight(YaspArgsError(args))

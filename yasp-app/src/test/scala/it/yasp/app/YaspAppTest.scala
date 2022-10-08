@@ -147,7 +147,7 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
       )
     )
 
-    YaspApp.fromFile(s"$workspace/test2/execution/example.yml",dryRun=false)
+    YaspApp.fromFile(s"$workspace/test2/execution/example.yml", dryRun = false)
 
     val actual   = spark.read.parquet(s"$workspace/test2/output/")
     val expected = spark.createDataset(
