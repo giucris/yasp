@@ -1,6 +1,8 @@
-# Yasp
+# Yasp [![ci](https://github.com/giucris/yasp/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/giucris/yasp/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/giucris/yasp/branch/main/graph/badge.svg)](https://codecov.io/gh/giucris/yasp)
 
-[![ci](https://github.com/giucris/yasp/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/giucris/yasp/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/giucris/yasp/branch/main/graph/badge.svg?token=H3T07AGY1S)](https://codecov.io/gh/giucris/yasp)
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-black.svg)](https://sonarcloud.io/summary/new_code?id=giucris_yasp)
+
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=giucris_yasp&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=giucris_yasp) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=giucris_yasp&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=giucris_yasp) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=giucris_yasp&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=giucris_yasp) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=giucris_yasp&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=giucris_yasp)
 
 Yet Another SPark Framework
 
@@ -9,13 +11,18 @@ An easy and lightweight tool for data engineering process built on top of Apache
 ## Introduction
 
 Yasp was created to help data engineers working with Apache Spark to reduce their pipeline development time by using a
-no-code/less-code approach.
+**no-code/less-code** approach.
 
 With Yasp you can configure an ETL/ELT job that fetch data from a multiple source execute multiple transformation and
 write in multiple destination
 
 It is written in **Scala (2.12.15)** on top of **Apache Spark (3.3.0)** and managed as an **SBT (1.4.9)** multi module
-project.
+project comes with the following modules: 
+* **YaspApp** provide the highest possible level of abstraction for your ETL job and come with an executable main class.
+  Allow you to manage complex big data etl job with a simple yml file
+* **YaspService** provide all the yasp ops for your ETL job.
+* **YaspCore** provide spark primitives useful for yasp operations.
+
 
 ## Getting Started
 
@@ -28,34 +35,100 @@ project.
 
 ### Local Execute
 
-* checkout yasp: `git clone https://github.com/giucris/yasp.git`
-* run yasp test: `sbt clean test`
-* build yasp : `sbt assembly`
+To execute Yasp you should first build it.
+
+* clone: `git clone https://github.com/giucris/yasp.git`
+* build: `sbt assembly`
+* Go to `yasp-app/target/scala2.12/` folder and you can find the executable jar file.
+
+For devs:
+
+* yasp style test: `sbt scalafmtSbtCheck scalafmtCheckAll`
+* yasp code test: `sbt clean test`
 * all in one: `bash ci.sh`
+
+**NB: I'm working to provide a first release that you can directly download**
+
+To execute yasp you have to provide a single yaml file (json is fine too), that basically will contain all your Extract
+Transform and Load task.
+
+#### yasp.yaml
+A yasp.yaml is a file that define a `YaspExecution`.
+A `YaspExecution` is a model that define an e2e ETL/EL job in terms of `Session` and `YaspPlan`. 
+A `YaspPlan` is a model that define all the data operations that yasp will execute. 
+
+For example:
+```yaml
+# Session field
+session: 
+  kind: local               #Define a local spark session. Use distributed for non local execution.
+  name: example-app         #Define a Spark Appcliation name.
+
+# YaspPlan field
+plan:   
+  # List of all sources
+  sources:
+    - id: my_csv            # Id of the source. used by yasp to register the dataset as a table
+      source:               # Source fiedl, will contains all the configuration to read the data
+        format: csv         # Standard Spark format
+        options:            # Standard Spark format options
+          header: 'true'
+          path: path/to/input/csv/
+  # List of all process
+  processes:
+    - id: my_csv_filtered   # Id of the process. used by yasp to register the resulting data as a table
+      process:              # Process field, will contains all the Process configuration to transform the data
+        query: >-           # A sql process configuration
+          SELECT * 
+          FROM my_csv 
+          WHERE id=1
+  # List of sinks
+  sinks:                   
+    - id: my_csv_filtered   # Id of the source/process registered that will be written 
+      dest:                 # Destination field, contains all the Dest configuration to write the data
+        format: csv         # Standard Spark format
+        options:            # Standard Spark format options
+          header: 'true'
+          path: path/to/out/csv/
+```
+
+Take a look to the detailed user documentation for [Session](/docs/Session.md), [YaspExecution](/docs/YaspExecution.md), [YaspPlan](/docs/YaspPlan.md)
 
 ## Usage
 
-Yasp provide 3 different module, you can use any one of them.
+Currently you can use Yasp in three different way
+**NB** You have to build yasp before using it, please follow the relative section.
 
-* **YaspApp** provide the highest possible level of abstraction for your ETL job and come with an executable main class.
-  Allow you to manage complex big data etl job with a simple yml file
-* **YaspService** provide all the yasp ops for your ETL job.
-* **YaspCore** provide spark primitives useful for yasp operations.
+### Local usage
 
-### YaspApp
+Yasp comes with a bundled spark, so you can directly execute the jar package on your machine.
+**NB: Please take a look to the prerequisites needed to run it locally**
 
-YaspApp module provide the highest possible level of abstraction for your ETL. You should just provide a yml definition
-of your data operations, it will initialize the SparkSession and execute all the steps provided on the yml file.
+**Execute an ETL/EL**
+* Create a yasp.yaml file that define your ETL/EL flow.
+* Then run yasp: 
+```bash
+java -jar yasp-app-x.y.z.jar --file <PATH_TO_YASP_YAML_FILE>`
+```
 
-YaspApp are able to interpolate environment variable into your yaml file, helping you to avoid writing secrets in your
-task. Just add some placeholders like this `${my-pwd}` and yasp will interpolate it.
+**Test your yasp.yml**
+* Create a yasp.yaml file that define your ETL/EL flow.
+* Then run yasp with dry-run enabled:
+```bash
+java -jar yasp-app-x.y.z.jar --file <PATH_TO_YASP_YAML_FILE> --dry-run
+```
 
-Currently, there are two different mode to run a YaspApp **but only one is stable, use it as a dependency on your code**
+The dry-run does not execute spark action, it just provide to you the YaspPlan that will be executed.
 
-**I'm working to make the executable version stable in order to run the binary jar with the yml provided as external
-file.**
+### Cluster usage
 
-#### YaspApp as library
+* Create a yasp.yaml file and make it available for your cluster
+* Then run yasp as main class for your spark submit:
+```bash
+  spark-submit --class it.yasp.app.Yasp yasp-app-x-y-z.jar --file yasp.yaml
+```
+
+### Library usage
 
 Add the yasp-app reference to your dependencies into the `build.sbt`or `pom.xml` build and start using it in your code.
 
@@ -113,97 +186,6 @@ object MyUsersByCitiesReport {
 }
 ```
 
-The YaspApp will interpolate the yml content provided with environment variable, parse the yml into a YaspExecution and
-execute it via a YaspService.
-
-Take a look at the YaspService and YaspCore modules section for more detail on how it works.
-
-### YaspService
-
-You can use YaspService just as a library. Add the yasp-service reference to your dependencies into your `build.sbt`
-or `pom.xml` file and then start using it.
-
-#### YaspExecution and YaspPlan
-
-The main component of the YaspService module are `YaspExecution`, `YaspPlan` and of course the `YaspService`.
-
-A YaspExecution is a model that define an e2e ETL job executed by the `YaspService`.
-
-A YaspExecution define a `Session` that will be used to create the `SparkSession` and a `YaspPlan` that describe all
-data operations within the job.
-
-```scala
-case class Session(
-  kind: SessionType, // A SumType with two possible value Local (for local session) Distributed (for cluster session)
-  name: String, // Spark application name
-  config: Map[String, String] // Spark session configuration
-)
-
-case class YaspPlan(
-  sources: Seq[YaspSource], // A Sequence of YaspSource
-  processes: Seq[YaspProcess], // A Sequence of YaspProcess
-  sinks: Seq[YaspSink] // A Sequence of YaspSink
-)
-
-case class YaspExecution(
-  session: Session, // A SessionConf instance
-  plan: YaspPlan // A YaspPlan Instance
-)
-
-trait YaspService {
-  // Generate the SparkSession and execute the YaspPlan
-  def run(yaspExecution: YaspExecution)
-}
-```
-
-#### YaspSource, YaspProcess and YaspSink
-
-A `YaspSource` define a data source. Each `YaspSource` are loaded via a `YaspLoader` that read repartition and cache the
-data to a specific `CacheLayer` and register it as a temporary table with the id provided.
-
-A `YaspProcess` define a data process operation. Each `YaspProcess` are executed via a `YaspProcessor` that execute
-the `Process`, repartition and cache the data to a specific `CacheLayer` and register it as a temporary table with the
-id provided.
-
-A `YaspSink` define a data output operation. Each `YaspSink` are executed via a `YaspWriter` that retrieve the specific
-data using the provided `id` and write them to the specified destination.
-
-```scala
-case class YaspSource(
-  id: String, // Unique ID to internally identify the resulting dataframe
-  source: Source, // Source Sum Type
-  partitions: Option[Int], // Optional number of partitions 
-  cache: Option[CacheLayer] // Optional cache layer that will be used to cache resulting dataframe  
-)
-
-case class YaspProcess(
-  id: String, // Unique ID to internally identify the resulting dataframe
-  process: Process, // Source Sum Type
-  partitions: Option[Int], // Optional number of partitions
-  cache: Option[CacheLayer] // Optional cache layer that will be used to cache resulting dataframe
-)
-
-case class YaspSink(
-  id: String, // Unique ID of the dataframe that should be write out.
-  dest: Dest // Dest Sum Type
-)
-
-trait YaspLoader {
-  //Load the Source, Cache the resulting dataframe if CacheLayer is specified and register the dataframe as temporary view
-  def load(source: YaspSource): Unit
-}
-
-trait YaspProcessor {
-  //Execute the Process, Cache the resulting dataframe if CacheLayer is specified and register the dataframe as temporary view
-  def process(process: YaspProcess)
-}
-
-trait YaspWriter {
-  // Retrieve the dataframe and write out as Dest configuration describe.
-  def write(yaspSink: YaspSink): Unit
-}
-```
-
 #### YaspService in action
 
 Suppose that you have 3 data source that you should read join and then extract a simple number of users by cities.
@@ -237,53 +219,6 @@ object MyUsersByCitiesReport {
 
 ```
 
-`Source`, `Process`, `Dest` and `CacheLayer` are all part of the `YaspCore` module. Take a look at the yasp core module
-section for more details about the available sources, processes and destination.
-
-### YaspCore
-
-The YaspCore module is a wrapper of all the Apache Spark primitives. Containing definition of Sources, Process, Dest,
-Reader, Processor, Writer and Cache.
-
-#### Source
-
-Currently Yasp Core support only Format source.
-
-```scala
-final case class Format(
-      format: String,
-      schema: Option[String] = None,
-      options: Map[String, String] = Map.empty
-) extends Source
-```
-
-#### Process
-
-Define a data operations
-
-##### Sql
-
-```scala
-case class Sql(
-  query: String
-) extends Process
-```
-
-#### Dest
-
-Currently Yasp support only the Format destination.
-
-##### Format
-
-```scala
-final case class Format(
-    format:String,
-    options:Map[String,String],
-    mode:Option[String] = None,
-    partitionBy: Seq[String] = Seq.empty
-) extends Dest
-```
-
 ## Roadmap
 
 * Add BuiltIn Processor
@@ -291,14 +226,12 @@ final case class Format(
 * Add data quality process
 * Add Structured Streaming Execution
 
-### Code of conduct
+### Contribution and Code of conduct
 
-* Respect the code base and all the project style
-* Avoid massive refactors
-* Avoid meaningless class names, functions and variables
-* Avoid write more than 5/10 lines of logic within a function, often due to poor single responsibility principles
-* Avoid duplicated lines of codes
-* Provide the relative test cases for your feature/bug-fix
+See relative file for more information:
+
+* [Contributing](CONTRIBUTING.md)
+* [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ## Contact
 
