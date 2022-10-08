@@ -7,6 +7,8 @@ import it.yasp.core.spark.model.CacheLayer._
 import it.yasp.core.spark.model.SessionType.{Distributed, Local}
 import it.yasp.core.spark.model.{CacheLayer, Dest, Process, SessionType, Source}
 
+import java.util.Locale
+
 /** Provide a set of encoder and decoder useful to beautify all Yasp ADT.
   */
 trait DecodersSupport {
@@ -42,8 +44,8 @@ trait DecodersSupport {
     */
   implicit def sessionTypeDecoder: Decoder[SessionType] = (c: HCursor) =>
     for {
-      value <- c.as[String].right
-    } yield value.toUpperCase match {
+      value <- c.as[String].map(_.toUpperCase(Locale.US))
+    } yield value match {
       case "LOCAL"       => Local
       case "DISTRIBUTED" => Distributed
     }
