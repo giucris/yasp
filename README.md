@@ -17,7 +17,12 @@ With Yasp you can configure an ETL/ELT job that fetch data from a multiple sourc
 write in multiple destination
 
 It is written in **Scala (2.12.15)** on top of **Apache Spark (3.3.0)** and managed as an **SBT (1.4.9)** multi module
-project.
+project comes with the following modules: 
+* **YaspApp** provide the highest possible level of abstraction for your ETL job and come with an executable main class.
+  Allow you to manage complex big data etl job with a simple yml file
+* **YaspService** provide all the yasp ops for your ETL job.
+* **YaspCore** provide spark primitives useful for yasp operations.
+
 
 ## Getting Started
 
@@ -111,69 +116,129 @@ Currently Yasp support all default Spark format destination plus:
 
 Take a look to the detailed user documentation for all the yasp destination
 
+## Usage
 
-## Running
+Currently you can use Yasp in three different way
+**NB** You have to build yasp before using it, please follow the relative section.
 
-Yasp comes with a bundled spark so you can directly execute the jar package, that's it.
+### Local usage
 
-**I am working to provide a lightweight version without all the required library**
+Yasp comes with a bundled spark, so you can directly execute the jar package on your machine.
+**NB: Please take a look to the prerequisites needed to run it locally**
 
-* Create some file/local db that will works as a source
+**Execute an ETL/EL**
 * Create a yasp.yaml file that define your ETL/EL flow.
-* Then run `java -jar yasp-app-*.jar --file <PATH_TO_YASP_YAML_FILE>`
-
-### Example 1
-
-Crate source data as CSV File:
-
-```
-id,field1,field2
-1,b,c
-2,x,y
-```
-
-A Yaml file:
-
-```yaml
-session:
-  kind: local
-  name: example-app
-plan:
-  sources:
-    - id: my_csv
-      source:
-        format: csv
-        schema: id INT, field1 STRING, field2 STRING
-          options: 
-            header: 'true'
-            path: path/to/input/csv/
-  processes:
-    - id: my_csv_filtered
-      process:
-        query: SELECT * FROM my_csv WHERE id=1
-  sinks:
-    - id: my_csv_filtered
-      dest:
-        format: csv
-        options: 
-          header: 'true'
-          path: path/to/out/csv/
+* Then run yasp: 
+```bash
+java -jar yasp-app-x.y.z.jar --file <PATH_TO_YASP_YAML_FILE>`
 ```
 
 **Test your yasp.yml**
-yasp provide an input args that could be used to test your configuration file.
-
+* Create a yasp.yaml file that define your ETL/EL flow.
+* Then run yasp with dry-run enabled:
 ```bash
-java -jar yasp-app-*.jar --file yasp.yaml --dry-run
+java -jar yasp-app-x.y.z.jar --file <PATH_TO_YASP_YAML_FILE> --dry-run
 ```
 
 The dry-run does not execute spark action, it just provide to you the YaspPlan that will be executed.
 
-**Run yasp**
-If the dry-run works fine, to run your flow you have just to execute something like this
+### Cluster usage
 
+* Create a yasp.yaml file and make it available for your cluster
+* Then run yasp as main class for your spark submit:
 ```bash
-java -jar yasp-app-*.jar --file yasp.yaml
+  spark-submit --class it.yasp.app.Yasp yasp-app-x-y-z.jar --file yasp.yaml
+```
+
+### Library usage
+
+Add the yasp-app reference to your dependencies into the `build.sbt`or `pom.xml` build and start using it in your code.
+
+##### YaspApp in action
+
+```scala
+object MyUsersByCitiesReport {
+
+  def main(args: Array[String]): Unit = {
+    YaspApp.fromYaml(
+      s"""
+         |session:
+         |  kind: Local
+         |  name: example-app
+         |  conf: {}
+         |plan:
+         |  sources:
+         |    - id: users
+         |      source:
+         |        format: csv
+         |          options: 
+         |            path: users.csv
+         |    - id: addresses
+         |      source:
+         |      format: json
+         |        options: 
+         |          path: addresses.jsonl
+         |    - id: cities
+         |      source:
+         |      format: jdbc
+         |        options: 
+         |          url: my-db-url
+         |          user: ${db_username}
+         |          password: ${db_password}
+         |          dbTable: my-table
+         |  processes:
+         |    - id: user_with_address
+         |      process:
+         |        query: >-
+         |          SELECT u.name,u.surname,a.address,a.city,a.country 
+         |          FROM users u 
+         |          JOIN addresses a ON u.id = a.user_id
+         |          JOIN cities c ON a.city_id = c.id
+         |  sinks:
+         |    - id: user_with_address
+         |      dest:
+         |        format: parquet
+         |        options: 
+         |          path: user_with_address
+         |        partitionBy: 
+         |          - country_id
+         |""".stripMargin
+    )
+  }
+}
+```
+
+#### YaspService in action
+
+Suppose that you have 3 data source that you should read join and then extract a simple number of users by cities.
+
+```scala
+object MyUsersByCitiesReport {
+
+  def main(args: Array[String]): Unit = {
+    YaspService().run(
+      YaspExecution(
+        session = Session(Local, "my-app-name", Map.empty),
+        plan = YaspPlan(
+          sources = Seq(
+            YaspSource("users", Source.Format("csv",options=Map("path"-> "users/","header" -> "true")), partitions = None, cache = None),
+            YaspSource("addresses", Source.Format("json",options=Map("path"->"addresses/")), partitions = None, cache = None),
+            YaspSource("cities", Source.Format("parquet",options=Map("path"->"cities/", "mergeSchema" ->"false")), partitions = None, cache = None)
+          ),
+          processes = Seq(
+            YaspProcess("users_addresses", Sql("SELECT u.*,a.address,a.city_id FROM users u JOIN addresses a ON u.address_id=a.id"), partitions = None, cache = None),
+            YaspProcess("users_addresses_cities", Sql("SELECT u.*,a.address,a.city_id FROM users_addresses u JOIN cities c ON u.city_id=c.id"), partitions = None, cache = None),
+            YaspProcess("users_by_city", Sql("SELECT city,count(*) FROM users_addresses_cities GROUP BY city"), partitions = None, cache = None)
+          ),
+          sinks = Seq(
+            YaspSink("users_by_city", Dest.Format("parquet",Map("path"->s"user-by-city"), partitionBy=Seq("city")))
+          )
+        )
+      )
+    )
+  }
+}
+
 ```
 
 ## Roadmap
