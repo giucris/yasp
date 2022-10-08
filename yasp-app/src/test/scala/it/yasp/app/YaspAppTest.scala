@@ -70,7 +70,8 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
         |        format: parquet
         |        options:
         |          path: $workspace/test1/output/
-        |""".stripMargin
+        |""".stripMargin,
+      dryRun = false
     )
 
     val actual   = spark.read.parquet(s"$workspace/test1/output/")
@@ -146,7 +147,7 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
       )
     )
 
-    YaspApp.fromFile(s"$workspace/test2/execution/example.yml")
+    YaspApp.fromFile(s"$workspace/test2/execution/example.yml", dryRun = false)
 
     val actual   = spark.read.parquet(s"$workspace/test2/output/")
     val expected = spark.createDataset(

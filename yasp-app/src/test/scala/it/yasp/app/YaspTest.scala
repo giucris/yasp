@@ -64,7 +64,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
 
   test("main raise execution error for wrong config on yaml") {
     createFile(
-      filePath = s"$workspace/plan/3/yasp.yaml",
+      filePath = s"$workspace/plan/2/yasp.yaml",
       rows = Seq(
         s"""session:
            |  kind: Local
@@ -90,55 +90,102 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
       )
     )
     assertThrows[YaspExecutionError] {
-      Yasp.main(Array("--file", s"$workspace/plan/3/yasp.yaml"))
+      Yasp.main(Array("--file", s"$workspace/plan/2/yasp.yaml"))
     }
+  }
+
+  test("main successful execute plan dryRun") {
+    createFile(
+      filePath = s"$workspace/plan/3/yasp.yaml",
+      rows = Seq(
+        s"""
+           |session:
+           |  kind: Local
+           |  name: example-app
+           |  conf:
+           |    k: j
+           |    x: y
+           |  withHiveSupport: true
+           |  withDeltaSupport: true
+           |  withCheckpointDir: $workspace/checkPoint/dir
+           |plan:
+           |  sources:
+           |    - id: users
+           |      source:
+           |        format: csv
+           |        options:
+           |          path: $workspace/input/source/user.csv
+           |          header: 'true'
+           |          sep: ','
+           |      cache: Memory
+           |    - id: addresses
+           |      source:
+           |        format: json
+           |        options:
+           |          path: $workspace/input/source/addresses.jsonl
+           |  processes:
+           |    - id: user_with_address
+           |      process:
+           |        query: >-
+           |          SELECT u.name,u.surname,a.address
+           |          FROM users u JOIN addresses a ON u.id = a.user_id
+           |  sinks:
+           |    - id: user_with_address
+           |      dest:
+           |        format: json
+           |        options:
+           |          path: $workspace/output/
+           |""".stripMargin
+      )
+    )
+    Yasp.main(Array("--file", s"$workspace/plan/3/yasp.yaml", "--dry-run"))
   }
 
   test("main successful execute plan") {
     createFile(
-      filePath = s"$workspace/plan/2/yasp.yaml",
+      filePath = s"$workspace/plan/4/yasp.yaml",
       rows = Seq(
         s"""
-        |session:
-        |  kind: Local
-        |  name: example-app
-        |  conf:
-        |    k: j
-        |    x: y
-        |  withHiveSupport: true
-        |  withDeltaSupport: true
-        |  withCheckpointDir: checkpoint paht
-        |plan:
-        |  sources:
-        |    - id: users
-        |      source:
-        |        format: csv
-        |        options:
-        |          path: $workspace/input/source/user.csv
-        |          header: 'true'
-        |          sep: ','
-        |      cache: Memory
-        |    - id: addresses
-        |      source:
-        |        format: json
-        |        options:
-        |          path: $workspace/input/source/addresses.jsonl
-        |  processes:
-        |    - id: user_with_address
-        |      process:
-        |        query: >-
-        |          SELECT u.name,u.surname,a.address
-        |          FROM users u JOIN addresses a ON u.id = a.user_id
-        |  sinks:
-        |    - id: user_with_address
-        |      dest:
-        |        format: json
-        |        options:
-        |          path: $workspace/output/
-        |""".stripMargin
+           |session:
+           |  kind: Local
+           |  name: example-app
+           |  conf:
+           |    k: j
+           |    x: y
+           |  withHiveSupport: true
+           |  withDeltaSupport: true
+           |  withCheckpointDir: $workspace/checkPoint/dir
+           |plan:
+           |  sources:
+           |    - id: users
+           |      source:
+           |        format: csv
+           |        options:
+           |          path: $workspace/input/source/user.csv
+           |          header: 'true'
+           |          sep: ','
+           |      cache: Memory
+           |    - id: addresses
+           |      source:
+           |        format: json
+           |        options:
+           |          path: $workspace/input/source/addresses.jsonl
+           |  processes:
+           |    - id: user_with_address
+           |      process:
+           |        query: >-
+           |          SELECT u.name,u.surname,a.address
+           |          FROM users u JOIN addresses a ON u.id = a.user_id
+           |  sinks:
+           |    - id: user_with_address
+           |      dest:
+           |        format: json
+           |        options:
+           |          path: $workspace/output/
+           |""".stripMargin
       )
     )
-    Yasp.main(Array("--file", s"$workspace/plan/2/yasp.yaml"))
+    Yasp.main(Array("--file", s"$workspace/plan/4/yasp.yaml"))
   }
 
 }

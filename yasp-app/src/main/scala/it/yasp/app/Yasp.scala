@@ -26,7 +26,7 @@ object Yasp extends StrictLogging {
   def main(args: Array[String]): Unit = {
     println(banner)
     parse(args)
-      .flatMap(conf => YaspApp.fromFile(conf.filePath))
+      .flatMap(YaspApp.fromArgs)
       .fold(
         error => {
           logger.error("Yasp Error: ", error)
