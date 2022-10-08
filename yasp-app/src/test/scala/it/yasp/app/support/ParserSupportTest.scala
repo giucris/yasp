@@ -157,7 +157,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
           YaspProcess("p1", Sql("my-query"))
         ),
         Seq(
-          YaspSink("p1", Dest.Format("parquet", Map("path" -> "out-path-1"))),
+          YaspSink("p1", Dest.Format("parquet", Map("path" -> "out-path-1")))
         )
       )
     )
