@@ -30,9 +30,10 @@ project.
 
 ### Local Execute
 
-* checkout yasp: `git clone https://github.com/giucris/yasp.git`
-* run yasp test: `sbt clean test`
-* build yasp : `sbt assembly`
+* clone yasp: `git clone https://github.com/giucris/yasp.git`
+* yasp style test: `sbt scalafmtSbtCheck scalafmtCheckAll`  
+* yasp code test: `sbt clean test`
+* yasp build: `sbt assembly`
 * all in one: `bash ci.sh`
 
 ## Installation
