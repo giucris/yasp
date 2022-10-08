@@ -84,13 +84,13 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        path: x
         |        header: 'false'
         |        sep: ','
-        |    cache: Memory
+        |    cache: memory
         |  - id: id2
         |    source:
         |      format: parquet
         |      options:
         |        path: x
-        |    cache: MemoryAndDisk
+        |    cache: Memory_And_Disk
         |  - id: id3
         |    source:
         |      format: jdbc
@@ -139,7 +139,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
     assert(actual == Right(expected))
   }
 
-  test("parse return Right with lower Session Kind string") {
+  test("parse return Right with lower session Kind and cache string") {
     val expected = YaspExecution(
       Session(
         kind = Local,
@@ -176,7 +176,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        path: x
         |        header: 'false'
         |        sep: ','
-        |    cache: Memory
+        |    cache: MEMORY
         |  processes:
         |  - id: p1
         |    process:

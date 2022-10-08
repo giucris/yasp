@@ -59,14 +59,14 @@ trait DecodersSupport {
     */
   implicit def cacheLayerDecoder: Decoder[CacheLayer] = (c: HCursor) =>
     for {
-      value <- c.as[String].right
+      value <- c.as[String].right.map(_.toUpperCase(Locale.US))
     } yield value match {
-      case "Memory"           => Memory
-      case "Disk"             => Disk
-      case "MemoryAndDisk"    => MemoryAndDisk
-      case "MemorySer"        => MemorySer
-      case "MemoryAndDiskSer" => MemoryAndDiskSer
-      case "Checkpoint"       => Checkpoint
+      case "MEMORY"                                   => Memory
+      case "DISK"                                     => Disk
+      case "MEMORYANDDISK" | "MEMORY_AND_DISK"        => MemoryAndDisk
+      case "MEMORYSER" | "MEMORY_SER"                 => MemorySer
+      case "MEMORYANDDISKSER" | "MEMORY_AND_DISK_SER" => MemoryAndDiskSer
+      case "CHECKPOINT"                               => Checkpoint
     }
 
   /** A Source circe Decoder
