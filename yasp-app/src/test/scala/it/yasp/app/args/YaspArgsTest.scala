@@ -16,4 +16,8 @@ class YaspArgsTest extends AnyFunSuite {
     assert(YaspArgs.parse(Array("--file", "file-path")).contains(YaspArgs("file-path")))
   }
 
+  test("parse --file --dry-run") {
+    val actual = YaspArgs.parse(Array("--file", "file-path", "--dry-run"))
+    assert(actual.contains(YaspArgs("file-path", dryRun = true)))
+  }
 }

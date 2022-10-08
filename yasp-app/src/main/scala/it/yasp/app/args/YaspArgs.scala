@@ -6,9 +6,11 @@ import scopt.OParser
 /** YaspArgs model
   *
   * @param filePath:
-  *   the yasp file path
+  *   yasp yml file path
+  * @param dryRun:
+  *   yasp dry-run execution mode
   */
-final case class YaspArgs(filePath: String = "")
+final case class YaspArgs(filePath: String = "", dryRun: Boolean = false)
 
 object YaspArgs {
 
@@ -28,6 +30,16 @@ object YaspArgs {
         .required()
         .action((x, c) => c.copy(filePath = x))
         .text("yasp yml configuration file path"),
+      builder
+        .opt[Unit]("dry-run")
+        .action((_, c) => c.copy(dryRun = true))
+        .text(
+          """
+            |yasp dry-run flag that enable a dry-run execution.
+            |A dry-run execution will execute all yasp process without running any spark action.
+            |This is useful to test your configuration and to see how yasp will manage your steps
+            |"""
+        ),
       builder.help("help").text("Specify YaspExecution yml file path with -f option")
     )
     OParser.parse(parser, args, YaspArgs()).toRight(YaspArgsError(args))
