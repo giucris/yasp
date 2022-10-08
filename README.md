@@ -112,10 +112,7 @@ Currently Yasp support all default Spark format destination plus:
 Take a look to the detailed user documentation for all the yasp destination
 
 
-
-## Installation
-
-## Local Usage
+## Running
 
 Yasp comes with a bundled spark so you can directly execute the jar package, that's it.
 
