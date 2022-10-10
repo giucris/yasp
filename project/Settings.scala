@@ -39,7 +39,7 @@ object Settings {
     )
   )
 
-  def appAssembly(sparkVersion:String) = Seq(
+  def appAssembly(sparkVersion: String) = Seq(
     assembly / mainClass             := Some("it.yasp.app.Yasp"),
     assembly / assemblyJarName       := s"${name.value}-$sparkVersion-${version.value}.jar",
     assembly / assemblyCacheOutput   := false,
