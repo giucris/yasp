@@ -16,13 +16,15 @@ Yasp was created to help data engineers working with Apache Spark to reduce thei
 With Yasp you can configure an ETL/ELT job that fetch data from a multiple source execute multiple transformation and
 write in multiple destination
 
-It is written in **Scala (2.12.15)** on top of **Apache Spark (3.3.0)** and managed as an **SBT (1.4.9)** multi module
-project comes with the following modules: 
+It is written in **Scala (2.12.15)** on top of **Apache Spark 3.3.0** and managed as an **SBT (1.4.9)** multi module
+project.
+
+It support all the 3.x spark versions and comes with the following modules:
+
 * **YaspApp** provide the highest possible level of abstraction for your ETL job and come with an executable main class.
   Allow you to manage complex big data etl job with a simple yml file
 * **YaspService** provide all the yasp ops for your ETL job.
 * **YaspCore** provide spark primitives useful for yasp operations.
-
 
 ## Getting Started
 
@@ -38,7 +40,7 @@ project comes with the following modules:
 To execute Yasp you should first build it.
 
 * clone: `git clone https://github.com/giucris/yasp.git`
-* build: `sbt assembly`
+* build: `sbt -Dyasp.spark.version=3.3.0 assembly` (currenlty only 3.x versions of spark are supported)
 * Go to `yasp-app/target/scala2.12/` folder and you can find the executable jar file.
 
 For devs:
@@ -53,11 +55,12 @@ To execute yasp you have to provide a single yaml file (json is fine too), that 
 Transform and Load task.
 
 #### yasp.yaml
-A yasp.yaml is a file that define a `YaspExecution`.
-A `YaspExecution` is a model that define an e2e ETL/EL job in terms of `Session` and `YaspPlan`. 
-A `YaspPlan` is a model that define all the data operations that yasp will execute. 
+
+A yasp.yaml is a file that define a `YaspExecution`. A `YaspExecution` is a model that define an e2e ETL/EL job in terms
+of `Session` and `YaspPlan`. A `YaspPlan` is a model that define all the data operations that yasp will execute.
 
 For example:
+
 ```yaml
 # Session field
 session: 
@@ -92,7 +95,8 @@ plan:
           path: path/to/out/csv/
 ```
 
-Take a look to the detailed user documentation for [Session](/docs/Session.md), [YaspExecution](/docs/YaspExecution.md), [YaspPlan](/docs/YaspPlan.md)
+Take a look to the detailed user documentation for [Session](/docs/Session.md), [YaspExecution](/docs/YaspExecution.md)
+, [YaspPlan](/docs/YaspPlan.md)
 
 ## Usage
 
@@ -105,15 +109,19 @@ Yasp comes with a bundled spark, so you can directly execute the jar package on 
 **NB: Please take a look to the prerequisites needed to run it locally**
 
 **Execute an ETL/EL**
+
 * Create a yasp.yaml file that define your ETL/EL flow.
-* Then run yasp: 
+* Then run yasp:
+
 ```bash
 java -jar yasp-app-x.y.z.jar --file <PATH_TO_YASP_YAML_FILE>`
 ```
 
 **Test your yasp.yml**
+
 * Create a yasp.yaml file that define your ETL/EL flow.
 * Then run yasp with dry-run enabled:
+
 ```bash
 java -jar yasp-app-x.y.z.jar --file <PATH_TO_YASP_YAML_FILE> --dry-run
 ```
@@ -124,6 +132,7 @@ The dry-run does not execute spark action, it just provide to you the YaspPlan t
 
 * Create a yasp.yaml file and make it available for your cluster
 * Then run yasp as main class for your spark submit:
+
 ```bash
   spark-submit --class it.yasp.app.Yasp yasp-app-x-y-z.jar --file yasp.yaml
 ```

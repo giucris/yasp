@@ -39,25 +39,13 @@ object Settings {
     )
   )
 
-  lazy val appAssembly = Seq(
+  def appAssembly(sparkVersion:String) = Seq(
     assembly / mainClass             := Some("it.yasp.app.Yasp"),
-    assembly / assemblyJarName       := s"${name.value}-${version.value}.jar",
+    assembly / assemblyJarName       := s"${name.value}-$sparkVersion-${version.value}.jar",
     assembly / assemblyCacheOutput   := false,
     assembly / assemblyMergeStrategy := {
-      case "module-info.class"                                          => MergeStrategy.first
-      case "plugin.xml"                                                 => MergeStrategy.first
-      case "git.properties"                                             => MergeStrategy.first
-      case PathList("META-INF", "io.netty.versions.properties")         => MergeStrategy.first
-      case PathList("META-INF", "versions", _ @_*)                      => MergeStrategy.first
-      case PathList("META-INF", "org", "apache", "logging", _ @_*)      => MergeStrategy.first
-      case PathList("javax", "annotation", _ @_*)                       => MergeStrategy.first
-      case PathList("javax", "jdo", _ @_*)                              => MergeStrategy.first
-      case PathList("org", "apache", "commons", _ @_*)                  => MergeStrategy.first
-      case PathList("org", "apache", "spark", _ @_*)                    => MergeStrategy.first
-      case PathList("org", "apache", "hadoop", "hive", "common", _ @_*) => MergeStrategy.first
-      case x                                                            =>
-        val oldStrategy = (assemblyMergeStrategy in assembly).value
-        oldStrategy(x)
+      case PathList("META-INF", _ @_*) => MergeStrategy.discard
+      case _                           => MergeStrategy.first
     }
   )
 }

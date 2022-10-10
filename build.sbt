@@ -15,13 +15,20 @@ val commonSettings = Seq(
 )
 
 lazy val dependencies = new {
-  val scoptV                = "4.0.1"
-  val apacheTextV           = "1.9"
-  val catsV                 = "2.0.0"
-  val circeV                = "0.12.0"
-  val sparkV                = "3.3.0"
+
+  val scoptV      = "4.0.1"
+  val apacheTextV = "1.9"
+  val catsV       = "2.0.0"
+  val circeV      = "0.12.0"
+
+  val sparkV                = sys.props.getOrElse("yasp.spark.version", "3.3.0")
   val sparkXmlV             = "0.14.0"
-  val deltaV                = "2.1.0"
+  val sparkDeltaV           = sparkV match {
+    case v if v.startsWith("3.2") => "2.0.0"
+    case v if v.startsWith("3.1") => "1.0.1"
+    case v if v.startsWith("3.0") => "0.8.0"
+    case _                        => "2.1.0"
+  }
   val scalaTestV            = "3.2.10"
   val scalaMockV            = "5.1.0"
   val h2dbV                 = "1.4.200"
@@ -39,14 +46,13 @@ lazy val dependencies = new {
   val sparkAvro            = "org.apache.spark"           %% "spark-avro"      % sparkV
   val sparkHive            = "org.apache.spark"           %% "spark-hive"      % sparkV
   val sparkXml             = "com.databricks"             %% "spark-xml"       % sparkXmlV
-  val delta                = "io.delta"                   %% "delta-core"      % deltaV
+  val delta                = "io.delta"                   %% "delta-core"      % sparkDeltaV
   val typeSafeScalaLogging = "com.typesafe.scala-logging" %% "scala-logging"   % typeSafeScalaLoggingV
   val logback              = "ch.qos.logback"              % "logback-classic" % logbackV
   val scalactic            = "org.scalactic"              %% "scalactic"       % scalaTestV
   val scalaTest            = "org.scalatest"              %% "scalatest"       % scalaTestV
   val scalaMock            = "org.scalamock"              %% "scalamock"       % scalaMockV
   val h2db                 = "com.h2database"              % "h2"              % h2dbV
-
 }
 
 lazy val root = (project in file("."))
@@ -111,7 +117,7 @@ lazy val app     = (project in file("yasp-app"))
   .settings(
     name := "yasp-app",
     Settings.wartRemover,
-    Settings.appAssembly,
+    Settings.appAssembly(dependencies.sparkV),
     libraryDependencies ++= Seq(
       dependencies.scopt,
       dependencies.apacheText,

@@ -27,8 +27,8 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
     RowEncoder(
       StructType(
         Seq(
-          StructField("id", IntegerType, nullable = true),
-          StructField("field1", StringType, nullable = true)
+          StructField("ID", IntegerType, nullable = true),
+          StructField("FIELD1", StringType, nullable = true)
         )
       )
     )
@@ -39,7 +39,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
     super.beforeAll()
     executeStatement(
       conn = dbConn,
-      stmt = "CREATE TABLE my_table (id INT,field1 VARCHAR(20),PRIMARY KEY (id))"
+      stmt = "CREATE TABLE my_table (ID INT,FIELD1 VARCHAR(20),PRIMARY KEY (ID))"
     )
     executeStatement(
       conn = dbConn,
@@ -64,8 +64,8 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
   }
 
   test("read csv with header") {
-    createFile(s"$workspace/csv/input1/file1.csv", Seq("id,field1", "1,x"))
-    createFile(s"$workspace/csv/input1/file2.csv", Seq("id,field1", "2,y"))
+    createFile(s"$workspace/csv/input1/file1.csv", Seq("ID,FIELD1", "1,x"))
+    createFile(s"$workspace/csv/input1/file2.csv", Seq("ID,FIELD1", "2,y"))
 
     val actual = reader.read(
       Format(
@@ -75,13 +75,13 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
     )
     assertDatasetEquals(
       actual.getOrElse(fail()),
-      expectedDf.withColumn("id", col("id").cast(StringType))
+      expectedDf.withColumn("ID", col("ID").cast(StringType))
     )
   }
 
   test("read csv with header and custom sep") {
-    createFile(s"$workspace/csv/input2/file1.csv", Seq("id|field1", "1|x"))
-    createFile(s"$workspace/csv/input2/file2.csv", Seq("id|field1", "2|y"))
+    createFile(s"$workspace/csv/input2/file1.csv", Seq("ID|FIELD1", "1|x"))
+    createFile(s"$workspace/csv/input2/file2.csv", Seq("ID|FIELD1", "2|y"))
 
     val actual = reader.read(
       Format(
@@ -92,18 +92,18 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
     )
     assertDatasetEquals(
       actual.getOrElse(fail()),
-      expectedDf.withColumn("id", col("id").cast(StringType))
+      expectedDf.withColumn("ID", col("ID").cast(StringType))
     )
   }
 
   test("read csv with header custom sep and schema") {
-    createFile(s"$workspace/csv/input3/file1.csv", Seq("id|field1", "1|x"))
-    createFile(s"$workspace/csv/input3/file2.csv", Seq("id|field1", "2|y"))
+    createFile(s"$workspace/csv/input3/file1.csv", Seq("ID|FIELD1", "1|x"))
+    createFile(s"$workspace/csv/input3/file2.csv", Seq("ID|FIELD1", "2|y"))
 
     val actual = reader.read(
       Format(
         "csv",
-        Some("id INT, field1 STRING"),
+        Some("ID INT, FIELD1 STRING"),
         Map("header" -> "true", "sep" -> "|", "path" -> s"$workspace/csv/input3/")
       )
     )
@@ -113,16 +113,16 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
   test("read json with schema") {
     createFile(
       filePath = s"$workspace/json/input1/file1.json",
-      rows = Seq("{\"id\":1,\"field1\":\"x\"}")
+      rows = Seq("{\"ID\":1,\"FIELD1\":\"x\"}")
     )
     createFile(
       filePath = s"$workspace/json/input1/file2.json",
-      rows = Seq("{\"id\":2,\"field1\":\"y\"}")
+      rows = Seq("{\"ID\":2,\"FIELD1\":\"y\"}")
     )
     val actual = reader.read(
       Format(
         format = "json",
-        schema = Some("id INT, field1 STRING"),
+        schema = Some("ID INT, FIELD1 STRING"),
         options = Map("path" -> s"$workspace/json/input1/")
       )
     )
@@ -153,19 +153,19 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
       s"$workspace/xml/input1/file.xml",
       Seq(
         "<root>",
-        "<id>1</id>",
-        "<field1>x</field1>",
+        "<ID>1</ID>",
+        "<FIELD1>x</FIELD1>",
         "</root>",
         "<root>",
-        "<id>2</id>",
-        "<field1>y</field1>",
+        "<ID>2</ID>",
+        "<FIELD1>y</FIELD1>",
         "</root>"
       )
     )
     val actual = reader.read(
       Format(
         format = "xml",
-        schema = Some("id INT, field1 STRING"),
+        schema = Some("ID INT, FIELD1 STRING"),
         options = Map("path" -> s"$workspace/xml/input1/file.xml", "rowTag" -> "root")
       )
     )
@@ -173,10 +173,6 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
   }
 
   test("read jdbc table") {
-    val expected = expectedDf
-      .withMetadata("ID", new MetadataBuilder().putLong("scale", 0).build())
-      .withMetadata("FIELD1", new MetadataBuilder().putLong("scale", 0).build())
-
     val actual = reader.read(
       Format(
         format = "jdbc",
@@ -188,7 +184,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
         )
       )
     )
-    assertDatasetEquals(actual.getOrElse(fail()), expected)
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
 
   test("read delta table") {
@@ -198,7 +194,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
   }
 
   test("read delta table partitioned ") {
-    expectedDf.write.format("delta").partitionBy("id").save(s"$workspace/deltaTable2")
+    expectedDf.write.format("delta").partitionBy("ID").save(s"$workspace/deltaTable2")
     val actual = reader.read(Format("delta", options = Map("path" -> s"$workspace/deltaTable2")))
     assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }

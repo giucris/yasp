@@ -5,7 +5,7 @@ import it.yasp.core.spark.writer.Writer.DestWriter
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes.{IntegerType, StringType}
-import org.apache.spark.sql.types.{MetadataBuilder, StructField, StructType}
+import org.apache.spark.sql.types.{StructField, StructType}
 import org.apache.spark.sql.{Dataset, Row}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
@@ -82,13 +82,9 @@ class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll 
       Format("jdbc", Map("url" -> dbConnUrl, "dbTable" -> "my_test_table"), None)
     )
 
-    val expected = expectedDf
-      .withMetadata("id", new MetadataBuilder().putLong("scale", 0).build())
-      .withMetadata("field1", new MetadataBuilder().putLong("scale", 0).build())
-
     val actual = spark.read.jdbc(dbConnUrl, "my_test_table", new Properties())
 
-    assertDatasetEquals(actual, expected)
+    assertDatasetEquals(actual, expectedDf)
   }
 
   test("write hive table") {

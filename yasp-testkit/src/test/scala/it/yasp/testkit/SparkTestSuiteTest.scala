@@ -32,12 +32,9 @@ class SparkTestSuiteTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val caught          = intercept[TestFailedException] {
+    intercept[TestFailedException] {
       assertDatasetEquals(ds1, ds2)
     }
-    val expectedMessage =
-      "StructType(StructField(d,StringType,true), StructField(a,IntegerType,true), StructField(b,IntegerType,true)) did not equal StructType(StructField(d,StringType,true), StructField(a,IntegerType,true), StructField(c,IntegerType,true))"
-    assert(caught.getMessage == expectedMessage)
   }
 
   test("assertDatasetEquals red with different data on Dataset[Row]") {
@@ -66,13 +63,9 @@ class SparkTestSuiteTest extends AnyFunSuite with SparkTestSuite {
       )
     )
 
-    val caught = intercept[TestFailedException] {
+    intercept[TestFailedException] {
       assertDatasetEquals(ds1, ds2)
     }
-
-    val expectedStartsMessage =
-      "Array([data1,1,null,2], [data234,1,2,3]) did not equal Array([data1,1,null,2], [data2,1,2,3])"
-    assert(caught.getMessage == expectedStartsMessage)
   }
 
   test("assertDatasetEquals green with same data and schema on Dataset[Row]") {
