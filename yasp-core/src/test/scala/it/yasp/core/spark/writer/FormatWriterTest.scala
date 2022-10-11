@@ -6,7 +6,7 @@ import it.yasp.core.spark.writer.Writer.FormatWriter
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes.StringType
-import org.apache.spark.sql.types.{IntegerType, MetadataBuilder, StructField, StructType}
+import org.apache.spark.sql.types.{IntegerType, StructField, StructType}
 import org.apache.spark.sql.{Dataset, Row}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
@@ -301,11 +301,7 @@ class FormatWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
 
     val actual = spark.read.jdbc(dbConnUrl, "my_test_table", prop)
 
-    val expected = expectedDf
-      .withMetadata("id", new MetadataBuilder().putLong("scale", 0).build())
-      .withMetadata("field1", new MetadataBuilder().putLong("scale", 0).build())
-
-    assertDatasetEquals(actual, expected)
+    assertDatasetEquals(actual, expectedDf)
   }
 
   test("write return WriterError with bad format") {

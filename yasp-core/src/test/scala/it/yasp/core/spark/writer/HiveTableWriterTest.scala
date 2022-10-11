@@ -87,7 +87,7 @@ class HiveTableWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAnd
         "not_exists_table",
         Map("path" -> s"$workspace/xxxx"),
         mode = Some("append"),
-        partitionBy = Seq("id")
+        partitionBy = Seq("x")
       )
     )
     assert(actual.left.getOrElse(fail()).isInstanceOf[WriteError])

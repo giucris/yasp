@@ -1,13 +1,25 @@
-import sbt.Compile
 import sbt.Keys._
+import sbt.{url, Compile, Developer}
 import sbtassembly.AssemblyKeys.{assemblyCacheOutput, assemblyJarName}
 import sbtassembly.AssemblyPlugin.autoImport.{assembly, assemblyMergeStrategy, MergeStrategy}
 import sbtassembly.PathList
 import wartremover.WartRemover.autoImport.{wartremoverErrors, Wart, Warts}
 
 object Settings {
+  lazy val scala_211 = "2.11.12"
+  lazy val scala_212 = "2.12.15"
+  lazy val spark_330 = "3.3.0"
 
-  lazy val scalaCompilerOptions = Seq(
+  //Default spark version set to 3.3.0 if not provided
+  lazy val yaspSparkVersion: String =
+    sys.props.getOrElse("yasp.spark.version", spark_330)
+
+  //Cross building based on spark version
+  lazy val yaspScalaVersion: String =
+    if (yaspSparkVersion.startsWith("2.")) scala_211
+    else scala_212
+
+  lazy val yaspScalaCompilerSettings = Seq(
     "-deprecation",
     "-feature",
     "-unchecked",
@@ -27,7 +39,7 @@ object Settings {
     "-language:postfixOps"
   )
 
-  lazy val wartRemover = Seq(
+  lazy val yaspWartRemoverSettings = Seq(
     Compile / compile / wartremoverErrors ++= Warts.allBut(
       Wart.Nothing,
       Wart.DefaultArguments,
@@ -39,25 +51,13 @@ object Settings {
     )
   )
 
-  lazy val appAssembly = Seq(
+  lazy val yaspAssemblySettings = Seq(
     assembly / mainClass             := Some("it.yasp.app.Yasp"),
-    assembly / assemblyJarName       := s"${name.value}-${version.value}.jar",
+    assembly / assemblyJarName       := s"${name.value}-spark-$yaspSparkVersion-${version.value}.jar",
     assembly / assemblyCacheOutput   := false,
     assembly / assemblyMergeStrategy := {
-      case "module-info.class"                                          => MergeStrategy.first
-      case "plugin.xml"                                                 => MergeStrategy.first
-      case "git.properties"                                             => MergeStrategy.first
-      case PathList("META-INF", "io.netty.versions.properties")         => MergeStrategy.first
-      case PathList("META-INF", "versions", _ @_*)                      => MergeStrategy.first
-      case PathList("META-INF", "org", "apache", "logging", _ @_*)      => MergeStrategy.first
-      case PathList("javax", "annotation", _ @_*)                       => MergeStrategy.first
-      case PathList("javax", "jdo", _ @_*)                              => MergeStrategy.first
-      case PathList("org", "apache", "commons", _ @_*)                  => MergeStrategy.first
-      case PathList("org", "apache", "spark", _ @_*)                    => MergeStrategy.first
-      case PathList("org", "apache", "hadoop", "hive", "common", _ @_*) => MergeStrategy.first
-      case x                                                            =>
-        val oldStrategy = (assemblyMergeStrategy in assembly).value
-        oldStrategy(x)
+      case PathList("META-INF", _ @_*) => MergeStrategy.discard
+      case _                           => MergeStrategy.first
     }
   )
 }

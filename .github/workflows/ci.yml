@@ -1,7 +1,7 @@
 name: test
 on: [ push ]
 jobs:
-  test:
+  check_style:
     runs-on: ubuntu-latest
     env:
       JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
@@ -18,17 +18,42 @@ jobs:
         uses: coursier/cache-action@v6
       - name: check style
         run: sbt scalafmtSbtCheck scalafmtCheckAll
+  test:
+    needs: [ check_style ]
+    strategy:
+      fail-fast: false
+      matrix:
+        spark_version: [ '3.3.0','3.2.2','3.1.3','3.0.3' ]
+    runs-on: ubuntu-latest
+    env:
+      JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+      JVM_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: setup jdk
+        uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: 8
+      - name: setup cache
+        uses: coursier/cache-action@v6
       - name: compile
-        run: sbt compile
+        run: sbt -Dyasp.spark.version=${{ matrix.spark_version }} compile
       - name: test
-        run: sbt clean coverage test coverageAggregate
+        run: sbt -Dyasp.spark.version=${{ matrix.spark_version }} clean coverage test coverageAggregate
       - name: upload coverage to codecov
         uses: codecov/codecov-action@v2
+        if: matrix.spark_version == '3.3.0'
         with:
           token: ${{secrets.CODECOV_TOKEN}}
           fail_ci_if_error: true
   build:
-    needs: [test]
+    needs: [ test ]
+    strategy:
+      fail-fast: false
+      matrix:
+        spark_version: [ '3.3.0','3.2.2','3.1.3','3.0.3']
     runs-on: ubuntu-latest
     env:
       JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
@@ -44,7 +69,7 @@ jobs:
       - name: setup cache
         uses: coursier/cache-action@v6
       - name: build
-        run: sbt assembly
+        run: sbt -Dyasp.spark.version=${{ matrix.spark_version }} assembly
       - name: cleanup cache
         run: |
           rm -rf "$HOME/.ivy2/local" || true
