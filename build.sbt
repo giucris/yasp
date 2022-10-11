@@ -21,6 +21,7 @@ lazy val dependencies = new {
   val catsV       = "2.0.0"
   val circeV      = "0.12.0"
 
+
   val sparkV                = sys.props.getOrElse("yasp.spark.version", "3.3.0")
   val sparkXmlV             = "0.14.0"
   val sparkDeltaV           = sparkV match {
