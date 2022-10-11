@@ -14,7 +14,7 @@ object Dependencies {
   val sparkXmlV: String             = "0.14.0"
 
   // Cross Build based on SparkVersion
-  val sparkDeltaV: String           = Settings.yaspSparkVersion match {
+  val sparkDeltaV: String = Settings.yaspSparkVersion match {
     case v if v.startsWith("3.2") => "2.0.0"
     case v if v.startsWith("3.1") => "1.0.1"
     case v if v.startsWith("3.0") => "0.8.0"
