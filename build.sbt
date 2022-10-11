@@ -16,10 +16,7 @@ lazy val commonSettings = Seq(
   )
 )
 
-lazy val dependencies = new {
-
-
-}
+lazy val dependencies = new {}
 
 lazy val root = (project in file("."))
   .disablePlugins(AssemblyPlugin)
