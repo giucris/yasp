@@ -19,7 +19,7 @@ write in multiple destination
 It is written in **Scala (2.12.15)** on top of **Apache Spark 3.3.0** and managed as an **SBT (1.4.9)** multi module
 project.
 
-It support all the 3.x spark versions and comes with the following modules:
+Currently support all the 3.x Spark versions and comes with the following modules:
 
 * **YaspApp** provide the highest possible level of abstraction for your ETL job and come with an executable main class.
   Allow you to manage complex big data etl job with a simple yml file
