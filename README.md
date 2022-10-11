@@ -39,15 +39,15 @@ It support all the 3.x spark versions and comes with the following modules:
 
 To execute Yasp you should first build it.
 
-* clone: `git clone https://github.com/giucris/yasp.git`
-* build: `sbt -Dyasp.spark.version=3.3.0 assembly` (currenlty only 3.x versions of spark are supported)
-* Go to `yasp-app/target/scala2.12/` folder and you can find the executable jar file.
+* Clone: `git clone https://github.com/giucris/yasp.git`
+* Build: `sbt -Dyasp.spark.version=3.3.0 assembly` (currenlty only 3.x versions of spark are supported)
+* Go to `yasp-app/target/scala2.12/` folder and you can find the executable jar file
+  `yasp-app-spark-3.3.0-0.0.1.jar`
 
 For devs:
 
 * yasp style test: `sbt scalafmtSbtCheck scalafmtCheckAll`
 * yasp code test: `sbt clean test`
-* all in one: `bash ci.sh`
 
 **NB: I'm working to provide a first release that you can directly download**
 
@@ -114,7 +114,7 @@ Yasp comes with a bundled spark, so you can directly execute the jar package on 
 * Then run yasp:
 
 ```bash
-java -jar yasp-app-x.y.z.jar --file <PATH_TO_YASP_YAML_FILE>`
+java -jar yasp-app-spark-x.y.z-i.j.k.jar --file <PATH_TO_YASP_YAML_FILE>`
 ```
 
 **Test your yasp.yml**
@@ -123,7 +123,7 @@ java -jar yasp-app-x.y.z.jar --file <PATH_TO_YASP_YAML_FILE>`
 * Then run yasp with dry-run enabled:
 
 ```bash
-java -jar yasp-app-x.y.z.jar --file <PATH_TO_YASP_YAML_FILE> --dry-run
+java -jar yasp-app-spark-x.y.z-i.j.k.jar --file <PATH_TO_YASP_YAML_FILE> --dry-run
 ```
 
 The dry-run does not execute spark action, it just provide to you the YaspPlan that will be executed.
@@ -134,7 +134,7 @@ The dry-run does not execute spark action, it just provide to you the YaspPlan t
 * Then run yasp as main class for your spark submit:
 
 ```bash
-  spark-submit --class it.yasp.app.Yasp yasp-app-x-y-z.jar --file yasp.yaml
+  spark-submit --class it.yasp.app.Yasp yasp-app-spark-x.y.z-i.j.k.jar --file yasp.yaml
 ```
 
 ### Library usage
