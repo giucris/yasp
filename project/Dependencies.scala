@@ -27,7 +27,7 @@ object Dependencies {
     case v if v.startsWith("3.2") => "iceberg-spark-runtime-3.2_2.12"
     case v if v.startsWith("3.1") => "iceberg-spark-runtime-3.1_2.12"
     case v if v.startsWith("3.0") => "iceberg-spark3-runtime"
-    case _                        => "2.1.0" // Default Spark 3.3
+    case _                        => "iceberg-spark-runtime-3.3_2.12" // Default Spark 3.3
   }
 
   val apacheText           = "org.apache.commons"          % "commons-text"      % apacheTextV
