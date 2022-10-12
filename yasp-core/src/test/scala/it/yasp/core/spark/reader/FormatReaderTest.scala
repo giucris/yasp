@@ -36,6 +36,16 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
 
   override protected def beforeAll(): Unit = {
     TestUtils.cleanFolder(workspace)
+    spark.conf.set(
+      "spark.sql.catalog.spark_catalog",
+      "org.apache.iceberg.spark.SparkSessionCatalog"
+    )
+    spark.conf.set("spark.sql.catalog.spark_catalog.type", "hadoop")
+    spark.conf.set("spark.sql.catalog.spark_catalog.warehouse", s"$workspace/iceberg_spark_catalog")
+    spark.conf.set("spark.sql.catalog.local", "org.apache.iceberg.spark.SparkCatalog")
+    spark.conf.set("spark.sql.catalog.local.type", "hadoop")
+    spark.conf.set("spark.sql.catalog.local.warehouse", s"$workspace/iceberg_local_catalog")
+
     super.beforeAll()
     executeStatement(
       conn = dbConn,
@@ -49,6 +59,12 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
 
   override protected def afterAll(): Unit = {
     TestUtils.cleanFolder(workspace)
+    spark.conf.unset("spark.sql.catalog.spark_catalog")
+    spark.conf.unset("spark.sql.catalog.spark_catalog.type")
+    spark.conf.unset("spark.sql.catalog.spark_catalog.warehouse")
+    spark.conf.unset("spark.sql.catalog.local")
+    spark.conf.unset("spark.sql.catalog.local.type")
+    spark.conf.unset("spark.sql.catalog.local.warehouse")
     super.afterAll()
   }
 
@@ -196,6 +212,12 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
   test("read delta table partitioned ") {
     expectedDf.write.format("delta").partitionBy("ID").save(s"$workspace/deltaTable2")
     val actual = reader.read(Format("delta", options = Map("path" -> s"$workspace/deltaTable2")))
+    assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
+  }
+
+  test("read iceberg table") {
+    expectedDf.writeTo("local.db.my_table").create()
+    val actual = reader.read(Format("iceberg", options = Map("path" -> s"local.db.my_table")))
     assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
 
