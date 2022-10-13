@@ -36,10 +36,7 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
 
   override protected def beforeAll(): Unit = {
     TestUtils.cleanFolder(workspace)
-    spark.conf.set(
-      "spark.sql.catalog.spark_catalog",
-      "org.apache.iceberg.spark.SparkSessionCatalog"
-    )
+    spark.conf.set("spark.sql.catalog.spark_catalog", "org.apache.iceberg.spark.SparkSessionCatalog")
     spark.conf.set("spark.sql.catalog.spark_catalog.type", "hadoop")
     spark.conf.set("spark.sql.catalog.spark_catalog.warehouse", s"$workspace/iceberg_spark_catalog")
     spark.conf.set("spark.sql.catalog.local", "org.apache.iceberg.spark.SparkCatalog")
@@ -216,8 +213,8 @@ class FormatReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
   }
 
   test("read iceberg table") {
-    expectedDf.writeTo("local.db.my_table").create()
-    val actual = reader.read(Format("iceberg", options = Map("path" -> s"local.db.my_table")))
+    expectedDf.writeTo("local.db.my_iceberg_table").createOrReplace()
+    val actual = reader.read(Format("iceberg", options = Map("path" -> s"local.db.my_iceberg_table")))
     assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
 

@@ -19,6 +19,7 @@ final case class Session(
     conf: Option[Map[String, String]] = None,
     withHiveSupport: Option[Boolean] = None,
     withDeltaSupport: Option[Boolean] = None,
+    withIcebergSupport: Option[Boolean] = None,
     withCheckpointDir: Option[String] = None
 )
 
