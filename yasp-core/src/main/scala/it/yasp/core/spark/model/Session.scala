@@ -20,6 +20,7 @@ final case class Session(
     withHiveSupport: Option[Boolean] = None,
     withDeltaSupport: Option[Boolean] = None,
     withIcebergSupport: Option[Boolean] = None,
+    withIcebergCatalogs: Option[Seq[IcebergCatalog]] = None,
     withCheckpointDir: Option[String] = None
 )
 

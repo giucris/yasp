@@ -2,7 +2,6 @@ package it.yasp.core.spark.err
 
 import it.yasp.core.spark.model.{CacheLayer, Dest, Process, Session, Source}
 
-//TODO: Improve Error and Exception handling of Yasp in a more fun style approach.
 /** YaspCoreError Sum Type
   */
 sealed abstract class YaspCoreError(val message: String, val cause: Throwable)

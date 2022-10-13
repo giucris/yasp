@@ -6,8 +6,8 @@ import org.scalatest.{Assertion, Suite}
 
 /** SparkTestSuite a mixin for [[Suite]] to test spark code
   *
-  * Provide a shared spark session using the [[SharedSparkSession]] trait and an assertDatasetEquals
-  * method to test equality among two dataset.
+  * Provide a shared spark session using the [[SharedSparkSession]] trait and an assertDatasetEquals method to test
+  * equality among two dataset.
   *
   * Example usage:
   * {{{
