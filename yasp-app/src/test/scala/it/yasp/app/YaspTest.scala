@@ -188,4 +188,57 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
     Yasp.main(Array("--file", s"$workspace/plan/4/yasp.yaml"))
   }
 
+  test("main successful execute plan with iceberg catalogs") {
+    createFile(
+      filePath = s"$workspace/plan/5/yasp.yaml",
+      rows = Seq(
+        s"""
+           |session:
+           |  kind: Local
+           |  name: example-app
+           |  withHiveSupport: true
+           |  withIcebergSupport: true
+           |  withIcebergCatalogs:
+           |    - name: local
+           |      path: $workspace/plan/5/local_catalog
+           |  withCheckpointDir: $workspace/checkPoint/dir
+           |plan:
+           |  sources:
+           |    - id: users_x
+           |      source:
+           |        format: csv
+           |        options:
+           |          path: $workspace/input/source/user.csv
+           |          header: 'true'
+           |          sep: ','
+           |      cache: Memory
+           |    - id: addresses_x
+           |      source:
+           |        format: json
+           |        options:
+           |          path: $workspace/input/source/addresses.jsonl
+           |  processes:
+           |    - id: user_with_address_x
+           |      process:
+           |        query: >-
+           |          SELECT u.name,u.surname,a.address
+           |          FROM users_x u JOIN addresses_x a ON u.id = a.user_id
+           |    - id: create_table
+           |      process:
+           |        query: >-
+           |          CREATE TABLE local.my_db.iceberg_users_x (
+           |              name string,
+           |              surname string,
+           |              address string
+           |          ) USING iceberg;
+           |    - id: insert_into
+           |      process:
+           |        query: >-
+           |          INSERT INTO local.my_db.iceberg_users_x
+           |          SELECT name, surname, address FROM user_with_address_x
+           |""".stripMargin
+      )
+    )
+    Yasp.main(Array("--file", s"$workspace/plan/5/yasp.yaml"))
+  }
 }

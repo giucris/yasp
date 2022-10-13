@@ -28,8 +28,7 @@ trait Reader[A <: Source] {
 
 object Reader {
 
-  /** A FormatReader. Will use the standard spark approach to read a dataset starting from a
-    * configured format
+  /** A FormatReader. Will use the standard spark approach to read a dataset starting from a configured format
     * @param spark:
     *   [[SparkSession]] that will be used to read the Format Source
     */
@@ -56,9 +55,7 @@ object Reader {
       catch { case t: Throwable => Left(ReadError(source, t)) }
   }
 
-  //TODO Something that retrieve automatically the relative Reader[A] should be implemented. Instead of doing it with an exhaustive pattern matching. probably shapeless could help on this
-  /** SourceReader an instance of Reader[Source] Provide a method to dispatch the specific source to
-    * the specific method
+  /** SourceReader an instance of Reader[Source] Provide a method to dispatch the specific source to the specific method
     * @param spark:
     *   A [[SparkSession]] instance
     */

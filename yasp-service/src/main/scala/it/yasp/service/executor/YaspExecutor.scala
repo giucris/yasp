@@ -16,8 +16,8 @@ trait YaspExecutor {
 
   /** Execute a specific [[YaspPlan]]
     *
-    * Load all [[it.yasp.service.model.YaspSource]], execute all
-    * [[it.yasp.service.model.YaspProcess]] and write all [[it.yasp.service.model.YaspSink]]
+    * Load all [[it.yasp.service.model.YaspSource]], execute all [[it.yasp.service.model.YaspProcess]] and write all
+    * [[it.yasp.service.model.YaspSink]]
     * @param yaspPlan:
     *   a [[YaspPlan]] instance to execute
     */

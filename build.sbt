@@ -16,8 +16,6 @@ lazy val commonSettings = Seq(
   )
 )
 
-lazy val dependencies = new {}
-
 lazy val root = (project in file("."))
   .disablePlugins(AssemblyPlugin)
   .settings(commonSettings)
@@ -51,7 +49,8 @@ lazy val core    = (project in file("yasp-core"))
       Dependencies.sparkAvro,
       Dependencies.sparkXml,
       Dependencies.sparkHive,
-      Dependencies.delta,
+      Dependencies.sparkDelta,
+      Dependencies.sparkIceberg,
       Dependencies.scalaTest % Test,
       Dependencies.scalaMock % Test,
       Dependencies.h2db      % Test

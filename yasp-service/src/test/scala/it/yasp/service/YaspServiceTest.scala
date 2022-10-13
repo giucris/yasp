@@ -14,11 +14,7 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 
-class YaspServiceTest
-    extends AnyFunSuite
-    with SparkTestSuite
-    with MockFactory
-    with BeforeAndAfterAll {
+class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory with BeforeAndAfterAll {
 
   private val workspace = "yasp-service/src/test/resources/YaspExecutorTest"
 

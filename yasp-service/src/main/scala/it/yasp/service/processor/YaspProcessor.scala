@@ -17,8 +17,8 @@ import org.apache.spark.sql.{Dataset, Row}
   */
 trait YaspProcessor {
 
-  /** Execute the provided [[YaspProcess]] cache the result if some cache option are specified on
-    * the process and register the result as a table.
+  /** Execute the provided [[YaspProcess]] cache the result if some cache option are specified on the process and
+    * register the result as a table.
     * @param process:
     *   A [[YaspProcess]] instance
     */

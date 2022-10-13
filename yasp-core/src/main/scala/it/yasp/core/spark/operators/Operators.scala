@@ -20,8 +20,8 @@ trait Operators {
     * @param layer:
     *   [[CacheLayer]]
     * @return
-    *   Right([[Dataset]]) if cache operation is successful completed Left([[CacheOperationError]])
-    *   if cache operation raise some exception
+    *   Right([[Dataset]]) if cache operation is successful completed Left([[CacheOperationError]]) if cache operation
+    *   raise some exception
     */
   def cache(ds: Dataset[Row], layer: CacheLayer): Either[CacheOperationError, Dataset[Row]]
 
@@ -32,8 +32,8 @@ trait Operators {
     * @param partition:
     *   number of partition
     * @return
-    *   Right([[Dataset]]) if repartition operation is successful completed
-    *   Left([[RepartitionOperationError]]) if repartition operation raise some exception
+    *   Right([[Dataset]]) if repartition operation is successful completed Left([[RepartitionOperationError]]) if
+    *   repartition operation raise some exception
     */
   def repartition(ds: Dataset[Row], partition: Int): Either[RepartitionOperationError, Dataset[Row]]
 }

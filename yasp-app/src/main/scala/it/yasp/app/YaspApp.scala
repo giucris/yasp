@@ -40,8 +40,8 @@ object YaspApp extends FileSupport with ParserSupport with VariablesSupport with
 
   /** Load a YaspExecution from a yml content.
     *
-    * Interpolate the yaml content with environment variable, then parse the yaml in a
-    * [[YaspExecution]] and call the [[YaspService.run]] method to start the ETL job.
+    * Interpolate the yaml content with environment variable, then parse the yaml in a [[YaspExecution]] and call the
+    * [[YaspService.run]] method to start the ETL job.
     *
     * @param content:
     *   YaspExecution in yml format

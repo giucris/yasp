@@ -7,8 +7,8 @@ import java.nio.file.Files
 
 /** A SharedSparkSession trait
   *
-  * Provide a spark session for testing purpose. Setup the spark session on the beforeAll method and
-  * close the spark session on the afterAll method
+  * Provide a spark session for testing purpose. Setup the spark session on the beforeAll method and close the spark
+  * session on the afterAll method
   */
 trait SharedSparkSession {
   this: Suite =>

@@ -6,8 +6,7 @@ sealed trait Dest extends Product with Serializable
 
 object Dest {
 
-  /** Format Dest. Mainly based on the spark format writer. For more docs please check the spark
-    * relative documentation.
+  /** Format Dest. Mainly based on the spark format writer. For more docs please check the spark relative documentation.
     *
     * @param format:
     *   Kind of format

@@ -17,8 +17,8 @@ import org.apache.spark.sql.{Dataset, Row}
   */
 trait YaspLoader {
 
-  /** Read the specified YaspSource, cache the result if some cache specification exists on the
-    * source and then register the table
+  /** Read the specified YaspSource, cache the result if some cache specification exists on the source and then register
+    * the table
     * @param source:
     *   A [[YaspSource]] instance
     */

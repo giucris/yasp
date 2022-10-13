@@ -14,9 +14,7 @@ trait YaspWriter {
 
 object YaspWriter {
 
-  class DefaultYaspWriter(registry: Registry, writer: Writer[Dest])
-      extends YaspWriter
-      with StrictLogging {
+  class DefaultYaspWriter(registry: Registry, writer: Writer[Dest]) extends YaspWriter with StrictLogging {
     override def write(yaspSink: YaspSink): Either[YaspWriterError, Unit] = {
       logger.info(s"Sink: $yaspSink")
       for {
