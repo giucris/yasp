@@ -3,8 +3,7 @@ package it.yasp.core.spark.factory
 import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.err.YaspCoreError.CreateSessionError
 import it.yasp.core.spark.factory.SessionFactory.{SparkSessionBuilderOps, SparkSessionOps}
-import it.yasp.core.spark.model.IcebergCatalog.{CustomIcebergCatalog, HadoopIcebergCatalog, HiveIcebergCatalog}
-import it.yasp.core.spark.model.{IcebergCatalog, Session}
+import it.yasp.core.spark.model.Session
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.internal.StaticSQLConf.SPARK_SESSION_EXTENSIONS
@@ -143,7 +142,7 @@ object SessionFactory {
           .config(SPARK_SESSION_EXTENSIONS.key, ICEBERG_EXTENSION)
           .config("spark.sql.catalog.spark_catalog", ICEBERG_CATALOG)
       }
-/*
+    /*
     def maybeWithIcebergCatalog(icebergCatalogs: Option[Seq[IcebergCatalog]]): SparkSession.Builder =
       icebergCatalogs.filter(_.nonEmpty).fold(builder) { catalogs =>
         catalogs.foldLeft(builder) {
@@ -155,7 +154,7 @@ object SessionFactory {
             b.config("", "")
         }
       }
-      */
+     */
   }
 
   /** SparkSessionOps
