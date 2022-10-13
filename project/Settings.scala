@@ -6,8 +6,8 @@ import sbtassembly.PathList
 import wartremover.WartRemover.autoImport.{wartremoverErrors, Wart, Warts}
 
 object Settings {
-  lazy val SCALA_212 = "2.12.15"
-  lazy val SPARK_330 = "3.3.0"
+  lazy val SCALA_212   = "2.12.15"
+  lazy val SPARK_330   = "3.3.0"
   lazy val LIGHT_BUILD = "LIGHT"
 
   //Default spark version set to 3.3.0 if not provided
@@ -17,8 +17,8 @@ object Settings {
   lazy val yaspLightBuild: Boolean =
     sys.props.get("yasp.build.version").contains(LIGHT_BUILD)
 
-  lazy val yaspAppJarName:String =
-    if(yaspLightBuild) s"yasp-app-light-spark-$yaspSparkVersion-${version.value}.jar"
+  lazy val yaspAppJarName: String =
+    if (yaspLightBuild) s"yasp-app-light-spark-$yaspSparkVersion-${version.value}.jar"
     else s"yasp-app-light-spark-$yaspSparkVersion-${version.value}.jar"
 
   lazy val yaspScalaCompilerSettings = Seq(
