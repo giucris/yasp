@@ -3,7 +3,7 @@ package it.yasp.core.spark.factory
 import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.err.YaspCoreError.CreateSessionError
 import it.yasp.core.spark.factory.SessionFactory.{SparkSessionBuilderOps, SparkSessionOps}
-import it.yasp.core.spark.model.IcebergCatalog.{HadoopIcebergCatalog, HiveIcebergCatalog}
+import it.yasp.core.spark.model.IcebergCatalog.{CustomIcebergCatalog, HadoopIcebergCatalog, HiveIcebergCatalog}
 import it.yasp.core.spark.model.{IcebergCatalog, Session}
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
@@ -78,11 +78,11 @@ object SessionFactory {
     *   [[SparkSession.Builder]]
     */
   implicit class SparkSessionBuilderOps(builder: SparkSession.Builder) extends StrictLogging {
-    private val SPARK_CATALOG = "org.apache.iceberg.spark.SparkCatalog"
-    private val DELTA_EXTENSION   = "io.delta.sql.DeltaSparkSessionExtension"
+    private val SPARK_CATALOG     = "org.apache.iceberg.spark.SparkCatalog"
     private val DELTA_CATALOG     = "org.apache.spark.sql.delta.catalog.DeltaCatalog"
-    private val ICEBERG_EXTENSION = "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"
     private val ICEBERG_CATALOG   = "org.apache.iceberg.spark.SparkSessionCatalog"
+    private val DELTA_EXTENSION   = "io.delta.sql.DeltaSparkSessionExtension"
+    private val ICEBERG_EXTENSION = "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"
 
     /** Optionally set the Spark master
       * @param master:
@@ -143,7 +143,19 @@ object SessionFactory {
           .config(SPARK_SESSION_EXTENSIONS.key, ICEBERG_EXTENSION)
           .config("spark.sql.catalog.spark_catalog", ICEBERG_CATALOG)
       }
-
+/*
+    def maybeWithIcebergCatalog(icebergCatalogs: Option[Seq[IcebergCatalog]]): SparkSession.Builder =
+      icebergCatalogs.filter(_.nonEmpty).fold(builder) { catalogs =>
+        catalogs.foldLeft(builder) {
+          case (b, c: HiveIcebergCatalog)   =>
+            b.config("", "")
+          case (b, c: HadoopIcebergCatalog) =>
+            b.config("", "")
+          case (b, c: CustomIcebergCatalog) =>
+            b.config("", "")
+        }
+      }
+      */
   }
 
   /** SparkSessionOps
