@@ -5,8 +5,8 @@ import it.yasp.app.args.YaspArgs._
 
 /** Yasp
   *
-  * An executable Yasp application. Process input args, that accept a yml file location, and create
-  * a YaspApp using the fromFile funcitons, create the relative YaspExecution and execute it.
+  * An executable Yasp application. Process input args, that accept a yml file location, and create a YaspApp using the
+  * fromFile funcitons, create the relative YaspExecution and execute it.
   */
 object Yasp extends StrictLogging {
 

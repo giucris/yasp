@@ -1,10 +1,6 @@
 package it.yasp.service.loader
 
-import it.yasp.core.spark.err.YaspCoreError.{
-  CacheOperationError,
-  RegisterTableError,
-  RepartitionOperationError
-}
+import it.yasp.core.spark.err.YaspCoreError.{CacheOperationError, RegisterTableError, RepartitionOperationError}
 import it.yasp.core.spark.model.CacheLayer.Memory
 import it.yasp.core.spark.model.Source
 import it.yasp.core.spark.operators.Operators
