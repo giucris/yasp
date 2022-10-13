@@ -71,7 +71,7 @@ jobs:
       - name: build
         run: sbt -Dyasp.spark.version=${{ matrix.spark_version }} assembly
       - name: build light
-        run: sbt -Dyasp.spark.version=${{ matrix.spark_version }} -Dyasp.spark.version=LIGHT assembly
+        run: sbt -Dyasp.spark.version=${{ matrix.spark_version }} -Dyasp.build.version=LIGHT assembly
       - name: cleanup cache
         run: |
           rm -rf "$HOME/.ivy2/local" || true
