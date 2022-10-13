@@ -4,8 +4,9 @@ import cats.syntax.functor._
 import io.circe.generic.auto._
 import io.circe.{Decoder, HCursor, KeyDecoder}
 import it.yasp.core.spark.model.CacheLayer._
+import it.yasp.core.spark.model.IcebergCatalog.{CustomIcebergCatalog, HadoopIcebergCatalog, HiveIcebergCatalog}
 import it.yasp.core.spark.model.SessionType.{Distributed, Local}
-import it.yasp.core.spark.model.{CacheLayer, Dest, Process, SessionType, Source}
+import it.yasp.core.spark.model.{CacheLayer, Dest, IcebergCatalog, Process, SessionType, Source}
 
 import java.util.Locale
 
@@ -93,5 +94,12 @@ trait DecodersSupport {
     */
   implicit def processDecoder: Decoder[Process] =
     Decoder[Process.Sql].widen
+
+  implicit def icebergCatalogDecoder: Decoder[IcebergCatalog] =
+    List[Decoder[IcebergCatalog]](
+      Decoder[HiveIcebergCatalog].widen,
+      Decoder[HadoopIcebergCatalog].widen,
+      Decoder[CustomIcebergCatalog].widen
+    ).reduceLeft(_ or _)
 
 }

@@ -6,6 +6,6 @@ object IcebergCatalog {
 
   final case class HiveIcebergCatalog(name: String, uri: String)                                 extends IcebergCatalog
   final case class HadoopIcebergCatalog(name: String, path: String)                              extends IcebergCatalog
-  final case class CustomIcebergCatalog(name: String, catalogImpl: String, customConfig: String) extends IcebergCatalog
+  final case class CustomIcebergCatalog(name: String, impl: String, config: Map[String, String]) extends IcebergCatalog
 
 }

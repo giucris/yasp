@@ -3,7 +3,8 @@ package it.yasp.core.spark.factory
 import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.err.YaspCoreError.CreateSessionError
 import it.yasp.core.spark.factory.SessionFactory.{SparkSessionBuilderOps, SparkSessionOps}
-import it.yasp.core.spark.model.Session
+import it.yasp.core.spark.model.IcebergCatalog.{CustomIcebergCatalog, HadoopIcebergCatalog, HiveIcebergCatalog}
+import it.yasp.core.spark.model.{IcebergCatalog, Session}
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.internal.StaticSQLConf.SPARK_SESSION_EXTENSIONS
@@ -60,6 +61,8 @@ class SessionFactory extends StrictLogging {
         .maybeWithSparkConf(session.conf)
         .maybeWithHiveSupport(session.withHiveSupport)
         .maybeWithDeltaSupport(session.withDeltaSupport)
+        .maybeWithIcebergSupport(session.withIcebergSupport)
+        .maybeWithIcebergCatalogs(session.withIcebergCatalogs)
         .getOrCreate()
         .maybeWithCheckPointDir(session.withCheckpointDir)
     )
@@ -77,7 +80,7 @@ object SessionFactory {
     *   [[SparkSession.Builder]]
     */
   implicit class SparkSessionBuilderOps(builder: SparkSession.Builder) extends StrictLogging {
-    //private val SPARK_CATALOG     = "org.apache.iceberg.spark.SparkCatalog"
+    private val SPARK_CATALOG     = "org.apache.iceberg.spark.SparkCatalog"
     private val DELTA_CATALOG     = "org.apache.spark.sql.delta.catalog.DeltaCatalog"
     private val ICEBERG_CATALOG   = "org.apache.iceberg.spark.SparkSessionCatalog"
     private val DELTA_EXTENSION   = "io.delta.sql.DeltaSparkSessionExtension"
@@ -141,20 +144,29 @@ object SessionFactory {
         builder
           .config(SPARK_SESSION_EXTENSIONS.key, ICEBERG_EXTENSION)
           .config("spark.sql.catalog.spark_catalog", ICEBERG_CATALOG)
+          .config("spark.sql.catalog.spark_catalog.type", "hive")
       }
-    /*
-    def maybeWithIcebergCatalog(icebergCatalogs: Option[Seq[IcebergCatalog]]): SparkSession.Builder =
+
+    def maybeWithIcebergCatalogs(icebergCatalogs: Option[Seq[IcebergCatalog]]): SparkSession.Builder =
       icebergCatalogs.filter(_.nonEmpty).fold(builder) { catalogs =>
         catalogs.foldLeft(builder) {
-          case (b, c: HiveIcebergCatalog)   =>
-            b.config("", "")
-          case (b, c: HadoopIcebergCatalog) =>
-            b.config("", "")
-          case (b, c: CustomIcebergCatalog) =>
-            b.config("", "")
+          case (bld, c: HiveIcebergCatalog)   =>
+            bld
+              .config(s"spark.sql.catalog.${c.name}", SPARK_CATALOG)
+              .config(s"spark.sql.catalog.${c.name}.type", "hive")
+              .config(s"spark.sql.catalog.${c.name}.uri", c.uri)
+          case (bld, c: HadoopIcebergCatalog) =>
+            bld
+              .config(s"spark.sql.catalog.${c.name}", SPARK_CATALOG)
+              .config(s"spark.sql.catalog.${c.name}.type", "hadoop")
+              .config(s"spark.sql.catalog.${c.name}.warehouse", c.path)
+          case (bld, c: CustomIcebergCatalog) =>
+            bld
+              .config(s"spark.sql.catalog.${c.name}", SPARK_CATALOG)
+              .config(s"spark.sql.catalog.${c.name}.catalog-impl", c.impl)
+            c.config.foldLeft(bld) { case (b, (k, v)) => b.config(s"spark.sql.catalog.${c.name}.$k", v) }
         }
       }
-     */
   }
 
   /** SparkSessionOps
