@@ -4,7 +4,7 @@ lazy val commonSettings = Seq(
   organization := "it.yasp",
   licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
   version      := "0.0.1",
-  scalaVersion := Settings.yaspScalaVersion,
+  scalaVersion := Settings.SCALA_212,
   scalacOptions ++= Settings.yaspScalaCompilerSettings,
   developers   := List(
     Developer(
@@ -45,12 +45,12 @@ lazy val core    = (project in file("yasp-core"))
       Dependencies.scalactic,
       Dependencies.typeSafeScalaLogging,
       Dependencies.logback,
-      Dependencies.sparkSql,
-      Dependencies.sparkAvro,
-      Dependencies.sparkXml,
-      Dependencies.sparkHive,
-      Dependencies.sparkDelta,
-      Dependencies.sparkIceberg,
+      if (!Settings.yaspLightBuild) Dependencies.sparkSql else Dependencies.sparkSql         % Provided,
+      if (!Settings.yaspLightBuild) Dependencies.sparkAvro else Dependencies.sparkAvro       % Provided,
+      if (!Settings.yaspLightBuild) Dependencies.sparkXml else Dependencies.sparkXml         % Provided,
+      if (!Settings.yaspLightBuild) Dependencies.sparkHive else Dependencies.sparkHive       % Provided,
+      if (!Settings.yaspLightBuild) Dependencies.sparkDelta else Dependencies.sparkDelta     % Provided,
+      if (!Settings.yaspLightBuild) Dependencies.sparkIceberg else Dependencies.sparkIceberg % Provided,
       Dependencies.scalaTest % Test,
       Dependencies.scalaMock % Test,
       Dependencies.h2db      % Test
