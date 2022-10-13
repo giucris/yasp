@@ -17,6 +17,10 @@ object Settings {
   lazy val yaspLightBuild: Boolean =
     sys.props.get("yasp.build.version").contains(LIGHT_BUILD)
 
+  lazy val yaspAppJarName:String =
+    if(yaspLightBuild) s"yasp-app-light-spark-$yaspSparkVersion-${version.value}.jar"
+    else s"yasp-app-light-spark-$yaspSparkVersion-${version.value}.jar"
+
   lazy val yaspScalaCompilerSettings = Seq(
     "-deprecation",
     "-feature",
@@ -51,7 +55,7 @@ object Settings {
 
   lazy val yaspAssemblySettings = Seq(
     assembly / mainClass             := Some("it.yasp.app.Yasp"),
-    assembly / assemblyJarName       := s"${name.value}-spark-$yaspSparkVersion-${version.value}.jar",
+    assembly / assemblyJarName       := yaspAppJarName,
     assembly / assemblyCacheOutput   := false,
     assembly / assemblyMergeStrategy := {
       case PathList("META-INF", _ @_*) => MergeStrategy.discard
