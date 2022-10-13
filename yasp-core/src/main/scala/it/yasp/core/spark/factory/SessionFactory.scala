@@ -77,7 +77,7 @@ object SessionFactory {
     *   [[SparkSession.Builder]]
     */
   implicit class SparkSessionBuilderOps(builder: SparkSession.Builder) extends StrictLogging {
-    private val SPARK_CATALOG     = "org.apache.iceberg.spark.SparkCatalog"
+    //private val SPARK_CATALOG     = "org.apache.iceberg.spark.SparkCatalog"
     private val DELTA_CATALOG     = "org.apache.spark.sql.delta.catalog.DeltaCatalog"
     private val ICEBERG_CATALOG   = "org.apache.iceberg.spark.SparkSessionCatalog"
     private val DELTA_EXTENSION   = "io.delta.sql.DeltaSparkSessionExtension"
