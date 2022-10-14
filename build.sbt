@@ -67,6 +67,7 @@ lazy val service = (project in file("yasp-service"))
     libraryDependencies ++= Seq(
       Dependencies.catsCore,
       Dependencies.scalactic,
+      Dependencies.sparkSql  % Provided,
       Dependencies.scalaTest % Test,
       Dependencies.scalaMock % Test,
       Dependencies.h2db      % Test
