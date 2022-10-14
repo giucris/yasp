@@ -2,7 +2,6 @@ package it.yasp.app.err
 
 import it.yasp.service.model.YaspExecution
 
-//TODO: Improve Error and Exception handling of Yasp in a more fun style approach.
 /** YaspAppErrors Sum Type
   */
 sealed abstract class YaspError(val message: String, val cause: Throwable)

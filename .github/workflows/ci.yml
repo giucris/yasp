@@ -8,7 +8,7 @@ jobs:
       JVM_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: setup jdk
         uses: actions/setup-java@v2
         with:
@@ -30,7 +30,7 @@ jobs:
       JVM_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: setup jdk
         uses: actions/setup-java@v2
         with:
@@ -60,7 +60,7 @@ jobs:
       JVM_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: setup jdk
         uses: actions/setup-java@v2
         with:
@@ -70,6 +70,8 @@ jobs:
         uses: coursier/cache-action@v6
       - name: build
         run: sbt -Dyasp.spark.version=${{ matrix.spark_version }} assembly
+      - name: build light
+        run: sbt -Dyasp.spark.version=${{ matrix.spark_version }} -Dyasp.build.version=LIGHT assembly
       - name: cleanup cache
         run: |
           rm -rf "$HOME/.ivy2/local" || true

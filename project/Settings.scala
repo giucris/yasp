@@ -1,23 +1,25 @@
+import sbt.Compile
 import sbt.Keys._
-import sbt.{url, Compile, Developer}
 import sbtassembly.AssemblyKeys.{assemblyCacheOutput, assemblyJarName}
 import sbtassembly.AssemblyPlugin.autoImport.{assembly, assemblyMergeStrategy, MergeStrategy}
 import sbtassembly.PathList
 import wartremover.WartRemover.autoImport.{wartremoverErrors, Wart, Warts}
 
 object Settings {
-  lazy val scala_211 = "2.11.12"
-  lazy val scala_212 = "2.12.15"
-  lazy val spark_330 = "3.3.0"
+  lazy val SCALA_212   = "2.12.15"
+  lazy val SPARK_330   = "3.3.0"
+  lazy val LIGHT_BUILD = "LIGHT"
 
   //Default spark version set to 3.3.0 if not provided
   lazy val yaspSparkVersion: String =
-    sys.props.getOrElse("yasp.spark.version", spark_330)
+    sys.props.getOrElse("yasp.spark.version", SPARK_330)
 
-  //Cross building based on spark version
-  lazy val yaspScalaVersion: String =
-    if (yaspSparkVersion.startsWith("2.")) scala_211
-    else scala_212
+  lazy val yaspLightBuild: Boolean =
+    sys.props.get("yasp.build.type").contains(LIGHT_BUILD)
+
+  lazy val yaspAppJarName: String =
+    if (yaspLightBuild) s"yasp-app-light-spark-$yaspSparkVersion"
+    else s"yasp-app-spark-$yaspSparkVersion"
 
   lazy val yaspScalaCompilerSettings = Seq(
     "-deprecation",
@@ -53,7 +55,7 @@ object Settings {
 
   lazy val yaspAssemblySettings = Seq(
     assembly / mainClass             := Some("it.yasp.app.Yasp"),
-    assembly / assemblyJarName       := s"${name.value}-spark-$yaspSparkVersion-${version.value}.jar",
+    assembly / assemblyJarName       := s"$yaspAppJarName-${version.value}.jar",
     assembly / assemblyCacheOutput   := false,
     assembly / assemblyMergeStrategy := {
       case PathList("META-INF", _ @_*) => MergeStrategy.discard
