@@ -42,11 +42,11 @@ Yasp comes with the following modules:
 ****There are no packages already built and distributed that you can download and use. You have to build your yasp
 package****
 
-Yasp can be built with all the dependencies required (spark, delta, iceberg, etc.). The result of this build is a FAT
-jar.
+Yasp can be built with a bundled version of spark and all required dependencies (delta, iceberg, etc.). The result of this build is a FAT
+jar that could be executed locally or in your cluster.
 
-However, it is possible to build yasp in light mode, this excludes all the spark dependencies. If you're planning to use
-it with the light package be sure that yasp can find all the required dependencies of spark in the classpath.
+However, it is possible to build yasp in light mode, this excludes all the spark required dependencies. 
+If you're planning to use it with the light package be sure that yasp can the required libraries on your local machine or cluster.
 
 **FAT package**
 
@@ -118,7 +118,6 @@ You can use Yasp in three different way.
 
 **Execute an ETL/EL**
 
-* Build yasp. 
 * Create a yasp.yaml file.
 * **[OPTIONAL]** Execute a dry-run:
   ```bash
