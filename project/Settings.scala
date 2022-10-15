@@ -55,7 +55,7 @@ object Settings {
 
   lazy val yaspAssemblySettings = Seq(
     assembly / mainClass             := Some("it.yasp.app.Yasp"),
-    assembly / assemblyJarName       := s"$yaspAppJarName-${version.value}.jar",
+    assembly / assemblyJarName       := s"$yaspAppJarName-${version.value}_${scalaVersion.value}.jar",
     assembly / assemblyCacheOutput   := false,
     assembly / assemblyMergeStrategy := {
       case PathList("META-INF", _ @_*) => MergeStrategy.discard
