@@ -19,12 +19,14 @@ write in multiple destination
 It is written in **Scala (2.12.15)** on top of **Apache Spark 3.3.0** and managed as an **SBT (1.4.9)** multi module
 project.
 
-Currently support all the 3.x Spark versions and comes with the following modules:
+Yasp comes with the following modules:
 
 * **YaspApp** provide the highest possible level of abstraction for your ETL job and come with an executable main class.
   Allow you to manage complex big data etl job with a simple yml file
 * **YaspService** provide all the yasp ops for your ETL job.
 * **YaspCore** provide spark primitives useful for yasp operations.
+
+**Only Apache Spark 3.x versions are supported**
 
 ## Getting Started
 
@@ -35,23 +37,32 @@ Currently support all the 3.x Spark versions and comes with the following module
 * Windows user only: This is an Apache Spark based framework to run it locally you should configure the hadoop winutils
   on your laptop. Check [here](https://github.com/steveloughran/winutils) for more details.
 
-### Local Execute
+### Build
 
-To execute Yasp you should first build it.
+****There are no packages already built and distributed that you can download and use. You have to build your yasp
+package****
+
+Yasp can be built with all the dependencies required (spark, delta, iceberg, etc.). The result of this build is a FAT
+jar.
+
+However, it is possible to build yasp in light mode, this excludes all the spark dependencies. If you're planning to use
+it with the light package be sure that yasp can find all the required dependencies of spark in the classpath.
+
+**FAT package**
 
 * Clone: `git clone https://github.com/giucris/yasp.git`
-* Build: `sbt -Dyasp.spark.version=3.3.0 assembly` (currenlty only 3.x versions of spark are supported)
-* Go to `yasp-app/target/scala2.12/` folder and you can find the executable jar file
-  `yasp-app-spark-3.3.0-0.0.1.jar`
+* Build: `sbt -Dyasp.spark.version=3.3.0 assembly`
+* Go to `yasp-app/target/scala2.12/` folder and you can find an executable jar file `yasp-app-spark-3.3.0-0.0.1.jar`
 
-For devs:
+**LIGHT package**
 
-* yasp style test: `sbt scalafmtSbtCheck scalafmtCheckAll`
-* yasp code test: `sbt clean test`
+* Clone: `git clone https://github.com/giucris/yasp.git`
+* Build: `sbt -Dyasp.spark.version=3.3.0 -Dyasp.build.type=LIGHT assembly`
+* Go to `yasp-app/target/scala2.12/` folder and you can find an executable jar file `yasp-app-light-spark-3.3.0-0.0.1.jar`
 
-**NB: I'm working to provide a first release that you can directly download**
+### Local Execute
 
-To execute yasp you have to provide a single yaml file (json is fine too), that basically will contain all your Extract
+To run a yasp app you have to provide a single yaml file (json is fine too), that basically contain all your Extract
 Transform and Load task.
 
 #### yasp.yaml
@@ -99,34 +110,27 @@ Take a look to the detailed user documentation for [Session](/docs/Session.md), 
 , [YaspPlan](/docs/YaspPlan.md)
 
 ## Usage
+**NB: You have to build yasp before using it, please follow the relative section**
 
-Currently you can use Yasp in three different way
-**NB** You have to build yasp before using it, please follow the relative section.
+You can use Yasp in three different way.
 
 ### Local usage
 
-Yasp comes with a bundled spark, so you can directly execute the jar package on your machine.
-**NB: Please take a look to the prerequisites needed to run it locally**
-
 **Execute an ETL/EL**
 
-* Create a yasp.yaml file that define your ETL/EL flow.
-* Then run yasp:
+* Build yasp. 
+* Create a yasp.yaml file.
+* **[OPTIONAL]** Execute a dry-run:
+  ```bash
+  java -jar yasp-app-spark-x.y.z-i.j.k.jar --file <PATH_TO_YASP_YAML_FILE> --dry-run
+  ```
+* run:
+  ```bash
+  java -jar yasp-app-spark-x.y.z-i.j.k.jar --file <PATH_TO_YASP_YAML_FILE>`
+  ```
 
-```bash
-java -jar yasp-app-spark-x.y.z-i.j.k.jar --file <PATH_TO_YASP_YAML_FILE>`
-```
-
-**Test your yasp.yml**
-
-* Create a yasp.yaml file that define your ETL/EL flow.
-* Then run yasp with dry-run enabled:
-
-```bash
-java -jar yasp-app-spark-x.y.z-i.j.k.jar --file <PATH_TO_YASP_YAML_FILE> --dry-run
-```
-
-The dry-run does not execute spark action, it just provide to you the YaspPlan that will be executed.
+**DRY RUN**
+The dry-run does not execute any Spark action, it just provide to you the YaspPlan that will be executed.
 
 ### Cluster usage
 
@@ -196,8 +200,6 @@ object MyUsersByCitiesReport {
 ```
 
 #### YaspService in action
-
-Suppose that you have 3 data source that you should read join and then extract a simple number of users by cities.
 
 ```scala
 object MyUsersByCitiesReport {
