@@ -71,7 +71,7 @@ jobs:
       - name: build
         run: sbt -Dyasp.spark.version=${{ matrix.spark_version }} assembly
       - name: build light
-        run: sbt -Dyasp.spark.version=${{ matrix.spark_version }} -Dyasp.build.version=LIGHT assembly
+        run: sbt -Dyasp.spark.version=${{ matrix.spark_version }} -Dyasp.build.type=LIGHT assembly
       - name: archive yasp built jars
         uses: actions/upload-artifact@v3
         with:
