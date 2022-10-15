@@ -77,7 +77,7 @@ jobs:
         with:
           name: yasp-app-${{ matrix.spark_version }}-jar
           path: |
-            yasp-app/scala2.12/yasp-app-*.jar
+            yasp-app/target/scala-2.12/yasp-app-*.jar
       - name: cleanup cache
         run: |
           rm -rf "$HOME/.ivy2/local" || true
