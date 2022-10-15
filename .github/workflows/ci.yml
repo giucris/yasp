@@ -73,11 +73,11 @@ jobs:
       - name: build light
         run: sbt -Dyasp.spark.version=${{ matrix.spark_version }} -Dyasp.build.version=LIGHT assembly
       - name: archive yasp built jars
-          uses: actions/upload-artifact@v3
-          with:
-            name: yasp-app-jars
-            path: |
-              yasp-app/scala2.12/yasp-app-*.jar
+        uses: actions/upload-artifact@v3
+        with:
+          name: yasp-app-${{ matrix.spark_version }}-jar
+          path: |
+            yasp-app/scala2.12/yasp-app-*.jar
       - name: cleanup cache
         run: |
           rm -rf "$HOME/.ivy2/local" || true
