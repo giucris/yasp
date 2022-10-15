@@ -231,7 +231,7 @@ object MyUsersByCitiesReport {
 ## Roadmap
 
 * Add BuiltIn Processor
-* Add support for Iceberg and Hudi as Source/Dest
+* Add support for Hudi as Source/Dest
 * Add data quality process
 * Add Structured Streaming Execution
 

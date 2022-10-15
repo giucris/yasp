@@ -1,4 +1,4 @@
-#Code of conduct
+# Code of conduct
 
 * Respect the code base and all the project style
 * Avoid massive refactors
