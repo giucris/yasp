@@ -4,7 +4,10 @@ import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.err.YaspCoreError.ReadError
 import it.yasp.core.spark.model.Source
 import it.yasp.core.spark.model.Source._
+import it.yasp.core.spark.plugin.ReaderPlugin
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
+
+import java.util.ServiceLoader
 
 /** Reader
   *
@@ -27,6 +30,28 @@ trait Reader[A <: Source] {
 }
 
 object Reader {
+
+  import scala.jdk.CollectionConverters._
+
+  class CustomReader(spark: SparkSession) extends Reader[Custom] with StrictLogging {
+    override def read(source: Custom): Either[ReadError, Dataset[Row]] = {
+      logger.info(s"Loading class: ${source.clazz}")
+      loadReaderInstance(source).flatMap { reader =>
+        try Right(reader.read(spark, source.options))
+        catch { case t: Throwable => Left(ReadError(source, t)) }
+      }
+    }
+
+    private def loadReaderInstance(source: Custom): Either[ReadError, ReaderPlugin] =
+      try ServiceLoader
+        .load(classOf[ReaderPlugin])
+        .iterator()
+        .asScala
+        .toSeq
+        .headOption
+        .toRight(ReadError(source, new ClassNotFoundException(source.clazz)))
+      catch { case t: Throwable => Left(ReadError(source, t)) }
+  }
 
   /** A FormatReader. Will use the standard spark approach to read a dataset starting from a configured format
     * @param spark:
@@ -62,6 +87,7 @@ object Reader {
   class SourceReader(spark: SparkSession) extends Reader[Source] {
     override def read(source: Source): Either[ReadError, Dataset[Row]] =
       source match {
+        case s: Custom    => new CustomReader(spark).read(s)
         case s: Format    => new FormatReader(spark).read(s)
         case s: HiveTable => new HiveTableReader(spark).read(s)
       }
