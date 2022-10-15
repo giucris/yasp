@@ -109,6 +109,14 @@ plan:
 Take a look to the detailed user documentation for [Session](/docs/Session.md), [YaspExecution](/docs/YaspExecution.md)
 , [YaspPlan](/docs/YaspPlan.md)
 
+
+#### Source Process and Dest
+
+Yasp support all the Apache Spark Source and Destination with the addition of Iceberg Table and Delta Table.
+Yasp support only Spark SQL process.
+
+**NB There are no specific Dest for Iceberg and Delta table. Any write action should be described as SQL process.**
+
 ## Usage
 **NB: You have to build yasp before using it, please follow the relative section**
 
