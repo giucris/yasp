@@ -72,7 +72,7 @@ jobs:
         run: sbt -Dyasp.spark.version=${{ matrix.spark_version }} assembly
       - name: build light
         run: sbt -Dyasp.spark.version=${{ matrix.spark_version }} -Dyasp.build.version=LIGHT assembly
-      - name: Archive production artifacts
+      - name: archive yasp built jars
           uses: actions/upload-artifact@v3
           with:
             name: yasp-app-jars
