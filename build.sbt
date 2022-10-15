@@ -3,7 +3,6 @@ import sbt.url
 lazy val commonSettings = Seq(
   organization := "it.yasp",
   licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
-  version      := "0.0.1",
   scalaVersion := Settings.SCALA_212,
   scalacOptions ++= Settings.yaspScalaCompilerSettings,
   developers   := List(
