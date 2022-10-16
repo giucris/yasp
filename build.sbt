@@ -41,6 +41,7 @@ lazy val core    = (project in file("yasp-core"))
     name := "yasp-core",
     Settings.yaspWartRemoverSettings,
     libraryDependencies ++= Seq(
+      Dependencies.catsCore,
       Dependencies.scalactic,
       Dependencies.typeSafeScalaLogging,
       Dependencies.logback,
@@ -64,8 +65,6 @@ lazy val service = (project in file("yasp-service"))
     name := "yasp-service",
     Settings.yaspWartRemoverSettings,
     libraryDependencies ++= Seq(
-      Dependencies.catsCore,
-      Dependencies.scalactic,
       Dependencies.sparkSql  % Provided,
       Dependencies.scalaTest % Test,
       Dependencies.scalaMock % Test,
@@ -83,12 +82,10 @@ lazy val app     = (project in file("yasp-app"))
     libraryDependencies ++= Seq(
       Dependencies.scopt,
       Dependencies.apacheText,
-      Dependencies.catsCore,
       Dependencies.circeCore,
       Dependencies.circeGeneric,
       Dependencies.circeParser,
       Dependencies.circeParserYml,
-      Dependencies.scalactic,
       Dependencies.scalaTest % Test,
       Dependencies.scalaMock % Test,
       Dependencies.h2db      % Test

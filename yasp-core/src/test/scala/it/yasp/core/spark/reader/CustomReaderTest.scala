@@ -1,6 +1,7 @@
 package it.yasp.core.spark.reader
 
 import it.yasp.core.spark.model.Source.Custom
+import it.yasp.core.spark.plugin.PluginProvider
 import it.yasp.core.spark.reader.Reader.CustomReader
 import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -24,8 +25,8 @@ class CustomReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
   )
 
   test("read load MyTestCustomReader") {
-    val reader = new CustomReader(spark)
-    val actual = reader.read(Custom("it.yasp.core.spark.reader.MyCustomTestReader", Some(Map("x" -> "y"))))
+    val reader = new CustomReader(spark, new PluginProvider)
+    val actual = reader.read(Custom("it.yasp.core.spark.plugin.MyTestReaderPlugin", Some(Map("x" -> "y"))))
     assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
 
