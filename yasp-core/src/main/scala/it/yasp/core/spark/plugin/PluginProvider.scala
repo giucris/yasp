@@ -16,6 +16,7 @@ class PluginProvider extends StrictLogging {
     * @return
     *   Right(A) if the ServiceLoader successful retrieve the instance Left(Throwable) otherwise
     */
+  @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
   def load[A: ClassTag](clazz: String): Either[Throwable, A] = {
     logger.info(s"Loading class: $clazz")
     try ServiceLoader
