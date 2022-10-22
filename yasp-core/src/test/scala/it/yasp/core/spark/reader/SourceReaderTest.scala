@@ -89,4 +89,9 @@ class SourceReaderTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
     val actual = reader.read(HiveTable("my_table_xxx"))
     assertDatasetEquals(actual.getOrElse(fail()), expectedDf)
   }
+
+  test("read custom") {
+    val actual = reader.read(Custom("it.yasp.core.spark.plugin.MyTestReaderPlugin", None))
+    assertDatasetEquals(actual.getOrElse(fail()), spark.emptyDataFrame)
+  }
 }
