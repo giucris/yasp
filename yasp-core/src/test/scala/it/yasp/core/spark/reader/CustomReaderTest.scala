@@ -19,7 +19,6 @@ class CustomReaderTest extends AnyFunSuite with MockFactory with SparkTestSuite 
     RowEncoder(StructType(Seq(StructField("ID", IntegerType, nullable = true))))
   )
 
-
   test("read call a fails PluginProvider") {
     val pluginProvider = stub[PluginProvider]
 
@@ -28,7 +27,7 @@ class CustomReaderTest extends AnyFunSuite with MockFactory with SparkTestSuite 
       .when(*, *)
       .returns(Left(new IllegalArgumentException("x")))
 
-    assert(new CustomReader(spark,pluginProvider).read(Custom("x", None)).isLeft)
+    assert(new CustomReader(spark, pluginProvider).read(Custom("x", None)).isLeft)
   }
 
   test("read call ReaderPlugin read") {
