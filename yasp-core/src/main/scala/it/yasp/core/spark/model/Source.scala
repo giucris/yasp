@@ -6,6 +6,17 @@ sealed trait Source extends Product with Serializable
 
 object Source {
 
+  /** Custom source.
+    * @param clazz:
+    *   class
+    * @param options:
+    *   Options configuration
+    */
+  final case class Custom(
+      clazz: String,
+      options: Option[Map[String, String]]
+  ) extends Source
+
   /** A Format Source Model. Mainly based on the spark format reader.
     * @param format:
     *   Kind of format

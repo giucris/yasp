@@ -1,6 +1,6 @@
 package it.yasp.core.spark.processor
 
-import it.yasp.core.spark.model.Process.Sql
+import it.yasp.core.spark.model.Process.{Custom, Sql}
 import it.yasp.core.spark.processor.Processor.ProcessProcessor
 import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.Row
@@ -10,7 +10,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class ProcessProcessorTest extends AnyFunSuite with SparkTestSuite {
 
-  test("process") {
+  test("sql process") {
     spark
       .createDataset(Seq(Row(1, "name1"), Row(2, "name2"), Row(3, "name3"), Row(4, "name4")))(
         RowEncoder(
@@ -29,5 +29,15 @@ class ProcessProcessorTest extends AnyFunSuite with SparkTestSuite {
       RowEncoder(StructType(Seq(StructField("ID", IntegerType, nullable = true))))
     )
     assertDatasetEquals(actual.getOrElse(fail()), expected)
+  }
+
+  test("custom process") {
+    val actual = new ProcessProcessor(spark).execute(
+      Custom(
+        clazz = "it.yasp.core.spark.plugin.MyTestProcessorPlugin",
+        options = None
+      )
+    )
+    assertDatasetEquals(actual.getOrElse(fail()), spark.emptyDataFrame)
   }
 }

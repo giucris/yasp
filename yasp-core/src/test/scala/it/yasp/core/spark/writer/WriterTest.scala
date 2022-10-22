@@ -1,6 +1,6 @@
 package it.yasp.core.spark.writer
 
-import it.yasp.core.spark.model.Dest.{Format, HiveTable}
+import it.yasp.core.spark.model.Dest.{Custom, Format, HiveTable}
 import it.yasp.core.spark.writer.Writer.DestWriter
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -95,5 +95,13 @@ class WriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll 
     val actual = spark.table("wr_table_1")
 
     assertDatasetEquals(actual, expectedDf)
+  }
+
+  test("write custom") {
+    val res = writer.write(
+      expectedDf,
+      Custom("it.yasp.core.spark.plugin.MyTestWriterPlugin", None)
+    )
+    assert(res.isRight)
   }
 }

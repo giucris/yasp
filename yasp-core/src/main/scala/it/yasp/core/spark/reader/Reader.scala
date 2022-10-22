@@ -1,9 +1,11 @@
 package it.yasp.core.spark.reader
 
+import cats.implicits._
 import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.err.YaspCoreError.ReadError
 import it.yasp.core.spark.model.Source
 import it.yasp.core.spark.model.Source._
+import it.yasp.core.spark.plugin.{PluginProvider, ReaderPlugin}
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 /** Reader
@@ -55,6 +57,25 @@ object Reader {
       catch { case t: Throwable => Left(ReadError(source, t)) }
   }
 
+  /** SparkCustomReader. Will load at runtime the ReaderPlugin configured on the Custom source and run it.
+    * @param spark:
+    *   An instance of [[SparkSession]]
+    * @param pluginProvider:
+    *   An instance of [[PluginProvider]]
+    */
+  class CustomReader(spark: SparkSession, pluginProvider: PluginProvider) extends Reader[Custom] with StrictLogging {
+    override def read(source: Custom): Either[ReadError, Dataset[Row]] = {
+      logger.info(s"Reading custom source: $source")
+      pluginProvider
+        .load[ReaderPlugin](source.clazz)
+        .flatMap { reader =>
+          try Right(reader.read(spark, source.options))
+          catch { case t: Throwable => Left(ReadError(source, t)) }
+        }
+        .leftMap(ReadError(source, _))
+    }
+  }
+
   /** SourceReader an instance of Reader[Source] Provide a method to dispatch the specific source to the specific method
     * @param spark:
     *   A [[SparkSession]] instance
@@ -64,6 +85,7 @@ object Reader {
       source match {
         case s: Format    => new FormatReader(spark).read(s)
         case s: HiveTable => new HiveTableReader(spark).read(s)
+        case s: Custom    => new CustomReader(spark, new PluginProvider).read(s)
       }
   }
 

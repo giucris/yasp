@@ -41,4 +41,8 @@ object Dest {
       partitionBy: Seq[String] = Seq.empty
   ) extends Dest
 
+  final case class Custom(
+      clazz: String,
+      options: Option[Map[String, String]]
+  ) extends Dest
 }

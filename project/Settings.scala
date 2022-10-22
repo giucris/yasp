@@ -58,8 +58,9 @@ object Settings {
     assembly / assemblyJarName       := s"$yaspAppJarName-${version.value}_${scalaVersion.value}.jar",
     assembly / assemblyCacheOutput   := false,
     assembly / assemblyMergeStrategy := {
-      case PathList("META-INF", _ @_*) => MergeStrategy.discard
-      case _                           => MergeStrategy.first
+      case PathList("META-INF", "services", _ @_*) => MergeStrategy.filterDistinctLines
+      case PathList("META-INF", _ @_*)             => MergeStrategy.discard
+      case _                                       => MergeStrategy.first
     }
   )
 }
