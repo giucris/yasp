@@ -10,7 +10,12 @@ object Process {
     * @param query:
     *   Spark sql query that will be executed
     */
-  final case class Sql(query: String) extends Process
+  final case class Sql(
+      query: String
+  ) extends Process
 
-  final case class Custom(clazz: String, options: Option[Map[String, String]]) extends Process
+  final case class Custom(
+      clazz: String,
+      options: Option[Map[String, String]]
+  ) extends Process
 }
