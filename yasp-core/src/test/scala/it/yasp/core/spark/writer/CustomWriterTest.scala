@@ -1,19 +1,19 @@
 package it.yasp.core.spark.writer
 
 import it.yasp.core.spark.model.Dest.Custom
-import it.yasp.core.spark.plugin.PluginProvider
+import it.yasp.core.spark.plugin.{PluginProvider, WriterPlugin}
 import it.yasp.core.spark.writer.Writer.CustomWriter
-import it.yasp.testkit.{SparkTestSuite, TestUtils}
+import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes.{IntegerType, StringType}
 import org.apache.spark.sql.types.{StructField, StructType}
 import org.apache.spark.sql.{Dataset, Row}
-import org.scalatest.BeforeAndAfterAll
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
 
-class CustomWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll {
-  val workspace: String = "yasp-core/src/test/resources/CustomWriterTest"
+import scala.reflect.ClassTag
 
+class CustomWriterTest extends AnyFunSuite with MockFactory with SparkTestSuite {
   val expectedDf: Dataset[Row] = spark.createDataset(Seq(Row(1, "x"), Row(2, "y")))(
     RowEncoder(
       StructType(
@@ -25,23 +25,35 @@ class CustomWriterTest extends AnyFunSuite with SparkTestSuite with BeforeAndAft
     )
   )
 
-  override protected def beforeAll(): Unit = {
-    TestUtils.cleanFolder(workspace)
-    super.beforeAll()
+  test("write call a fails PluginProvider") {
+    val pluginProvider = stub[PluginProvider]
+
+    (pluginProvider
+      .load[WriterPlugin](_: String)(_: ClassTag[WriterPlugin]))
+      .when(*, *)
+      .returns(Left(new IllegalArgumentException("x")))
+
+    assert(new CustomWriter(pluginProvider).write(expectedDf, Custom("x", None)).isLeft)
   }
 
-  override protected def afterAll(): Unit = {
-    TestUtils.cleanFolder(workspace)
-    super.afterAll()
+  test("write call a WriterPlugin") {
+    val writerPlugin   = mock[WriterPlugin]
+    val pluginProvider = stub[PluginProvider]
+
+    (pluginProvider.load[WriterPlugin](_: String)(_: ClassTag[WriterPlugin])).when(*, *).returns(Right(writerPlugin))
+    (writerPlugin.write _).expects(*, *).once().returns(())
+
+    assert(new CustomWriter(pluginProvider).write(expectedDf, Custom("y", None)).isRight)
   }
 
-  test("read with MyTestWriterPlugin") {
-    new CustomWriter(new PluginProvider).write(
-      expectedDf,
-      Custom("it.yasp.core.spark.plugin.MyTestWriterPlugin", Some(Map("path" -> s"$workspace/custom")))
-    )
-    val actual = spark.read.parquet(s"$workspace/custom")
-    assertDatasetEquals(actual, expectedDf)
+  test("write call a fails WriterPlugin") {
+    val writerPlugin   = mock[WriterPlugin]
+    val pluginProvider = stub[PluginProvider]
+
+    (pluginProvider.load[WriterPlugin](_: String)(_: ClassTag[WriterPlugin])).when(*, *).returns(Right(writerPlugin))
+    (writerPlugin.write _).expects(*, *).once().throws(new IllegalArgumentException("x"))
+
+    assert(new CustomWriter(pluginProvider).write(expectedDf, Custom("z", None)).isLeft)
   }
 
 }
