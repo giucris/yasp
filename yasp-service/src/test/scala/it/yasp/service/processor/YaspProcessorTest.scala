@@ -9,7 +9,7 @@ import it.yasp.core.spark.err.YaspCoreError.{
 import it.yasp.core.spark.model.CacheLayer.Memory
 import it.yasp.core.spark.model.Process
 import it.yasp.core.spark.model.Process.Sql
-import it.yasp.core.spark.operators.Operators
+import it.yasp.core.spark.operators.DataOperators
 import it.yasp.core.spark.processor.Processor
 import it.yasp.core.spark.registry.Registry
 import it.yasp.service.err.YaspServiceError.YaspProcessError
@@ -25,7 +25,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory {
   val processor: Processor[Process] = mock[Processor[Process]]
-  val operators: Operators          = mock[Operators]
+  val operators: DataOperators          = mock[DataOperators]
   val registry: Registry            = mock[Registry]
 
   val yaspProcessor = new DefaultYaspProcessor(processor, operators, registry)

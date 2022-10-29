@@ -2,7 +2,7 @@ package it.yasp.core.spark.operators
 
 import it.yasp.core.spark.err.YaspCoreError.RepartitionOperationError
 import it.yasp.core.spark.model.CacheLayer._
-import it.yasp.core.spark.operators.Operators.DefaultOperators
+import it.yasp.core.spark.operators.DataOperators.DefaultDataOperators
 import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -11,9 +11,9 @@ import org.apache.spark.sql.types.{StructField, StructType}
 import org.apache.spark.storage.StorageLevel
 import org.scalatest.funsuite.AnyFunSuite
 
-class DefaultOperatorsTest extends AnyFunSuite with SparkTestSuite {
+class DefaultDataOperatorsTest extends AnyFunSuite with SparkTestSuite {
 
-  val operators = new DefaultOperators()
+  val operators = new DefaultDataOperators()
 
   test("cache with Memory") {
     val ds1    = spark.createDataset(Seq(Row("a", "b", "c")))(

@@ -3,7 +3,7 @@ package it.yasp.service.loader
 import it.yasp.core.spark.err.YaspCoreError.{CacheOperationError, RegisterTableError, RepartitionOperationError}
 import it.yasp.core.spark.model.CacheLayer.Memory
 import it.yasp.core.spark.model.Source
-import it.yasp.core.spark.operators.Operators
+import it.yasp.core.spark.operators.DataOperators
 import it.yasp.core.spark.reader.Reader
 import it.yasp.core.spark.registry.Registry
 import it.yasp.service.err.YaspServiceError.YaspLoaderError
@@ -20,7 +20,7 @@ import org.scalatest.funsuite.AnyFunSuite
 class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
 
   val reader: Reader[Source] = mock[Reader[Source]]
-  val operators: Operators   = mock[Operators]
+  val operators: DataOperators   = mock[DataOperators]
   val registry: Registry     = mock[Registry]
 
   val yaspLoader: YaspLoader = new DefaultYaspLoader(reader, operators, registry)

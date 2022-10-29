@@ -1,9 +1,11 @@
 package it.yasp.core.spark.operators
 
 import com.typesafe.scalalogging.StrictLogging
+import it.yasp.core.spark.err.YaspCoreError
 import it.yasp.core.spark.err.YaspCoreError.{CacheOperationError, RepartitionOperationError}
-import it.yasp.core.spark.model.CacheLayer
+import it.yasp.core.spark.model.{CacheLayer, DataOperation}
 import it.yasp.core.spark.model.CacheLayer._
+import org.apache.iceberg.DataOperations
 import org.apache.spark.sql.{Dataset, Row}
 import org.apache.spark.storage.StorageLevel
 
@@ -11,8 +13,15 @@ import org.apache.spark.storage.StorageLevel
   *
   * Provide a set of method to execute data operations
   */
-trait Operators {
+trait DataOperators {
 
+  def exec(ds: Dataset[Row],dataOperation: DataOperation):  Either[YaspCoreError, Dataset[Row]] =
+    dataOperation match {
+      case DataOperation(Some(p),Some(c)) => repartition(ds,p).flatMap(cache(_,c))
+      case DataOperation(Some(p),None) => repartition(ds,p)
+      case DataOperation(None,Some(c)) => cache(ds,c)
+      case DataOperation(None,None) => Right(ds)
+    }
   /** Cache the provided dataset into a specific [[CacheLayer]]
     *
     * @param ds:
@@ -38,11 +47,11 @@ trait Operators {
   def repartition(ds: Dataset[Row], partition: Int): Either[RepartitionOperationError, Dataset[Row]]
 }
 
-object Operators {
+object DataOperators {
 
   /** DefaultCache implementation
     */
-  class DefaultOperators extends Operators with StrictLogging {
+  class DefaultDataOperators extends DataOperators with StrictLogging {
 
     override def cache(
         ds: Dataset[Row],

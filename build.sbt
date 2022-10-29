@@ -65,7 +65,7 @@ lazy val service = (project in file("yasp-service"))
     name := "yasp-service",
     Settings.yaspWartRemoverSettings,
     libraryDependencies ++= Seq(
-      Dependencies.sparkSql  % Provided,
+      //Dependencies.sparkSql  % Provided,
       Dependencies.scalaTest % Test,
       Dependencies.scalaMock % Test,
       Dependencies.h2db      % Test
