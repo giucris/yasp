@@ -25,12 +25,12 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
           YaspSource(
             "id1",
             Source.Format("csv", options = Map("path" -> "x", "header" -> "false", "sep" -> ",")),
-            dataOps = Some(DataOperation(None,Some(Memory)))
+            dataOps = Some(DataOperation(None, Some(Memory)))
           ),
           YaspSource(
             "id2",
             Source.Format("parquet", options = Map("path" -> "x")),
-            dataOps = Some(DataOperation(None,Some(MemoryAndDisk)))
+            dataOps = Some(DataOperation(None, Some(MemoryAndDisk)))
           ),
           YaspSource(
             "id3",
@@ -38,22 +38,22 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
               "jdbc",
               options = Map("url" -> "url", "user" -> "x", "password" -> "y", "dbTable" -> "table")
             ),
-            dataOps = Some(DataOperation(None,Some(Disk)))
+            dataOps = Some(DataOperation(None, Some(Disk)))
           ),
           YaspSource(
             "id4",
             Source.Format("csv", options = Map("path" -> "z")),
-            dataOps = Some(DataOperation(None,Some(Checkpoint)))
+            dataOps = Some(DataOperation(None, Some(Checkpoint)))
           ),
           YaspSource(
             "id5",
             Source.Format("csv", options = Map("path" -> "k")),
-            dataOps = Some(DataOperation(None,Some(MemorySer)))
+            dataOps = Some(DataOperation(None, Some(MemorySer)))
           )
         ),
         Seq(
-          YaspProcess("p1", Sql("my-query"), dataOps=None),
-          YaspProcess("p2", Sql("my-query-2"), dataOps =Some(DataOperation(None,Some(MemoryAndDiskSer))))
+          YaspProcess("p1", Sql("my-query"), dataOps = None),
+          YaspProcess("p2", Sql("my-query-2"), dataOps = Some(DataOperation(None, Some(MemoryAndDiskSer))))
         ),
         Seq(
           YaspSink("p1", Dest.Format("parquet", Map("path" -> "out-path-1"))),
@@ -156,11 +156,11 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
           YaspSource(
             "id1",
             Source.Format("csv", options = Map("path" -> "x", "header" -> "false", "sep" -> ",")),
-            dataOps = Some(DataOperation(None,Some(Memory)))
+            dataOps = Some(DataOperation(None, Some(Memory)))
           )
         ),
         Seq(
-          YaspProcess("p1", Sql("my-query"),dataOps=None)
+          YaspProcess("p1", Sql("my-query"), dataOps = None)
         ),
         Seq(
           YaspSink("p1", Dest.Format("parquet", Map("path" -> "out-path-1")))

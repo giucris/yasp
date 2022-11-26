@@ -19,9 +19,9 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
 
-  val reader: Reader[Source] = mock[Reader[Source]]
-  val operators: DataOperators   = mock[DataOperators]
-  val registry: Registry     = mock[Registry]
+  val reader: Reader[Source]   = mock[Reader[Source]]
+  val operators: DataOperators = mock[DataOperators]
+  val registry: Registry       = mock[Registry]
 
   val yaspLoader: YaspLoader = new DefaultYaspLoader(reader, operators, registry)
 
@@ -44,9 +44,9 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     )
     yaspLoader.load(
       YaspSource(
-        id="tbl",
-        source=Source.Format("parquet", options = Map("path" -> "x")),
-        dataOps=None
+        id = "tbl",
+        source = Source.Format("parquet", options = Map("path" -> "x")),
+        dataOps = None
       )
     )
   }
@@ -59,7 +59,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
           .once()
           .returns(Right(baseDf)),
         (operators.exec _)
-          .expects(*, DataOperation(None,Some(Memory)))
+          .expects(*, DataOperation(None, Some(Memory)))
           .once()
           .returns(Right(baseDf)),
         (registry.register _)
@@ -71,9 +71,9 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
 
     yaspLoader.load(
       YaspSource(
-        id="tbl",
-        source=Source.Format("parquet", options = Map("path" -> "x")),
-        dataOps=Some(DataOperation(None,Some(Memory)))
+        id = "tbl",
+        source = Source.Format("parquet", options = Map("path" -> "x")),
+        dataOps = Some(DataOperation(None, Some(Memory)))
       )
     )
   }
@@ -86,7 +86,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
           .once()
           .returns(Right(baseDf)),
         (operators.exec _)
-          .expects(*, DataOperation(Some(100),Some(Memory)))
+          .expects(*, DataOperation(Some(100), Some(Memory)))
           .once()
           .returns(Right(baseDf)),
         (registry.register _)
@@ -98,9 +98,9 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
 
     yaspLoader.load(
       YaspSource(
-        id="tbl",
-        source=Source.Format("parquet", options = Map("path" -> "x")),
-        dataOps=Some(DataOperation(Some(100),Some(Memory)))
+        id = "tbl",
+        source = Source.Format("parquet", options = Map("path" -> "x")),
+        dataOps = Some(DataOperation(Some(100), Some(Memory)))
       )
     )
   }
@@ -117,9 +117,9 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
 
     val actual = yaspLoader.load(
       YaspSource(
-        id="tbl",
-        source=Source.Format("parquet", options = Map("path" -> "x")),
-        dataOps=Some(DataOperation(Some(100), None))
+        id = "tbl",
+        source = Source.Format("parquet", options = Map("path" -> "x")),
+        dataOps = Some(DataOperation(Some(100), None))
       )
     )
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspLoaderError])
@@ -137,9 +137,9 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
 
     val actual = yaspLoader.load(
       YaspSource(
-        id="tbl",
-        source=Source.Format("parquet", options = Map("path" -> "x")),
-        dataOps=Some(DataOperation(None, Some(Memory)))
+        id = "tbl",
+        source = Source.Format("parquet", options = Map("path" -> "x")),
+        dataOps = Some(DataOperation(None, Some(Memory)))
       )
     )
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspLoaderError])
@@ -157,9 +157,9 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
 
     val actual = yaspLoader.load(
       YaspSource(
-        id="tbl",
-        source=Source.Format("parquet", options = Map("path" -> "x")),
-        dataOps=None
+        id = "tbl",
+        source = Source.Format("parquet", options = Map("path" -> "x")),
+        dataOps = None
       )
     )
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspLoaderError])
