@@ -47,9 +47,9 @@ object YaspProcessor {
       for {
         ds1 <- processor.execute(process.process).leftMap(e => YaspProcessError(process, e))
         ds2 <- process.dataOps
-                .map(operators.exec(ds1, _))
-                .fold[Either[YaspCoreError, Dataset[Row]]](Right(ds1))(f => f)
-                .leftMap(e => YaspProcessError(process,e))
+                 .map(operators.exec(ds1, _))
+                 .fold[Either[YaspCoreError, Dataset[Row]]](Right(ds1))(f => f)
+                 .leftMap(e => YaspProcessError(process, e))
         _   <- registry.register(ds2, process.id).leftMap(e => YaspProcessError(process, e))
       } yield ()
     }
