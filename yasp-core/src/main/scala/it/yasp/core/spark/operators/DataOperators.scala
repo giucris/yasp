@@ -5,7 +5,6 @@ import it.yasp.core.spark.err.YaspCoreError
 import it.yasp.core.spark.err.YaspCoreError.{CacheOperationError, RepartitionOperationError}
 import it.yasp.core.spark.model.{CacheLayer, DataOperation}
 import it.yasp.core.spark.model.CacheLayer._
-import org.apache.iceberg.DataOperations
 import org.apache.spark.sql.{Dataset, Row}
 import org.apache.spark.storage.StorageLevel
 

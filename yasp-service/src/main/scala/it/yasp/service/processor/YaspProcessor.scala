@@ -2,12 +2,14 @@ package it.yasp.service.processor
 
 import cats.implicits._
 import com.typesafe.scalalogging.StrictLogging
-import it.yasp.core.spark.model.{DataOperation, Process}
+import it.yasp.core.spark.err.YaspCoreError
+import it.yasp.core.spark.model.Process
 import it.yasp.core.spark.operators.DataOperators
 import it.yasp.core.spark.processor.Processor
 import it.yasp.core.spark.registry.Registry
 import it.yasp.service.err.YaspServiceError.YaspProcessError
 import it.yasp.service.model.YaspProcess
+import org.apache.spark.sql.{Dataset, Row}
 
 /** YaspProcessor
   *
@@ -44,8 +46,10 @@ object YaspProcessor {
       logger.info(s"Process: $process")
       for {
         ds1 <- processor.execute(process.process).leftMap(e => YaspProcessError(process, e))
-        ops = DataOperation(process.partitions, process.cache)
-        ds2 <- operators.exec(ds1, ops).leftMap(e => YaspProcessError(process, e))
+        ds2 <- process.dataOps
+                .map(operators.exec(ds1, _))
+                .fold[Either[YaspCoreError, Dataset[Row]]](Right(ds1))(f => f)
+                .leftMap(e => YaspProcessError(process,e))
         _   <- registry.register(ds2, process.id).leftMap(e => YaspProcessError(process, e))
       } yield ()
     }

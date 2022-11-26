@@ -2,8 +2,8 @@ package it.yasp.service
 
 import it.yasp.core.spark.model.Dest.Format
 import it.yasp.core.spark.model.Process.Sql
-import it.yasp.core.spark.model.SessionType.Local
 import it.yasp.core.spark.model.{Session, Source}
+import it.yasp.core.spark.model.SessionType.Local
 import it.yasp.service.model._
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
@@ -53,8 +53,8 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
         plan = YaspPlan(
           sources = Seq(
             YaspSource(
-              "data_1",
-              Source.Format(
+              id="data_1",
+              source=Source.Format(
                 "csv",
                 options = Map(
                   "header" -> "true",
@@ -62,11 +62,11 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
                   "path"   -> s"$workspace/csv-data-source-1/file1.csv"
                 )
               ),
-              cache = None
+              dataOps=None
             ),
             YaspSource(
-              "data_2",
-              Source.Format(
+              id="data_2",
+              source=Source.Format(
                 "csv",
                 options = Map(
                   "header" -> "true",
@@ -74,20 +74,20 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
                   "path"   -> s"$workspace/csv-data-source-2/file1.csv"
                 )
               ),
-              cache = None
+              dataOps=None
             )
           ),
           processes = Seq(
             YaspProcess(
-              "data_3",
-              Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id"),
-              cache = None
+              id="data_3",
+              process=Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id"),
+              dataOps=None
             )
           ),
           sinks = Seq(
             YaspSink(
-              "data_3",
-              Format("parquet", options = Map("path" -> s"$workspace/parquet-out/"))
+              id="data_3",
+              dest=Format("parquet", options = Map("path" -> s"$workspace/parquet-out/"))
             )
           )
         )
