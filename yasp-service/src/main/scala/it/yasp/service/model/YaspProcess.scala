@@ -1,17 +1,34 @@
 package it.yasp.service.model
 
-import it.yasp.core.spark.model.{DataOperation, Process}
+import it.yasp.core.spark.model.{CacheLayer, DataOperations, Process}
 
 /** A YaspProcess model
   * @param id:
   *   The unique ID of the process result
   * @param process:
   *   An instance of [[Process]]
-  * @param dataOps:
-  *   An Optional instance of [[DataOperation]]
+  * @param partitions:
+  *   An Optional number of partition that will be used to reshuffle the dataset
+  * @param cache:
+  *   An Optional [[CacheLayer]]
   */
 final case class YaspProcess(
     id: String,
     process: Process,
-    dataOps: Option[DataOperation]
+    partitions: Option[Int] = None,
+    cache: Option[CacheLayer] = None
 )
+
+
+object YaspProcess {
+
+  implicit class YaspProcessOps(yaspProcess:YaspProcess){
+    def dataOps:Option[DataOperations] =
+      Some(DataOperations(yaspProcess.partitions,yaspProcess.cache))
+        .flatMap{
+          case DataOperations(None,None) => None
+          case dataOps: DataOperations => Some(dataOps)
+        }
+  }
+
+}

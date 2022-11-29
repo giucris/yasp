@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.err.YaspCoreError
 import it.yasp.core.spark.err.YaspCoreError.{CacheOperationError, RepartitionOperationError}
 import it.yasp.core.spark.model.CacheLayer._
-import it.yasp.core.spark.model.{CacheLayer, DataOperation}
+import it.yasp.core.spark.model.{CacheLayer, DataOperations}
 import org.apache.spark.sql.{Dataset, Row}
 import org.apache.spark.storage.StorageLevel
 
@@ -14,12 +14,12 @@ import org.apache.spark.storage.StorageLevel
   */
 trait DataOperators {
 
-  def exec(ds: Dataset[Row], dataOperation: DataOperation): Either[YaspCoreError, Dataset[Row]] =
+  def exec(ds: Dataset[Row], dataOperation: DataOperations): Either[YaspCoreError, Dataset[Row]] =
     dataOperation match {
-      case DataOperation(Some(p), Some(c)) => repartition(ds, p).flatMap(cache(_, c))
-      case DataOperation(Some(p), None)    => repartition(ds, p)
-      case DataOperation(None, Some(c))    => cache(ds, c)
-      case DataOperation(None, None)       => Right(ds)
+      case DataOperations(Some(p), Some(c)) => repartition(ds, p).flatMap(cache(_, c))
+      case DataOperations(Some(p), None)    => repartition(ds, p)
+      case DataOperations(None, Some(c))    => cache(ds, c)
+      case DataOperations(None, None)       => Right(ds)
     }
 
   /** Cache the provided dataset into a specific [[CacheLayer]]

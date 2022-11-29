@@ -79,8 +79,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |          path: $workspace/input/yyyy/user.csv
            |          header: 'true'
            |          sep: ','
-           |      dataOps:
-           |        cache: Memory
+           |      cache: Memory
            |  sinks:
            |    - id: test_y
            |      dest:
@@ -118,8 +117,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |          path: $workspace/input/source/user.csv
            |          header: 'true'
            |          sep: ','
-           |      dataOps:
-           |        cache: Memory
+           |      cache: Memory
            |    - id: addresses
            |      source:
            |        format: json
@@ -166,8 +164,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |          path: $workspace/input/source/user.csv
            |          header: 'true'
            |          sep: ','
-           |      dataOps:
-           |        cache: Memory
+           |      cache: Memory
            |    - id: addresses
            |      source:
            |        format: json
@@ -214,8 +211,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |          path: $workspace/input/source/user.csv
            |          header: 'true'
            |          sep: ','
-           |      dataOps:
-           |        cache: Memory
+           |      cache: Memory
            |    - id: addresses_x
            |      source:
            |        format: json

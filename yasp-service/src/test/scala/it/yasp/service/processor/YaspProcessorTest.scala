@@ -8,7 +8,7 @@ import it.yasp.core.spark.err.YaspCoreError.{
 }
 import it.yasp.core.spark.model.CacheLayer.Memory
 import it.yasp.core.spark.model.Process.Sql
-import it.yasp.core.spark.model.{DataOperation, Process}
+import it.yasp.core.spark.model.{DataOperations, Process}
 import it.yasp.core.spark.operators.DataOperators
 import it.yasp.core.spark.processor.Processor
 import it.yasp.core.spark.registry.Registry
@@ -58,7 +58,7 @@ class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory
           .once()
           .returns(Right(baseDf)),
         (operators.exec _)
-          .expects(*, DataOperation(Some(10), Some(Memory)))
+          .expects(*, DataOperations(Some(10), Some(Memory)))
           .once()
           .returns(Right(baseDf)),
         (registry.register _)
@@ -71,7 +71,8 @@ class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory
       YaspProcess(
         "tbl",
         Sql("select * from test_table"),
-        Some(DataOperation(Some(10), Some(Memory)))
+        partitions = Some(10),
+        cache = Some(Memory)
       )
     )
   }
@@ -92,11 +93,11 @@ class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory
       .once()
       .returns(Right(baseDf))
     (operators.exec _)
-      .expects(*, DataOperation(Some(10), None))
+      .expects(*, DataOperations(Some(10), None))
       .once()
       .returns(Left(RepartitionOperationError(10, new IllegalArgumentException())))
 
-    val actual = yaspProcessor.process(YaspProcess("x", Sql("x"), Some(DataOperation(Some(10), None))))
+    val actual = yaspProcessor.process(YaspProcess("x", Sql("x"), partitions=Some(10)))
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspProcessError])
   }
 
@@ -106,11 +107,11 @@ class YaspProcessorTest extends AnyFunSuite with SparkTestSuite with MockFactory
       .once()
       .returns(Right(baseDf))
     (operators.exec _)
-      .expects(*, DataOperation(None, Some(Memory)))
+      .expects(*, DataOperations(None, Some(Memory)))
       .once()
       .returns(Left(CacheOperationError(Memory, new IllegalArgumentException())))
 
-    val actual = yaspProcessor.process(YaspProcess("x", Sql("x"), Some(DataOperation(None, Some(Memory)))))
+    val actual = yaspProcessor.process(YaspProcess("x", Sql("x"), cache=Some(Memory)))
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspProcessError])
   }
 

@@ -26,8 +26,7 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
           .expects(
             YaspSource(
               id = "id1",
-              source = Source.Format("json", options = Map("path" -> "sourcePath")),
-              dataOps = None
+              source = Source.Format("json", options = Map("path" -> "sourcePath"))
             )
           )
           .once()
@@ -44,8 +43,7 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
         sources = Seq(
           YaspSource(
             id = "id1",
-            source = Source.Format("json", options = Map("path" -> "sourcePath")),
-            dataOps = None
+            source = Source.Format("json", options = Map("path" -> "sourcePath"))
           )
         ),
         processes = Seq.empty,
@@ -61,8 +59,7 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
           .expects(
             YaspSource(
               id = "id1",
-              source = Source.Format("json", options = Map("path" -> "sourcePath")),
-              dataOps = None
+              source = Source.Format("json", options = Map("path" -> "sourcePath"))
             )
           )
           .once()
@@ -83,8 +80,7 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
         sources = Seq(
           YaspSource(
             id = "id1",
-            source = Source.Format("json", options = Map("path" -> "sourcePath")),
-            dataOps = None
+            source = Source.Format("json", options = Map("path" -> "sourcePath"))
           )
         ),
         processes = Seq(YaspProcess("id2", Sql("my-sql"), None)),
@@ -100,8 +96,7 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
           .expects(
             YaspSource(
               id = "id1",
-              source = Source.Format("json", options = Map("path" -> "sourcePath1")),
-              dataOps = None
+              source = Source.Format("json", options = Map("path" -> "sourcePath1"))
             )
           )
           .once()
@@ -110,8 +105,7 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
           .expects(
             YaspSource(
               id = "id2",
-              source = Source.Format("parquet", options = Map("path" -> "sourcePath2", "mergeSchema" -> "true")),
-              dataOps = None
+              source = Source.Format("parquet", options = Map("path" -> "sourcePath2", "mergeSchema" -> "true"))
             )
           )
           .once()
@@ -140,13 +134,11 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
         sources = Seq(
           YaspSource(
             id = "id1",
-            source = Source.Format("json", options = Map("path" -> "sourcePath1")),
-            dataOps = None
+            source = Source.Format("json", options = Map("path" -> "sourcePath1"))
           ),
           YaspSource(
             id = "id2",
-            source = Source.Format("parquet", options = Map("path" -> "sourcePath2", "mergeSchema" -> "true")),
-            dataOps = None
+            source = Source.Format("parquet", options = Map("path" -> "sourcePath2", "mergeSchema" -> "true"))
           )
         ),
         processes = Seq(

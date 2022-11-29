@@ -2,7 +2,7 @@ package it.yasp.service.loader
 
 import it.yasp.core.spark.err.YaspCoreError.{CacheOperationError, RegisterTableError, RepartitionOperationError}
 import it.yasp.core.spark.model.CacheLayer.Memory
-import it.yasp.core.spark.model.{DataOperation, Source}
+import it.yasp.core.spark.model.{DataOperations, Source}
 import it.yasp.core.spark.operators.DataOperators
 import it.yasp.core.spark.reader.Reader
 import it.yasp.core.spark.registry.Registry
@@ -45,8 +45,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     yaspLoader.load(
       YaspSource(
         id = "tbl",
-        source = Source.Format("parquet", options = Map("path" -> "x")),
-        dataOps = None
+        source = Source.Format("parquet", options = Map("path" -> "x"))
       )
     )
   }
@@ -59,7 +58,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
           .once()
           .returns(Right(baseDf)),
         (operators.exec _)
-          .expects(*, DataOperation(None, Some(Memory)))
+          .expects(*, DataOperations(None, Some(Memory)))
           .once()
           .returns(Right(baseDf)),
         (registry.register _)
@@ -73,7 +72,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       YaspSource(
         id = "tbl",
         source = Source.Format("parquet", options = Map("path" -> "x")),
-        dataOps = Some(DataOperation(None, Some(Memory)))
+        cache = Some(Memory)
       )
     )
   }
@@ -86,7 +85,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
           .once()
           .returns(Right(baseDf)),
         (operators.exec _)
-          .expects(*, DataOperation(Some(100), Some(Memory)))
+          .expects(*, DataOperations(Some(100), Some(Memory)))
           .once()
           .returns(Right(baseDf)),
         (registry.register _)
@@ -100,7 +99,8 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       YaspSource(
         id = "tbl",
         source = Source.Format("parquet", options = Map("path" -> "x")),
-        dataOps = Some(DataOperation(Some(100), Some(Memory)))
+        partitions = Some(100),
+        cache = Some(Memory)
       )
     )
   }
@@ -111,7 +111,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       .once()
       .returns(Right(baseDf))
     (operators.exec _)
-      .expects(*, DataOperation(Some(100), None))
+      .expects(*, DataOperations(Some(100), None))
       .once()
       .returns(Left(RepartitionOperationError(10, new IllegalArgumentException())))
 
@@ -119,7 +119,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       YaspSource(
         id = "tbl",
         source = Source.Format("parquet", options = Map("path" -> "x")),
-        dataOps = Some(DataOperation(Some(100), None))
+        partitions = Some(100)
       )
     )
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspLoaderError])
@@ -131,7 +131,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       .once()
       .returns(Right(baseDf))
     (operators.exec _)
-      .expects(*, DataOperation(None, Some(Memory)))
+      .expects(*, DataOperations(None, Some(Memory)))
       .once()
       .returns(Left(CacheOperationError(Memory, new IllegalArgumentException())))
 
@@ -139,7 +139,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       YaspSource(
         id = "tbl",
         source = Source.Format("parquet", options = Map("path" -> "x")),
-        dataOps = Some(DataOperation(None, Some(Memory)))
+        cache = Some(Memory)
       )
     )
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspLoaderError])
@@ -158,8 +158,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     val actual = yaspLoader.load(
       YaspSource(
         id = "tbl",
-        source = Source.Format("parquet", options = Map("path" -> "x")),
-        dataOps = None
+        source = Source.Format("parquet", options = Map("path" -> "x"))
       )
     )
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspLoaderError])

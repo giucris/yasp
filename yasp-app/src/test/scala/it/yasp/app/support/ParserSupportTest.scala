@@ -25,12 +25,12 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
           YaspSource(
             "id1",
             Source.Format("csv", options = Map("path" -> "x", "header" -> "false", "sep" -> ",")),
-            dataOps = Some(DataOperation(None, Some(Memory)))
+            cache = Some(Memory)
           ),
           YaspSource(
             "id2",
             Source.Format("parquet", options = Map("path" -> "x")),
-            dataOps = Some(DataOperation(None, Some(MemoryAndDisk)))
+            cache = Some(MemoryAndDisk)
           ),
           YaspSource(
             "id3",
@@ -38,22 +38,22 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
               "jdbc",
               options = Map("url" -> "url", "user" -> "x", "password" -> "y", "dbTable" -> "table")
             ),
-            dataOps = Some(DataOperation(None, Some(Disk)))
+            cache = Some(Disk)
           ),
           YaspSource(
             "id4",
             Source.Format("csv", options = Map("path" -> "z")),
-            dataOps = Some(DataOperation(None, Some(Checkpoint)))
+            cache = Some(Checkpoint)
           ),
           YaspSource(
             "id5",
             Source.Format("csv", options = Map("path" -> "k")),
-            dataOps = Some(DataOperation(None, Some(MemorySer)))
+            cache = Some(MemorySer)
           )
         ),
         Seq(
-          YaspProcess("p1", Sql("my-query"), dataOps = None),
-          YaspProcess("p2", Sql("my-query-2"), dataOps = Some(DataOperation(None, Some(MemoryAndDiskSer))))
+          YaspProcess("p1", Sql("my-query")),
+          YaspProcess("p2", Sql("my-query-2"), cache = Some(MemoryAndDiskSer))
         ),
         Seq(
           YaspSink("p1", Dest.Format("parquet", Map("path" -> "out-path-1"))),
@@ -84,15 +84,13 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        path: x
         |        header: 'false'
         |        sep: ','
-        |    dataOps:
-        |      cache: Memory
+        |    cache: memory
         |  - id: id2
         |    source:
         |      format: parquet
         |      options:
         |        path: x
-        |    dataOps:
-        |      cache: Memory_And_Disk
+        |    cache: Memory_And_Disk
         |  - id: id3
         |    source:
         |      format: jdbc
@@ -101,22 +99,19 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        user: x
         |        password: y
         |        dbTable: table
-        |    dataOps:
-        |      cache: Disk
+        |    cache: Disk
         |  - id: id4
         |    source:
         |      format: csv
         |      options:
         |        path: z
-        |    dataOps:
-        |      cache: Checkpoint
+        |    cache: Checkpoint
         |  - id: id5
         |    source:
         |      format: csv
         |      options:
         |        path: k
-        |    dataOps:
-        |      cache: MemorySer
+        |    cache: MemorySer
         |  processes:
         |  - id: p1
         |    process:
@@ -124,8 +119,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |  - id: p2
         |    process:
         |      query: my-query-2
-        |    dataOps:
-        |      cache: MemoryAndDiskSer
+        |    cache: MemoryAndDiskSer
         |  sinks:
         |  - id: p1
         |    dest:
@@ -145,7 +139,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
     assert(actual == Right(expected))
   }
 
-  test("parse return Right with lower Session.kind and DataOps.cache") {
+  test("parse return Right with lower session Kind and cache string") {
     val expected = YaspExecution(
       Session(
         kind = Local,
@@ -156,11 +150,11 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
           YaspSource(
             "id1",
             Source.Format("csv", options = Map("path" -> "x", "header" -> "false", "sep" -> ",")),
-            dataOps = Some(DataOperation(None, Some(Memory)))
+            cache = Some(Memory)
           )
         ),
         Seq(
-          YaspProcess("p1", Sql("my-query"), dataOps = None)
+          YaspProcess("p1", Sql("my-query"))
         ),
         Seq(
           YaspSink("p1", Dest.Format("parquet", Map("path" -> "out-path-1")))
@@ -182,8 +176,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        path: x
         |        header: 'false'
         |        sep: ','
-        |    dataOps:
-        |      cache: MEMORY
+        |    cache: MEMORY
         |  processes:
         |  - id: p1
         |    process:
@@ -199,7 +192,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
     assert(actual == Right(expected))
   }
 
-  test("parse return Left with wrong yaml file") {
+  test("parse return Left") {
     val actual = parseYaml[YaspExecution](
       """
         |session:

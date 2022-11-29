@@ -61,8 +61,7 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
                   "sep"    -> ",",
                   "path"   -> s"$workspace/csv-data-source-1/file1.csv"
                 )
-              ),
-              dataOps = None
+              )
             ),
             YaspSource(
               id = "data_2",
@@ -73,15 +72,13 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
                   "sep"    -> ",",
                   "path"   -> s"$workspace/csv-data-source-2/file1.csv"
                 )
-              ),
-              dataOps = None
+              )
             )
           ),
           processes = Seq(
             YaspProcess(
               id = "data_3",
-              process = Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id"),
-              dataOps = None
+              process = Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id")
             )
           ),
           sinks = Seq(
