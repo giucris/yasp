@@ -1,10 +1,10 @@
 package it.yasp.core.spark.operators
 
+import com.typesafe.scalalogging.StrictLogging
 import it.yasp.core.spark.err.YaspCoreError
 import it.yasp.core.spark.err.YaspCoreError.{CacheOperationError, RepartitionOperationError}
 import it.yasp.core.spark.model.CacheLayer._
 import it.yasp.core.spark.model.{CacheLayer, DataOperations}
-import org.apache.spark.sql.execution.datasources.v2.OptimizeMetadataOnlyDeleteFromIcebergTable.logger
 import org.apache.spark.sql.{Dataset, Row}
 import org.apache.spark.storage.StorageLevel
 
@@ -12,7 +12,7 @@ import org.apache.spark.storage.StorageLevel
   *
   * Provide a set of method to execute data operations
   */
-class DataOperators {
+class DataOperators extends StrictLogging {
 
   def exec(ds: Dataset[Row], dataOperation: DataOperations): Either[YaspCoreError, Dataset[Row]] =
     dataOperation match {
@@ -22,17 +22,7 @@ class DataOperators {
       case DataOperations(None, None)       => Right(ds)
     }
 
-  /** Cache the provided dataset into a specific [[CacheLayer]]
-    *
-    * @param ds:
-    *   input [[Dataset]]
-    * @param layer:
-    *   [[CacheLayer]]
-    * @return
-    *   Right([[Dataset]]) if cache operation is successful completed Left([[CacheOperationError]]) if cache operation
-    *   raise some exception
-    */
-  def cache(ds: Dataset[Row], layer: CacheLayer): Either[CacheOperationError, Dataset[Row]] = {
+  private def cache(ds: Dataset[Row], layer: CacheLayer): Either[CacheOperationError, Dataset[Row]] = {
     logger.info(s"Applying the cache layer: $layer to the provided Dataset")
     try layer match {
       case Memory           => Right(ds.persist(StorageLevel.MEMORY_ONLY))
@@ -44,17 +34,7 @@ class DataOperators {
     } catch { case t: Throwable => Left(CacheOperationError(layer, t)) }
   }
 
-  /** Repartition the provided dataset into the provided number of partitions
-    *
-    * @param ds:
-    *   input [[Dataset]]
-    * @param partition:
-    *   number of partition
-    * @return
-    *   Right([[Dataset]]) if repartition operation is successful completed Left([[RepartitionOperationError]]) if
-    *   repartition operation raise some exception
-    */
-  def repartition(ds: Dataset[Row], partition: Int): Either[RepartitionOperationError, Dataset[Row]] = {
+  private def repartition(ds: Dataset[Row], partition: Int): Either[RepartitionOperationError, Dataset[Row]] = {
     logger.info(s"Applying dataset repartition with partition number: $partition")
     try Right(ds.repartition(partition))
     catch { case t: Throwable => Left(RepartitionOperationError(partition, t)) }
