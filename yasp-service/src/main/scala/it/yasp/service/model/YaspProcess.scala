@@ -19,15 +19,14 @@ final case class YaspProcess(
     cache: Option[CacheLayer] = None
 )
 
-
 object YaspProcess {
 
-  implicit class YaspProcessOps(yaspProcess:YaspProcess){
-    def dataOps:Option[DataOperations] =
-      Some(DataOperations(yaspProcess.partitions,yaspProcess.cache))
-        .flatMap{
-          case DataOperations(None,None) => None
-          case dataOps: DataOperations => Some(dataOps)
+  implicit class YaspProcessOps(yaspProcess: YaspProcess) {
+    def dataOps: Option[DataOperations] =
+      Some(DataOperations(yaspProcess.partitions, yaspProcess.cache))
+        .flatMap {
+          case DataOperations(None, None) => None
+          case dataOps: DataOperations    => Some(dataOps)
         }
   }
 

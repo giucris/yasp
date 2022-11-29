@@ -21,12 +21,12 @@ final case class YaspSource(
 
 object YaspSource {
 
-  implicit class YaspSourceOps(yaspSource:YaspSource){
-    def dataOps:Option[DataOperations] =
-      Some(DataOperations(yaspSource.partitions,yaspSource.cache))
-        .flatMap{
-          case DataOperations(None,None) => None
-          case dataOps:DataOperations => Some(dataOps)
+  implicit class YaspSourceOps(yaspSource: YaspSource) {
+    def dataOps: Option[DataOperations] =
+      Some(DataOperations(yaspSource.partitions, yaspSource.cache))
+        .flatMap {
+          case DataOperations(None, None) => None
+          case dataOps: DataOperations    => Some(dataOps)
         }
   }
 
