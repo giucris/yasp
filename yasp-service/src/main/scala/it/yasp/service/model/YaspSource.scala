@@ -1,6 +1,6 @@
 package it.yasp.service.model
 
-import it.yasp.core.spark.model.{CacheLayer, Source}
+import it.yasp.core.spark.model.{CacheLayer, DataOperations, Source}
 
 /** A YaspSource model
   * @param id:
@@ -18,3 +18,16 @@ final case class YaspSource(
     partitions: Option[Int] = None,
     cache: Option[CacheLayer] = None
 )
+
+object YaspSource {
+
+  implicit class YaspSourceOps(yaspSource: YaspSource) {
+    def dataOps: Option[DataOperations] =
+      Some(DataOperations(yaspSource.partitions, yaspSource.cache))
+        .flatMap {
+          case DataOperations(None, None) => None
+          case dataOps: DataOperations    => Some(dataOps)
+        }
+  }
+
+}

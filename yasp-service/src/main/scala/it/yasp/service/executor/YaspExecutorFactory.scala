@@ -1,7 +1,7 @@
 package it.yasp.service.executor
 
 import com.typesafe.scalalogging.StrictLogging
-import it.yasp.core.spark.operators.Operators.DefaultOperators
+import it.yasp.core.spark.operators.DataOperators
 import it.yasp.core.spark.processor.Processor.ProcessProcessor
 import it.yasp.core.spark.reader.Reader.SourceReader
 import it.yasp.core.spark.registry.Registry.DefaultRegistry
@@ -27,11 +27,11 @@ class YaspExecutorFactory extends StrictLogging {
     */
   def create(spark: SparkSession): YaspExecutor = {
     logger.info("Create YaspExecutor instance")
-    val registry    = new DefaultRegistry(spark)
-    val dataHandler = new DefaultOperators()
+    val registry      = new DefaultRegistry(spark)
+    val dataOperators = new DataOperators()
     new DefaultYaspExecutor(
-      new DefaultYaspLoader(new SourceReader(spark), dataHandler, registry),
-      new DefaultYaspProcessor(new ProcessProcessor(spark), dataHandler, registry),
+      new DefaultYaspLoader(new SourceReader(spark), dataOperators, registry),
+      new DefaultYaspProcessor(new ProcessProcessor(spark), dataOperators, registry),
       new DefaultYaspWriter(registry, new DestWriter())
     )
   }

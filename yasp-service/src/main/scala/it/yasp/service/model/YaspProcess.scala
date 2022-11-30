@@ -1,6 +1,6 @@
 package it.yasp.service.model
 
-import it.yasp.core.spark.model.{CacheLayer, Process}
+import it.yasp.core.spark.model.{CacheLayer, DataOperations, Process}
 
 /** A YaspProcess model
   * @param id:
@@ -18,3 +18,16 @@ final case class YaspProcess(
     partitions: Option[Int] = None,
     cache: Option[CacheLayer] = None
 )
+
+object YaspProcess {
+
+  implicit class YaspProcessOps(yaspProcess: YaspProcess) {
+    def dataOps: Option[DataOperations] =
+      Some(DataOperations(yaspProcess.partitions, yaspProcess.cache))
+        .flatMap {
+          case DataOperations(None, None) => None
+          case dataOps: DataOperations    => Some(dataOps)
+        }
+  }
+
+}

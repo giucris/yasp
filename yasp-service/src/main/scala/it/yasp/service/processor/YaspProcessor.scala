@@ -2,9 +2,9 @@ package it.yasp.service.processor
 
 import cats.implicits._
 import com.typesafe.scalalogging.StrictLogging
-import it.yasp.core.spark.err.YaspCoreError.{CacheOperationError, RepartitionOperationError}
+import it.yasp.core.spark.err.YaspCoreError
 import it.yasp.core.spark.model.Process
-import it.yasp.core.spark.operators.Operators
+import it.yasp.core.spark.operators.DataOperators
 import it.yasp.core.spark.processor.Processor
 import it.yasp.core.spark.registry.Registry
 import it.yasp.service.err.YaspServiceError.YaspProcessError
@@ -34,11 +34,11 @@ object YaspProcessor {
     * @param operators
     *   : A [[Registry]] instance
     * @param registry
-    *   : A [[Operators]] instance
+    *   : A [[DataOperators]] instance
     */
   class DefaultYaspProcessor(
       processor: Processor[Process],
-      operators: Operators,
+      operators: DataOperators,
       registry: Registry
   ) extends YaspProcessor
       with StrictLogging {
@@ -46,17 +46,11 @@ object YaspProcessor {
       logger.info(s"Process: $process")
       for {
         ds1 <- processor.execute(process.process).leftMap(e => YaspProcessError(process, e))
-        ds2 <- process.partitions
-                 .map(operators.repartition(ds1, _))
-                 .fold[Either[RepartitionOperationError, Dataset[Row]]](Right(ds1))(f => f)
+        ds2 <- process.dataOps
+                 .map(operators.exec(ds1, _))
+                 .fold[Either[YaspCoreError, Dataset[Row]]](Right(ds1))(f => f)
                  .leftMap(e => YaspProcessError(process, e))
-        ds3 <- process.cache
-                 .map(operators.cache(ds2, _))
-                 .fold[Either[CacheOperationError, Dataset[Row]]](Right(ds2))(f => f)
-                 .leftMap(e => YaspProcessError(process, e))
-
-        _ <- registry.register(ds3, process.id).leftMap(e => YaspProcessError(process, e))
-
+        _   <- registry.register(ds2, process.id).leftMap(e => YaspProcessError(process, e))
       } yield ()
     }
   }
