@@ -118,7 +118,7 @@ class DataOperatorsTest extends AnyFunSuite with SparkTestSuite {
     val actual = operators.exec(ds7, DataOperations(Some(2), Some(Memory)))
 
     assert(actual.map(_.storageLevel) == Right(StorageLevel.MEMORY_ONLY))
-    assert(actual.map(_.rdd.getNumPartitions) == Right(StorageLevel.MEMORY_ONLY))
+    assert(actual.map(_.rdd.getNumPartitions) == Right(2))
   }
 
   test("repartition return RepartitionOperationError") {
