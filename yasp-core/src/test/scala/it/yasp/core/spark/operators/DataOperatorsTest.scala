@@ -103,11 +103,29 @@ class DataOperatorsTest extends AnyFunSuite with SparkTestSuite {
     assert(actual == Right(2))
   }
 
+  test("cache and repartition") {
+    val ds7    = spark.createDataset(Seq(Row("a", "b", "c")))(
+      RowEncoder(
+        StructType(
+          Seq(
+            StructField("h1", StringType, nullable = true),
+            StructField("h2", StringType, nullable = true),
+            StructField("h3", StringType, nullable = true)
+          )
+        )
+      )
+    )
+    val actual = operators.exec(ds7, DataOperations(Some(2), Some(Memory)))
+
+    assert(actual.map(_.storageLevel) == Right(StorageLevel.MEMORY_ONLY))
+    assert(actual.map(_.rdd.getNumPartitions) == Right(StorageLevel.MEMORY_ONLY))
+  }
+
   test("repartition return RepartitionOperationError") {
-    val ds6    = spark.createDataset(Seq(Row("a"), Row("b"), Row("c"), Row("d"), Row("e"), Row("f")))(
+    val ds8    = spark.createDataset(Seq(Row("a"), Row("b"), Row("c"), Row("d"), Row("e"), Row("f")))(
       RowEncoder(StructType(Seq(StructField("h1", StringType, nullable = true))))
     )
-    val actual = operators.exec(ds6, DataOperations(Some(0), None))
+    val actual = operators.exec(ds8, DataOperations(Some(0), None))
     assert(actual.left.getOrElse(fail()).isInstanceOf[RepartitionOperationError])
   }
 }
