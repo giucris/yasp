@@ -4,7 +4,7 @@ on:
     types: [ opened, reopened, synchronize ]
   push:
     branches:
-      - '*'
+      - '**'
 jobs:
   check_style:
     runs-on: ubuntu-latest
