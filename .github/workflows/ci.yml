@@ -1,5 +1,10 @@
 name: test
-on: [ push ]
+on:
+  pull_request:
+    types: [ opened, reopened, synchronize ]
+  push:
+    branches:
+      - '**'
 jobs:
   check_style:
     runs-on: ubuntu-latest
