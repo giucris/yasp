@@ -76,7 +76,9 @@ trait DecodersSupport {
     */
   implicit def sourceDecoder: Decoder[Source] =
     List[Decoder[Source]](
-      Decoder[Source.Format].widen
+      Decoder[Source.Format].widen,
+      Decoder[Source.Custom].widen,
+      Decoder[Source.HiveTable].widen
     ).reduceLeft(_ or _)
 
   /** A Dest circe Decoder
@@ -85,7 +87,9 @@ trait DecodersSupport {
     */
   implicit def destDecoder: Decoder[Dest] =
     List[Decoder[Dest]](
-      Decoder[Dest.Format].widen
+      Decoder[Dest.Format].widen,
+      Decoder[Dest.Custom].widen,
+      Decoder[Dest.HiveTable].widen
     ).reduceLeft(_ or _)
 
   /** A Process circe Decoder
@@ -93,8 +97,15 @@ trait DecodersSupport {
     *   Decoder[Process]
     */
   implicit def processDecoder: Decoder[Process] =
-    Decoder[Process.Sql].widen
+    List[Decoder[Process]](
+      Decoder[Process.Sql].widen,
+      Decoder[Process.Custom].widen
+    ).reduceLeft(_ or _)
 
+  /** An IcebergCatalog circe Decoder
+    * @return
+    *   Decoder[IcebergCatalog]
+    */
   implicit def icebergCatalogDecoder: Decoder[IcebergCatalog] =
     List[Decoder[IcebergCatalog]](
       Decoder[HiveIcebergCatalog].widen,
