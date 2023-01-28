@@ -82,26 +82,29 @@ session:
 plan:   
   # List of all sources
   sources:
-    - id: my_csv            # Id of the source. used by yasp to register the dataset as a table
-      source:               # Source fiedl, will contains all the configuration to read the data
+    - id: csv_load          # Id of the source action.
+      dataset: my_csv       # Name of the dataset
+      source:               # Source field, will contains all the configuration to read the data
         format: csv         # Standard Spark format
         options:            # Standard Spark format options
           header: 'true'
           path: path/to/input/csv/
   # List of all process
   processes:
-    - id: my_csv_filtered   # Id of the process. used by yasp to register the resulting data as a table
-      process:              # Process field, will contains all the Process configuration to transform the data
-        query: >-           # A sql process configuration
+    - id: filter_csv             # Id of the process action.
+      dataset: my_csv_filtered   # Name of the dataset
+      process:                   # Process field, will contains all the Process configuration to transform the data
+        query: >-                # A sql process configuration
           SELECT * 
           FROM my_csv 
           WHERE id=1
   # List of sinks
   sinks:                   
-    - id: my_csv_filtered   # Id of the source/process registered that will be written 
-      dest:                 # Destination field, contains all the Dest configuration to write the data
-        format: csv         # Standard Spark format
-        options:            # Standard Spark format options
+    - id: sink_data             # Id of the sink action.
+      dataset: my_csv_filtered  # Name of the dataset to sink. 
+      dest:                     # Destination field, contains all the Dest configuration to write the data
+        format: csv             # Standard Spark format
+        options:                # Standard Spark format options
           header: 'true'
           path: path/to/out/csv/
 ```
@@ -217,17 +220,17 @@ object MyUsersByCitiesReport {
         session = Session(Local, "my-app-name", Map.empty),
         plan = YaspPlan(
           sources = Seq(
-            YaspSource("users", Source.Format("csv",options=Map("path"-> "users/","header" -> "true")), partitions = None, cache = None),
-            YaspSource("addresses", Source.Format("json",options=Map("path"->"addresses/")), partitions = None, cache = None),
-            YaspSource("cities", Source.Format("parquet",options=Map("path"->"cities/", "mergeSchema" ->"false")), partitions = None, cache = None)
+            YaspSource("1",users", Source.Format("csv",options=Map("path"-> "users/","header" -> "true")), partitions = None, cache = None),
+            YaspSource("2","addresses", Source.Format("json",options=Map("path"->"addresses/")), partitions = None, cache = None),
+            YaspSource("3","cities", Source.Format("parquet",options=Map("path"->"cities/", "mergeSchema" ->"false")), partitions = None, cache = None)
           ),
           processes = Seq(
-            YaspProcess("users_addresses", Sql("SELECT u.*,a.address,a.city_id FROM users u JOIN addresses a ON u.address_id=a.id"), partitions = None, cache = None),
-            YaspProcess("users_addresses_cities", Sql("SELECT u.*,a.address,a.city_id FROM users_addresses u JOIN cities c ON u.city_id=c.id"), partitions = None, cache = None),
-            YaspProcess("users_by_city", Sql("SELECT city,count(*) FROM users_addresses_cities GROUP BY city"), partitions = None, cache = None)
+            YaspProcess("4","users_addresses", Sql("SELECT u.*,a.address,a.city_id FROM users u JOIN addresses a ON u.address_id=a.id"), partitions = None, cache = None),
+            YaspProcess("5","users_addresses_cities", Sql("SELECT u.*,a.address,a.city_id FROM users_addresses u JOIN cities c ON u.city_id=c.id"), partitions = None, cache = None),
+            YaspProcess("6","users_by_city", Sql("SELECT city,count(*) FROM users_addresses_cities GROUP BY city"), partitions = None, cache = None)
           ),
           sinks = Seq(
-            YaspSink("users_by_city", Dest.Format("parquet",Map("path"->s"user-by-city"), partitionBy=Seq("city")))
+            YaspSink("7","users_by_city", Dest.Format("parquet",Map("path"->s"user-by-city"), partitionBy=Seq("city")))
           )
         )
       )
