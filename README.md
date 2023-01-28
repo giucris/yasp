@@ -68,7 +68,7 @@ Transform and Load task.
 #### yasp.yaml
 
 A yasp.yaml is a file that define a `YaspExecution`. A `YaspExecution` is a model that define an e2e ETL/EL job in terms
-of `Session` and `YaspPlan`. A `YaspPlan` is a model that define all the data operations that yasp will execute.
+of `Session` and `YaspPlan`. A `YaspPlan` is a model that define a list of `YaspAction`.
 
 For example:
 
@@ -80,8 +80,8 @@ session:
 
 # YaspPlan field
 plan:   
-  # List of all sources
-  sources:
+  # List of all actions
+  actions:
     - id: csv_load          # Id of the source action.
       dataset: my_csv       # Name of the dataset
       source:               # Source field, will contains all the configuration to read the data
@@ -89,8 +89,6 @@ plan:
         options:            # Standard Spark format options
           header: 'true'
           path: path/to/input/csv/
-  # List of all process
-  processes:
     - id: filter_csv             # Id of the process action.
       dataset: my_csv_filtered   # Name of the dataset
       process:                   # Process field, will contains all the Process configuration to transform the data
@@ -98,8 +96,6 @@ plan:
           SELECT * 
           FROM my_csv 
           WHERE id=1
-  # List of sinks
-  sinks:                   
     - id: sink_data             # Id of the sink action.
       dataset: my_csv_filtered  # Name of the dataset to sink. 
       dest:                     # Destination field, contains all the Dest configuration to write the data
@@ -168,7 +164,7 @@ object MyUsersByCitiesReport {
          |  name: example-app
          |  conf: {}
          |plan:
-         |  sources:
+         |  actions:
          |    - id: users
          |      source:
          |        format: csv
@@ -187,7 +183,6 @@ object MyUsersByCitiesReport {
          |          user: ${db_username}
          |          password: ${db_password}
          |          dbTable: my-table
-         |  processes:
          |    - id: user_with_address
          |      process:
          |        query: >-
@@ -195,7 +190,6 @@ object MyUsersByCitiesReport {
          |          FROM users u 
          |          JOIN addresses a ON u.id = a.user_id
          |          JOIN cities c ON a.city_id = c.id
-         |  sinks:
          |    - id: user_with_address
          |      dest:
          |        format: parquet
@@ -219,17 +213,13 @@ object MyUsersByCitiesReport {
       YaspExecution(
         session = Session(Local, "my-app-name", Map.empty),
         plan = YaspPlan(
-          sources = Seq(
+          actions = Seq(
             YaspSource("1",users", Source.Format("csv",options=Map("path"-> "users/","header" -> "true")), partitions = None, cache = None),
             YaspSource("2","addresses", Source.Format("json",options=Map("path"->"addresses/")), partitions = None, cache = None),
-            YaspSource("3","cities", Source.Format("parquet",options=Map("path"->"cities/", "mergeSchema" ->"false")), partitions = None, cache = None)
-          ),
-          processes = Seq(
+            YaspSource("3","cities", Source.Format("parquet",options=Map("path"->"cities/", "mergeSchema" ->"false")), partitions = None, cache = None),
             YaspProcess("4","users_addresses", Sql("SELECT u.*,a.address,a.city_id FROM users u JOIN addresses a ON u.address_id=a.id"), partitions = None, cache = None),
             YaspProcess("5","users_addresses_cities", Sql("SELECT u.*,a.address,a.city_id FROM users_addresses u JOIN cities c ON u.city_id=c.id"), partitions = None, cache = None),
-            YaspProcess("6","users_by_city", Sql("SELECT city,count(*) FROM users_addresses_cities GROUP BY city"), partitions = None, cache = None)
-          ),
-          sinks = Seq(
+            YaspProcess("6","users_by_city", Sql("SELECT city,count(*) FROM users_addresses_cities GROUP BY city"), partitions = None, cache = None),
             YaspSink("7","users_by_city", Dest.Format("parquet",Map("path"->s"user-by-city"), partitionBy=Seq("city")))
           )
         )

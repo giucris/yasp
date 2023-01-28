@@ -1,26 +1,26 @@
 # YaspPlan
 
-A `YaspPlan` is a model that define your ETL/EL jobs in terms of sources, processes and sinks.
+A `YaspPlan` is a model that define your ETL/EL jobs in terms of `YaspAction`.
 
 Currently is defined as follow:
 
 ```scala
 case class YaspPlan(
-  sources: Seq[YaspSource],     // A Sequence of YaspSource
-  processes: Seq[YaspProcess],  // A Sequence of YaspProcess
-  sinks: Seq[YaspSink]          // A Sequence of YaspSink
+  actions: Seq[YaspAction] // A Sequence of YaspAction
 )
 ```
 
-* **sources** [**REQUIRED**]: A List of `YaspSource`, default is empty
-* **processes** [**REQUIRED**]: A List of `YaspProcess`, default is empty
-* **sinks** [**REQUIRED**]: A List of `YaspProcess`, default is empty
+* **actions** [**REQUIRED**]: A List of `YaspAction`
+
+## YaspAction
+
+A `YaspAction` is a list of actions that `YaspService` can execute. 
+
+Three main `Actions` is defined
 
 ## YaspSource
 
 A `YaspSource` is a model that define a data source.
-
-Currently is defined as follow:
 
 ```scala
 case class YaspSource(
@@ -29,7 +29,7 @@ case class YaspSource(
   source: Source,           // Source Sum Type
   partitions: Option[Int],  // Optional number of partitions 
   cache: Option[CacheLayer] // Optional CacheLayer that will be used to cache resulting data  
-)
+) extends YaspAction
 ```
 
 * **id** [**REQUIRED**]: String ID to internally identify the data
@@ -88,7 +88,7 @@ case class YaspProcess(
   process: Process,           // Process Sum Type
   partitions: Option[Int],    // Optional number of partitions
   cache: Option[CacheLayer]   // Optional CacheLayer that will be used to cache resulting dataframe
-)
+) extends YaspAction
 ```
 
 Each `YaspProcess` are executed via a `YaspProcessor` that execute the `Process`, repartition and cache the data to a
@@ -117,7 +117,7 @@ case class YaspSink(
   id: String,       // Unique ID.
   dataset: String,  // Name of the dataset to sink.
   dest: Dest        // Dest Sum Type
-)
+) extends YaspAction
 ```
 
 Each `YaspSink` are executed via a `YaspWriter` that retrieve the specific data using the provided `id` and write them
