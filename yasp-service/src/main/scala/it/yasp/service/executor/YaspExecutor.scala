@@ -16,7 +16,6 @@ import it.yasp.service.writer.YaspWriter
 trait YaspExecutor {
 
   /** Execute a specific [[YaspPlan]]
-    *
     */
   def exec(yaspPlan: YaspPlan): Either[YaspServiceError, Unit]
 }
@@ -29,19 +28,21 @@ object YaspExecutor {
   /** A YaspExecutor default implementation
     */
   class DefaultYaspExecutor(
-                             loader: YaspLoader,
-                             processor: YaspProcessor,
-                             writer: YaspWriter
-                           ) extends YaspExecutor
-    with StrictLogging {
+      loader: YaspLoader,
+      processor: YaspProcessor,
+      writer: YaspWriter
+  ) extends YaspExecutor
+      with StrictLogging {
 
     override def exec(yaspPlan: YaspPlan): Either[YaspServiceError, Unit] = {
       logger.info(s"Execute Yasp plan: $yaspPlan")
-      yaspPlan.actions.toList.traverse {
-        case x: YaspSource => loader.load(x)
-        case x: YaspProcess => processor.process(x)
-        case x: YaspSink => writer.write(x)
-      }.map(_ => Right(()))
+      yaspPlan.actions.toList
+        .traverse {
+          case x: YaspSource  => loader.load(x)
+          case x: YaspProcess => processor.process(x)
+          case x: YaspSink    => writer.write(x)
+        }
+        .map(_ => Right(()))
     }
 
   }
