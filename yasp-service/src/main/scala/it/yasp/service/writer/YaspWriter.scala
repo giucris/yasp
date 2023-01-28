@@ -6,7 +6,7 @@ import it.yasp.core.spark.model.Dest
 import it.yasp.core.spark.registry.Registry
 import it.yasp.core.spark.writer.Writer
 import it.yasp.service.err.YaspServiceError.YaspWriterError
-import it.yasp.service.model.YaspSink
+import it.yasp.service.model.YaspAction._
 
 trait YaspWriter {
   def write(yaspSink: YaspSink): Either[YaspWriterError, Unit]

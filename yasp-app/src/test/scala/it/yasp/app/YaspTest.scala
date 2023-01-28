@@ -71,7 +71,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |  name: example-app
            |  conf: {}
            |plan:
-           |  sources:
+           |  actions:
            |    - id: test_x
            |      dataset: test_x
            |      source:
@@ -81,7 +81,6 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |          header: 'true'
            |          sep: ','
            |      cache: Memory
-           |  sinks:
            |    - id: test_y
            |      dataset: test_y
            |      dest:

@@ -8,7 +8,7 @@ import it.yasp.core.spark.operators.DataOperators
 import it.yasp.core.spark.reader.Reader
 import it.yasp.core.spark.registry.Registry
 import it.yasp.service.err.YaspServiceError.YaspLoaderError
-import it.yasp.service.model.YaspSource
+import it.yasp.service.model.YaspAction.YaspSource
 import org.apache.spark.sql.{Dataset, Row}
 
 /** YaspLoader

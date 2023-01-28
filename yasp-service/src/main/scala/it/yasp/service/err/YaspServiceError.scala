@@ -1,7 +1,7 @@
 package it.yasp.service.err
 
 import it.yasp.core.spark.err.YaspCoreError
-import it.yasp.service.model.{YaspProcess, YaspSink, YaspSource}
+import it.yasp.service.model.YaspAction._
 
 /** YaspCoreError Sum Type
   */

@@ -6,7 +6,7 @@ import it.yasp.core.spark.model.Dest._
 import it.yasp.core.spark.registry.Registry
 import it.yasp.core.spark.writer.Writer
 import it.yasp.service.err.YaspServiceError.YaspWriterError
-import it.yasp.service.model.YaspSink
+import it.yasp.service.model.YaspAction._
 import it.yasp.service.writer.YaspWriter.DefaultYaspWriter
 import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.catalyst.encoders.RowEncoder

@@ -8,7 +8,7 @@ import it.yasp.core.spark.operators.DataOperators
 import it.yasp.core.spark.processor.Processor
 import it.yasp.core.spark.registry.Registry
 import it.yasp.service.err.YaspServiceError.YaspProcessError
-import it.yasp.service.model.YaspProcess
+import it.yasp.service.model.YaspAction._
 import org.apache.spark.sql.{Dataset, Row}
 
 /** YaspProcessor

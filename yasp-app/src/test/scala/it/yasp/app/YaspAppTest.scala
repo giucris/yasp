@@ -39,12 +39,13 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
     )
 
     YaspApp.fromYaml(
-      s"""session:
+      s"""
+        |session:
         |  kind: Local
         |  name: example-app
         |  conf: {}
         |plan:
-        |  sources:
+        |  actions:
         |    - id: read_customer
         |      dataset: customer
         |      source:
@@ -60,14 +61,12 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
         |        format: json
         |        options:
         |          path: $workspace/test1/source/addresses.jsonl
-        |  processes:
         |    - id: read_customer_with_address
         |      dataset: customer_with_address
         |      process:
         |        query: >-
         |          SELECT c.name,c.surname,a.address
         |          FROM customer c JOIN customer_addresses a ON c.id = a.user_id
-        |  sinks:
         |    - id: sink_customer_with_address
         |      dataset: customer_with_address
         |      dest:
@@ -123,7 +122,7 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
           |  name: example-app
           |  conf: {}
           |plan:
-          |  sources:
+          |  actions:
           |    - id: read_user_csv
           |      dataset: users_table
           |      source:
@@ -139,12 +138,10 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
           |        format: json
           |        options:
           |         path: $workspace/test2/source/addresses.jsonl
-          |  processes:
           |    - id: join_user_address
           |      dataset: user_with_address_table
           |      process:
           |        query: SELECT u.name,u.surname,a.address FROM users_table u JOIN addresses_table a ON u.id = a.user_id
-          |  sinks:
           |    - id: sink_user_address
           |      dataset: user_with_address_table
           |      dest:

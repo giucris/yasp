@@ -8,7 +8,7 @@ import it.yasp.core.spark.reader.Reader
 import it.yasp.core.spark.registry.Registry
 import it.yasp.service.err.YaspServiceError.YaspLoaderError
 import it.yasp.service.loader.YaspLoader.DefaultYaspLoader
-import it.yasp.service.model.YaspSource
+import it.yasp.service.model.YaspAction._
 import it.yasp.testkit.SparkTestSuite
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.types.DataTypes.StringType
@@ -45,6 +45,8 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     yaspLoader.load(
       YaspSource(
         id = "id1",
+        partitions = None,
+        cache = None,
         dataset = "dataset_1",
         source = Source.Format("parquet", options = Map("path" -> "x"))
       )
@@ -73,6 +75,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       YaspSource(
         id = "tbl",
         dataset = "dataset_1",
+        partitions = None,
         source = Source.Format("parquet", options = Map("path" -> "x")),
         cache = Some(Memory)
       )
@@ -123,6 +126,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
         id = "tbl",
         dataset = "dataset_1",
         source = Source.Format("parquet", options = Map("path" -> "x")),
+        cache = None,
         partitions = Some(100)
       )
     )
@@ -144,6 +148,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
         id = "tbl",
         dataset = "dataset_1",
         source = Source.Format("parquet", options = Map("path" -> "x")),
+        partitions = None,
         cache = Some(Memory)
       )
     )
@@ -164,6 +169,8 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       YaspSource(
         id = "tbl",
         dataset = "dataset_1",
+        partitions = None,
+        cache = None,
         source = Source.Format("parquet", options = Map("path" -> "x"))
       )
     )

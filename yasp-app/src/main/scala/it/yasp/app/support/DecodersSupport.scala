@@ -7,6 +7,8 @@ import it.yasp.core.spark.model.CacheLayer._
 import it.yasp.core.spark.model.IcebergCatalog.{CustomIcebergCatalog, HadoopIcebergCatalog, HiveIcebergCatalog}
 import it.yasp.core.spark.model.SessionType.{Distributed, Local}
 import it.yasp.core.spark.model.{CacheLayer, Dest, IcebergCatalog, Process, SessionType, Source}
+import it.yasp.service.model.YaspAction
+import it.yasp.service.model.YaspAction.{YaspProcess, YaspSink, YaspSource}
 
 import java.util.Locale
 
@@ -50,6 +52,13 @@ trait DecodersSupport {
       case "LOCAL"       => Local
       case "DISTRIBUTED" => Distributed
     }
+
+  implicit def yaspActionDecoder: Decoder[YaspAction] =
+    List[Decoder[YaspAction]](
+      Decoder[YaspSource].widen,
+      Decoder[YaspProcess].widen,
+      Decoder[YaspSink].widen
+    ).reduceLeft(_ or _)
 
   /** A CacheLayer circe Decoder
     *
