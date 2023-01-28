@@ -21,7 +21,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         withCheckpointDir = Some("xyz")
       ),
       YaspPlan(
-        Seq(
+        sources = Seq(
           YaspSource(
             "id1",
             Source.Format("csv", options = Map("path" -> "x", "header" -> "false", "sep" -> ",")),
@@ -49,17 +49,45 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
             "id5",
             Source.Format("csv", options = Map("path" -> "k")),
             cache = Some(MemorySer)
+          ),
+          YaspSource(
+            "id6",
+            Source.Custom("x.y.z.CustomSource", options = Some(Map("path" -> "k"))),
+            cache = Some(MemorySer)
+          ),
+          YaspSource(
+            "id7",
+            Source.HiveTable("tbl"),
+            cache = Some(MemorySer)
           )
         ),
-        Seq(
-          YaspProcess("p1", Sql("my-query")),
-          YaspProcess("p2", Sql("my-query-2"), cache = Some(MemoryAndDiskSer))
+        processes = Seq(
+          YaspProcess(
+            "p1",
+            Process.Custom("x.y.z.CustomProcess", options = Some(Map("x" -> "y")))
+          ),
+          YaspProcess(
+            "p2",
+            Process.Sql("my-query")
+          ),
+          YaspProcess(
+            "p3",
+            Process.Sql("my-query-2"),
+            cache = Some(MemoryAndDiskSer)
+          )
         ),
-        Seq(
-          YaspSink("p1", Dest.Format("parquet", Map("path" -> "out-path-1"))),
+        sinks = Seq(
+          YaspSink(
+            "p1",
+            Dest.Format("parquet", Map("path" -> "out-path-1"), partitionBy = Seq("col1", "col2"))
+          ),
+          YaspSink(
+            "p1",
+            Dest.Custom("x.y.z.CustomDest", Some(Map("path" -> "out-path-2")))
+          ),
           YaspSink(
             "p3",
-            Dest.Format("parquet", Map("path" -> "out-path-2"), partitionBy = Seq("col1", "col2"))
+            Dest.HiveTable("tbl")
           )
         )
       )
@@ -112,11 +140,26 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |      options:
         |        path: k
         |    cache: MemorySer
+        |  - id: id6
+        |    source:
+        |      clazz: x.y.z.CustomSource
+        |      options:
+        |        path: k
+        |    cache: MemorySer
+        |  - id: id7
+        |    source:
+        |      table: tbl
+        |    cache: MemorySer
         |  processes:
         |  - id: p1
         |    process:
-        |      query: my-query
+        |      clazz: x.y.z.CustomProcess
+        |      options:
+        |        x: y
         |  - id: p2
+        |    process:
+        |      query: my-query
+        |  - id: p3
         |    process:
         |      query: my-query-2
         |    cache: MemoryAndDiskSer
@@ -126,14 +169,17 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |      format: parquet
         |      options:
         |        path: out-path-1
-        |  - id: p3
-        |    dest:
-        |      format: parquet
-        |      options:
-        |        path: out-path-2
         |      partitionBy:
         |        - col1
         |        - col2
+        |  - id: p1
+        |    dest:
+        |      clazz: x.y.z.CustomDest
+        |      options:
+        |        path: out-path-2
+        |  - id: p3
+        |    dest:
+        |      table: tbl
         |""".stripMargin
     )
     assert(actual == Right(expected))
