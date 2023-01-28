@@ -24,7 +24,8 @@ Currently is defined as follow:
 
 ```scala
 case class YaspSource(
-  id: String,               // Unique ID to internally identify the data
+  id: String,               // Unique ID to internally identify the action
+  dataset: String,          // Dataset name, used to register the in memory dataset
   source: Source,           // Source Sum Type
   partitions: Option[Int],  // Optional number of partitions 
   cache: Option[CacheLayer] // Optional CacheLayer that will be used to cache resulting data  
@@ -51,6 +52,7 @@ An example of a full yaml configuration with Spark format:
 source: 
   id: my_source                  # Source id
   source:                        # Source configuration
+    dataset: mydata              # Source dataset name
     format: jdbc                 # Standard jdbc Spark format
     options:                     # Standard jdbc Spark format option
         url: my-jdbc-endpoint    # Standard jdbc Spark url config
@@ -67,6 +69,7 @@ An example of a full yaml configuration with Hive table
 source: 
   id: my_source              # Source id
   source:                    # Source configuration
+    dataset: mydata          # Source dataset name
     table: my_hive_table     # Hive table name  
   partitions: 500            # Partitions number
   cache: checkpoint          # Cache layer to checkpoint
@@ -80,7 +83,8 @@ Currently is defined as follow:
 
 ```scala
 case class YaspProcess(
-  id: String,                 // Unique ID to internally identify the resulting dataframe
+  id: String,                 // Unique ID to internally identify the action
+  dataset: String,            // Dataset name used to register the outcome of the process
   process: Process,           // Process Sum Type
   partitions: Option[Int],    // Optional number of partitions
   cache: Option[CacheLayer]   // Optional CacheLayer that will be used to cache resulting dataframe
@@ -95,6 +99,7 @@ An example of a full yaml configuration with Hive table
 ```yaml
 process: 
   id: my_source         # Process id
+  dataset: mydata       # Dataset name
   process:              # Process field, will contains all the Process configuration to transform the data
     query: >-           # A sql process configuration
       SELECT * 
@@ -109,7 +114,8 @@ A `YaspSink` define a data output operation.
 
 ```scala
 case class YaspSink(
-  id: String,       // Unique ID of the dataframe that should be write out.
+  id: String,       // Unique ID.
+  dataset: String,  // Name of the dataset to sink.
   dest: Dest        // Dest Sum Type
 )
 ```
@@ -122,6 +128,7 @@ An example of a full yaml configuration with Spark format:
 ```yaml
 dest: 
   id: my_source                  # Source id
+  dataset: mydata                # Name of the dataset to sink
   dest:                          # Source configuration
     format: csv                  # Standard csv Spark format
     options:                     # Standard csv Spark format option
@@ -139,6 +146,7 @@ An example of a full yaml configuration with HiveFormat:
 ```yaml
 dest: 
   id: my_source                  # Source id
+  dataset: mytable               # Name of the dataset to sink
   dest:                          # Source configuration
     table: my_hive_table         # Hive table name
     mode: overwrite              # Standard Spark SaveMode

@@ -14,6 +14,7 @@ import it.yasp.core.spark.model.{CacheLayer, DataOperations, Process}
   */
 final case class YaspProcess(
     id: String,
+    dataset: String,
     process: Process,
     partitions: Option[Int] = None,
     cache: Option[CacheLayer] = None

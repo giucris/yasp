@@ -53,7 +53,8 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
         plan = YaspPlan(
           sources = Seq(
             YaspSource(
-              id = "data_1",
+              id = "id1",
+              dataset = "data_1",
               source = Source.Format(
                 "csv",
                 options = Map(
@@ -64,7 +65,8 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
               )
             ),
             YaspSource(
-              id = "data_2",
+              id = "2",
+              dataset = "data_2",
               source = Source.Format(
                 "csv",
                 options = Map(
@@ -77,13 +79,15 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
           ),
           processes = Seq(
             YaspProcess(
-              id = "data_3",
+              id = "3",
+              dataset = "data_3",
               process = Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id")
             )
           ),
           sinks = Seq(
             YaspSink(
-              id = "data_3",
+              id = "4",
+              dataset = "data_3",
               dest = Format("parquet", options = Map("path" -> s"$workspace/parquet-out/"))
             )
           )

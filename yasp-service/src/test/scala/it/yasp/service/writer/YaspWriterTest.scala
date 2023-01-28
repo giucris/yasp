@@ -30,7 +30,7 @@ class YaspWriterTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     inSequence(
       Seq(
         (registry.retrieve _)
-          .expects("id")
+          .expects("dataset_1")
           .once()
           .returns(Right(baseDf)),
         (writer.write _)
@@ -39,7 +39,7 @@ class YaspWriterTest extends AnyFunSuite with SparkTestSuite with MockFactory {
           .returns(Right(()))
       )
     )
-    yaspWriter.write(YaspSink("id", Format("parquet", Map("path" -> "path"))))
+    yaspWriter.write(YaspSink("id", dataset = "dataset_1", Format("parquet", Map("path" -> "path"))))
   }
 
   test("write return YaspWriterError on RetrieveTableError") {
@@ -48,7 +48,7 @@ class YaspWriterTest extends AnyFunSuite with SparkTestSuite with MockFactory {
       .once()
       .returns(Left(RetrieveTableError("x", new IllegalArgumentException())))
 
-    val actual = yaspWriter.write(YaspSink("id", Format("parquet", Map("path" -> "path"))))
+    val actual = yaspWriter.write(YaspSink("id", dataset = "dataset_1", Format("parquet", Map("path" -> "path"))))
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspWriterError])
   }
 
@@ -65,7 +65,7 @@ class YaspWriterTest extends AnyFunSuite with SparkTestSuite with MockFactory {
           .returns(Left(WriteError(Dest.Format("x", Map.empty), new IllegalArgumentException())))
       )
     )
-    val actual = yaspWriter.write(YaspSink("id", Format("parquet", Map("path" -> "path"))))
+    val actual = yaspWriter.write(YaspSink("id", dataset = "dataset_1", Format("parquet", Map("path" -> "path"))))
     assert(actual.left.getOrElse(fail()).isInstanceOf[YaspWriterError])
   }
 

@@ -37,14 +37,15 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
           .once()
           .returns(Right(baseDf)),
         (registry.register _)
-          .expects(*, "tbl")
+          .expects(*, "dataset_1")
           .once()
           .returns(Right(()))
       )
     )
     yaspLoader.load(
       YaspSource(
-        id = "tbl",
+        id = "id1",
+        dataset = "dataset_1",
         source = Source.Format("parquet", options = Map("path" -> "x"))
       )
     )
@@ -62,7 +63,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
           .once()
           .returns(Right(baseDf)),
         (registry.register _)
-          .expects(*, "tbl")
+          .expects(*, "dataset_1")
           .once()
           .returns(Right(()))
       )
@@ -71,6 +72,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     yaspLoader.load(
       YaspSource(
         id = "tbl",
+        dataset = "dataset_1",
         source = Source.Format("parquet", options = Map("path" -> "x")),
         cache = Some(Memory)
       )
@@ -89,7 +91,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
           .once()
           .returns(Right(baseDf)),
         (registry.register _)
-          .expects(*, "tbl")
+          .expects(*, "dataset_1")
           .once()
           .returns(Right(()))
       )
@@ -98,6 +100,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     yaspLoader.load(
       YaspSource(
         id = "tbl",
+        dataset = "dataset_1",
         source = Source.Format("parquet", options = Map("path" -> "x")),
         partitions = Some(100),
         cache = Some(Memory)
@@ -118,6 +121,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     val actual = yaspLoader.load(
       YaspSource(
         id = "tbl",
+        dataset = "dataset_1",
         source = Source.Format("parquet", options = Map("path" -> "x")),
         partitions = Some(100)
       )
@@ -138,6 +142,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     val actual = yaspLoader.load(
       YaspSource(
         id = "tbl",
+        dataset = "dataset_1",
         source = Source.Format("parquet", options = Map("path" -> "x")),
         cache = Some(Memory)
       )
@@ -158,6 +163,7 @@ class YaspLoaderTest extends AnyFunSuite with SparkTestSuite with MockFactory {
     val actual = yaspLoader.load(
       YaspSource(
         id = "tbl",
+        dataset = "dataset_1",
         source = Source.Format("parquet", options = Map("path" -> "x"))
       )
     )

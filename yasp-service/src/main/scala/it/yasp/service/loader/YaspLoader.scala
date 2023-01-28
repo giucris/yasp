@@ -50,7 +50,7 @@ object YaspLoader {
                  .map(operators.exec(ds1, _))
                  .fold[Either[YaspCoreError, Dataset[Row]]](Right(ds1))(f => f)
                  .leftMap(e => YaspLoaderError(source, e))
-        _   <- registry.register(ds2, source.id).leftMap(e => YaspLoaderError(source, e))
+        _   <- registry.register(ds2, source.dataset).leftMap(e => YaspLoaderError(source, e))
       } yield ()
     }
   }

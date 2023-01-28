@@ -8,4 +8,4 @@ import it.yasp.core.spark.model.Dest
   * @param dest:
   *   a [[Dest]] instance
   */
-final case class YaspSink(id: String, dest: Dest)
+final case class YaspSink(id: String, dataset: String, dest: Dest)

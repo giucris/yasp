@@ -50,7 +50,7 @@ object YaspProcessor {
                  .map(operators.exec(ds1, _))
                  .fold[Either[YaspCoreError, Dataset[Row]]](Right(ds1))(f => f)
                  .leftMap(e => YaspProcessError(process, e))
-        _   <- registry.register(ds2, process.id).leftMap(e => YaspProcessError(process, e))
+        _   <- registry.register(ds2, process.dataset).leftMap(e => YaspProcessError(process, e))
       } yield ()
     }
   }
