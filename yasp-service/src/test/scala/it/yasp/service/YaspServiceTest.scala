@@ -4,6 +4,7 @@ import it.yasp.core.spark.model.Dest.Format
 import it.yasp.core.spark.model.Process.Sql
 import it.yasp.core.spark.model.SessionType.Local
 import it.yasp.core.spark.model.{Session, Source}
+import it.yasp.service.model.YaspAction.{YaspProcess, YaspSink, YaspSource}
 import it.yasp.service.model._
 import it.yasp.testkit.{SparkTestSuite, TestUtils}
 import org.apache.spark.sql.Row
@@ -51,10 +52,12 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
       YaspExecution(
         session = Session(Local, "my-app-name", None, None, None, None),
         plan = YaspPlan(
-          sources = Seq(
+          actions = Seq(
             YaspSource(
               id = "id1",
               dataset = "data_1",
+              partitions = None,
+              cache = None,
               source = Source.Format(
                 "csv",
                 options = Map(
@@ -67,6 +70,8 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
             YaspSource(
               id = "2",
               dataset = "data_2",
+              partitions = None,
+              cache = None,
               source = Source.Format(
                 "csv",
                 options = Map(
@@ -75,16 +80,14 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
                   "path"   -> s"$workspace/csv-data-source-2/file1.csv"
                 )
               )
-            )
-          ),
-          processes = Seq(
+            ),
             YaspProcess(
               id = "3",
               dataset = "data_3",
+              partitions = None,
+              cache = None,
               process = Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id")
-            )
-          ),
-          sinks = Seq(
+            ),
             YaspSink(
               id = "4",
               dataset = "data_3",
