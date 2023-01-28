@@ -45,7 +45,8 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
         |  conf: {}
         |plan:
         |  sources:
-        |    - id: customer
+        |    - id: read_customer
+        |      dataset: customer
         |      source:
         |        format: csv
         |        options:
@@ -53,19 +54,22 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
         |          header: 'true'
         |          sep: ','
         |      cache: Memory
-        |    - id: customer_addresses
+        |    - id: read_customer_addresses
+        |      dataset: customer_addresses
         |      source:
         |        format: json
         |        options:
         |          path: $workspace/test1/source/addresses.jsonl
         |  processes:
-        |    - id: customer_with_address
+        |    - id: read_customer_with_address
+        |      dataset: customer_with_address
         |      process:
         |        query: >-
         |          SELECT c.name,c.surname,a.address
         |          FROM customer c JOIN customer_addresses a ON c.id = a.user_id
         |  sinks:
-        |    - id: customer_with_address
+        |    - id: sink_customer_with_address
+        |      dataset: customer_with_address
         |      dest:
         |        format: parquet
         |        options:
@@ -120,7 +124,8 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
           |  conf: {}
           |plan:
           |  sources:
-          |    - id: users_table
+          |    - id: read_user_csv
+          |      dataset: users_table
           |      source:
           |        format: csv
           |        options:
@@ -128,17 +133,20 @@ class YaspAppTest extends AnyFunSuite with SparkTestSuite with BeforeAndAfterAll
           |          sep: ','
           |          path: $workspace/test2/source/user.csv
           |      cache: Memory
-          |    - id: addresses_table
+          |    - id: read_address_json
+          |      dataset: addresses_table
           |      source:
           |        format: json
           |        options:
           |         path: $workspace/test2/source/addresses.jsonl
           |  processes:
-          |    - id: user_with_address_table
+          |    - id: join_user_address
+          |      dataset: user_with_address_table
           |      process:
           |        query: SELECT u.name,u.surname,a.address FROM users_table u JOIN addresses_table a ON u.id = a.user_id
           |  sinks:
-          |    - id: user_with_address_table
+          |    - id: sink_user_address
+          |      dataset: user_with_address_table
           |      dest:
           |        format: parquet
           |        options:

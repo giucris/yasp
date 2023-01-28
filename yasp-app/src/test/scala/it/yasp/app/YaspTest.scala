@@ -73,6 +73,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |plan:
            |  sources:
            |    - id: test_x
+           |      dataset: test_x
            |      source:
            |        format: csv
            |        options:
@@ -82,6 +83,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |      cache: Memory
            |  sinks:
            |    - id: test_y
+           |      dataset: test_y
            |      dest:
            |        format: json
            |        options:
@@ -111,6 +113,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |plan:
            |  sources:
            |    - id: users
+           |      dataset: users
            |      source:
            |        format: csv
            |        options:
@@ -119,18 +122,21 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |          sep: ','
            |      cache: Memory
            |    - id: addresses
+           |      dataset: addresses
            |      source:
            |        format: json
            |        options:
            |          path: $workspace/input/source/addresses.jsonl
            |  processes:
            |    - id: user_with_address
+           |      dataset: user_with_address
            |      process:
            |        query: >-
            |          SELECT u.name,u.surname,a.address
            |          FROM users u JOIN addresses a ON u.id = a.user_id
            |  sinks:
            |    - id: user_with_address
+           |      dataset: user_with_address
            |      dest:
            |        format: json
            |        options:
@@ -157,7 +163,8 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |  withCheckpointDir: $workspace/checkPoint/dir
            |plan:
            |  sources:
-           |    - id: users
+           |    - id: read_user
+           |      dataset: users
            |      source:
            |        format: csv
            |        options:
@@ -165,19 +172,22 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |          header: 'true'
            |          sep: ','
            |      cache: Memory
-           |    - id: addresses
+           |    - id: read_addresses
+           |      dataset: addresses
            |      source:
            |        format: json
            |        options:
            |          path: $workspace/input/source/addresses.jsonl
            |  processes:
-           |    - id: user_with_address
+           |    - id: user_join_process
+           |      dataset: user_with_addresses
            |      process:
            |        query: >-
            |          SELECT u.name,u.surname,a.address
            |          FROM users u JOIN addresses a ON u.id = a.user_id
            |  sinks:
-           |    - id: user_with_address
+           |    - id: sink_user_to_s3
+           |      dataset: user_with_addresses
            |      dest:
            |        format: json
            |        options:
@@ -204,7 +214,8 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |  withCheckpointDir: $workspace/checkPoint/dir
            |plan:
            |  sources:
-           |    - id: users_x
+           |    - id: read_user
+           |      dataset: users_x
            |      source:
            |        format: csv
            |        options:
@@ -212,18 +223,21 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |          header: 'true'
            |          sep: ','
            |      cache: Memory
-           |    - id: addresses_x
+           |    - id: read_address
+           |      dataset: addresses_x
            |      source:
            |        format: json
            |        options:
            |          path: $workspace/input/source/addresses.jsonl
            |  processes:
-           |    - id: user_with_address_x
+           |    - id: user_address
+           |      dataset: user_with_address_x
            |      process:
            |        query: >-
            |          SELECT u.name,u.surname,a.address
            |          FROM users_x u JOIN addresses_x a ON u.id = a.user_id
-           |    - id: create_table
+           |    - id: init_table
+           |      dataset: crate_table
            |      process:
            |        query: >-
            |          CREATE TABLE local.my_db.iceberg_users_x (
@@ -231,7 +245,8 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |              surname string,
            |              address string
            |          ) USING iceberg;
-           |    - id: insert_into
+           |    - id: exec_instert_into
+           |      dataset: insert_into
            |      process:
            |        query: >-
            |          INSERT INTO local.my_db.iceberg_users_x

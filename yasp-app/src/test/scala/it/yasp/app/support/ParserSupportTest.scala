@@ -23,17 +23,20 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
       YaspPlan(
         sources = Seq(
           YaspSource(
-            "id1",
+            id = "id1",
+            dataset = "data_1",
             Source.Format("csv", options = Map("path" -> "x", "header" -> "false", "sep" -> ",")),
             cache = Some(Memory)
           ),
           YaspSource(
-            "id2",
+            id = "id2",
+            dataset = "data_2",
             Source.Format("parquet", options = Map("path" -> "x")),
             cache = Some(MemoryAndDisk)
           ),
           YaspSource(
-            "id3",
+            id = "id3",
+            dataset = "data_3",
             Source.Format(
               "jdbc",
               options = Map("url" -> "url", "user" -> "x", "password" -> "y", "dbTable" -> "table")
@@ -41,52 +44,62 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
             cache = Some(Disk)
           ),
           YaspSource(
-            "id4",
+            id = "id4",
+            dataset = "data_4",
             Source.Format("csv", options = Map("path" -> "z")),
             cache = Some(Checkpoint)
           ),
           YaspSource(
-            "id5",
+            id = "id5",
+            dataset = "data_5",
             Source.Format("csv", options = Map("path" -> "k")),
             cache = Some(MemorySer)
           ),
           YaspSource(
-            "id6",
+            id = "id6",
+            dataset = "data_6",
             Source.Custom("x.y.z.CustomSource", options = Some(Map("path" -> "k"))),
             cache = Some(MemorySer)
           ),
           YaspSource(
-            "id7",
+            id = "id7",
+            dataset = "data_7",
             Source.HiveTable("tbl"),
             cache = Some(MemorySer)
           )
         ),
         processes = Seq(
           YaspProcess(
-            "p1",
+            id = "p1",
+            dataset = "data_8",
             Process.Custom("x.y.z.CustomProcess", options = Some(Map("x" -> "y")))
           ),
           YaspProcess(
-            "p2",
+            id = "p2",
+            dataset = "data_9",
             Process.Sql("my-query")
           ),
           YaspProcess(
-            "p3",
+            id = "p3",
+            dataset = "data_10",
             Process.Sql("my-query-2"),
             cache = Some(MemoryAndDiskSer)
           )
         ),
         sinks = Seq(
           YaspSink(
-            "p1",
+            id = "p1",
+            dataset = "data_11",
             Dest.Format("parquet", Map("path" -> "out-path-1"), partitionBy = Seq("col1", "col2"))
           ),
           YaspSink(
-            "p1",
+            id = "p1",
+            dataset = "data_12",
             Dest.Custom("x.y.z.CustomDest", Some(Map("path" -> "out-path-2")))
           ),
           YaspSink(
-            "p3",
+            id = "p3",
+            dataset = "data_13",
             Dest.HiveTable("tbl")
           )
         )
@@ -106,6 +119,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |plan:
         |  sources:
         |  - id: id1
+        |    dataset: data_1
         |    source:
         |      format: csv
         |      options:
@@ -114,12 +128,14 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        sep: ','
         |    cache: memory
         |  - id: id2
+        |    dataset: data_2
         |    source:
         |      format: parquet
         |      options:
         |        path: x
         |    cache: Memory_And_Disk
         |  - id: id3
+        |    dataset: data_3
         |    source:
         |      format: jdbc
         |      options:
@@ -129,42 +145,50 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        dbTable: table
         |    cache: Disk
         |  - id: id4
+        |    dataset: data_4
         |    source:
         |      format: csv
         |      options:
         |        path: z
         |    cache: Checkpoint
         |  - id: id5
+        |    dataset: data_5
         |    source:
         |      format: csv
         |      options:
         |        path: k
         |    cache: MemorySer
         |  - id: id6
+        |    dataset: data_6
         |    source:
         |      clazz: x.y.z.CustomSource
         |      options:
         |        path: k
         |    cache: MemorySer
         |  - id: id7
+        |    dataset: data_7
         |    source:
         |      table: tbl
         |    cache: MemorySer
         |  processes:
         |  - id: p1
+        |    dataset: data_8
         |    process:
         |      clazz: x.y.z.CustomProcess
         |      options:
         |        x: y
         |  - id: p2
+        |    dataset: data_9
         |    process:
         |      query: my-query
         |  - id: p3
+        |    dataset: data_10
         |    process:
         |      query: my-query-2
         |    cache: MemoryAndDiskSer
         |  sinks:
         |  - id: p1
+        |    dataset: data_11
         |    dest:
         |      format: parquet
         |      options:
@@ -173,11 +197,13 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |        - col1
         |        - col2
         |  - id: p1
+        |    dataset: data_12
         |    dest:
         |      clazz: x.y.z.CustomDest
         |      options:
         |        path: out-path-2
         |  - id: p3
+        |    dataset: data_13
         |    dest:
         |      table: tbl
         |""".stripMargin
@@ -194,16 +220,25 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
       YaspPlan(
         Seq(
           YaspSource(
-            "id1",
+            id = "id1",
+            dataset = "data_1",
             Source.Format("csv", options = Map("path" -> "x", "header" -> "false", "sep" -> ",")),
             cache = Some(Memory)
           )
         ),
         Seq(
-          YaspProcess("p1", Sql("my-query"))
+          YaspProcess(
+            id = "p1",
+            dataset = "data_2",
+            Sql("my-query")
+          )
         ),
         Seq(
-          YaspSink("p1", Dest.Format("parquet", Map("path" -> "out-path-1")))
+          YaspSink(
+            id = "p1",
+            dataset = "data_2",
+            Dest.Format("parquet", Map("path" -> "out-path-1"))
+          )
         )
       )
     )
@@ -216,6 +251,7 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |plan:
         |  sources:
         |  - id: id1
+        |    dataset: data_1
         |    source:
         |      format: csv
         |      options:
@@ -225,10 +261,12 @@ class ParserSupportTest extends AnyFunSuite with ParserSupport {
         |    cache: MEMORY
         |  processes:
         |  - id: p1
+        |    dataset: data_2
         |    process:
         |      query: my-query
         |  sinks:
         |  - id: p1
+        |    dataset: data_2
         |    dest:
         |      format: parquet
         |      options:

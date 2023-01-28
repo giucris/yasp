@@ -18,7 +18,7 @@ object YaspWriter {
     override def write(yaspSink: YaspSink): Either[YaspWriterError, Unit] = {
       logger.info(s"Sink: $yaspSink")
       for {
-        ds <- registry.retrieve(yaspSink.id).leftMap(e => YaspWriterError(yaspSink, e))
+        ds <- registry.retrieve(yaspSink.dataset).leftMap(e => YaspWriterError(yaspSink, e))
         _  <- writer.write(ds, yaspSink.dest).leftMap(e => YaspWriterError(yaspSink, e))
       } yield ()
     }

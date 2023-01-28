@@ -14,6 +14,7 @@ import it.yasp.core.spark.model.{CacheLayer, DataOperations, Source}
   */
 final case class YaspSource(
     id: String,
+    dataset: String,
     source: Source,
     partitions: Option[Int] = None,
     cache: Option[CacheLayer] = None
