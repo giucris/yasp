@@ -16,8 +16,9 @@ trait YaspService {
 
   /** Run a [[YaspExecution]]
     *
-    * Create the [[org.apache.spark.sql.SparkSession]], load all [[it.yasp.service.model.YaspSource]], execute all
-    * [[it.yasp.service.model.YaspProcess]] and write all [[it.yasp.service.model.YaspSink]] Execute all processes
+    * Create the [[org.apache.spark.sql.SparkSession]], load all [[it.yasp.service.model.YaspAction.YaspSource]],
+    * execute all [[it.yasp.service.model.YaspAction.YaspProcess]] and write all
+    * [[it.yasp.service.model.YaspAction.YaspSink]] Execute all processes
     * @param yaspExecution:
     *   A [[it.yasp.service.model.YaspExecution]] instance to run
     */

@@ -110,7 +110,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |  withDeltaSupport: true
            |  withCheckpointDir: $workspace/checkPoint/dir
            |plan:
-           |  sources:
+           |  actions:
            |    - id: users
            |      dataset: users
            |      source:
@@ -126,20 +126,22 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |        format: json
            |        options:
            |          path: $workspace/input/source/addresses.jsonl
-           |  processes:
+           |      depends_on:
+           |        - users
            |    - id: user_with_address
            |      dataset: user_with_address
            |      process:
            |        query: >-
            |          SELECT u.name,u.surname,a.address
            |          FROM users u JOIN addresses a ON u.id = a.user_id
-           |  sinks:
+           |      depends_on: addresses
            |    - id: user_with_address
            |      dataset: user_with_address
            |      dest:
            |        format: json
            |        options:
            |          path: $workspace/output/
+           |      depends_on: user_with_address
            |""".stripMargin
       )
     )
@@ -161,7 +163,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |  withDeltaSupport: true
            |  withCheckpointDir: $workspace/checkPoint/dir
            |plan:
-           |  sources:
+           |  actions:
            |    - id: read_user
            |      dataset: users
            |      source:
@@ -177,14 +179,12 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |        format: json
            |        options:
            |          path: $workspace/input/source/addresses.jsonl
-           |  processes:
            |    - id: user_join_process
            |      dataset: user_with_addresses
            |      process:
            |        query: >-
            |          SELECT u.name,u.surname,a.address
            |          FROM users u JOIN addresses a ON u.id = a.user_id
-           |  sinks:
            |    - id: sink_user_to_s3
            |      dataset: user_with_addresses
            |      dest:
@@ -212,7 +212,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |      path: $workspace/plan/5/local_catalog
            |  withCheckpointDir: $workspace/checkPoint/dir
            |plan:
-           |  sources:
+           |  actions:
            |    - id: read_user
            |      dataset: users_x
            |      source:
@@ -228,7 +228,6 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |        format: json
            |        options:
            |          path: $workspace/input/source/addresses.jsonl
-           |  processes:
            |    - id: user_address
            |      dataset: user_with_address_x
            |      process:

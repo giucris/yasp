@@ -86,12 +86,14 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
               dataset = "data_3",
               partitions = None,
               cache = None,
-              process = Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id")
+              process = Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id"),
+              dependsOn = Some(Seq("id1", "2"))
             ),
             YaspSink(
               id = "4",
               dataset = "data_3",
-              dest = Format("parquet", options = Map("path" -> s"$workspace/parquet-out/"))
+              dest = Format("parquet", options = Map("path" -> s"$workspace/parquet-out/")),
+              dependsOn = Some(Seq("3"))
             )
           )
         )

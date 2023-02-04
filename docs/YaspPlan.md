@@ -24,11 +24,12 @@ A `YaspSource` is a model that define a data source.
 
 ```scala
 case class YaspSource(
-  id: String,               // Unique ID to internally identify the action
-  dataset: String,          // Dataset name, used to register the in memory dataset
-  source: Source,           // Source Sum Type
-  partitions: Option[Int],  // Optional number of partitions 
-  cache: Option[CacheLayer] // Optional CacheLayer that will be used to cache resulting data  
+  id: String,                    // Unique ID to internally identify the action
+  dataset: String,               // Dataset name, used to register the in memory dataset
+  source: Source,                // Source Sum Type
+  partitions: Option[Int],       // Optional number of partitions 
+  cache: Option[CacheLayer]      // Optional CacheLayer that will be used to cache resulting data  
+  dependsOn: Option[Seq[String]] // Optional dependency
 ) extends YaspAction
 ```
 
