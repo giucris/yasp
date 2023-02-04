@@ -4,27 +4,7 @@ import it.yasp.core.spark.model.Source
 import it.yasp.service.model.YaspAction.YaspSource
 import org.scalatest.funsuite.AnyFunSuite
 
-import scala.annotation.tailrec
-
 class YaspPlanTest extends AnyFunSuite {
-
-  case class NotADag()
-  implicit class YaspPlanOps(yaspPlan: YaspPlan) {
-
-    def sort: Either[NotADag, YaspPlan] = {
-      @tailrec
-      def topoSort(
-          actions: Seq[YaspAction],
-          actionsDag: Seq[YaspAction] = Seq.empty
-      ): Either[NotADag, Seq[YaspAction]] =
-        actions.partition(a => a.dependsOn.map(_ diff actionsDag.map(_.id)).getOrElse(Seq.empty).isEmpty) match {
-          case (Nil, Nil)           => Right(actionsDag)
-          case (Nil, _ :: _)        => Left(NotADag())
-          case (withNoDep, withDep) => topoSort(withDep, actionsDag ++ withNoDep.sortBy(_.id))
-        }
-      topoSort(yaspPlan.actions).map(YaspPlan)
-    }
-  }
 
   test("sort simple dependsOn return Right") {
     val yaspPlan = YaspPlan(
@@ -78,8 +58,6 @@ class YaspPlanTest extends AnyFunSuite {
         YaspSource("1", "ds2", Source.Format("x", None), None, None, Some(Seq("3")))
       )
     )
-    val actual   = yaspPlan.sort
-    val expected = Left(NotADag())
-    assert(actual == expected)
+    assert(yaspPlan.sort.isLeft)
   }
 }

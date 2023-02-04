@@ -16,8 +16,9 @@ trait YaspService {
 
   /** Run a [[YaspExecution]]
     *
-    * Create the [[org.apache.spark.sql.SparkSession]], load all [[it.yasp.service.model.YaspAction.YaspSource]], execute all
-    * [[it.yasp.service.model.YaspAction.YaspProcess]] and write all [[it.yasp.service.model.YaspAction.YaspSink]] Execute all processes
+    * Create the [[org.apache.spark.sql.SparkSession]], load all [[it.yasp.service.model.YaspAction.YaspSource]],
+    * execute all [[it.yasp.service.model.YaspAction.YaspProcess]] and write all
+    * [[it.yasp.service.model.YaspAction.YaspSink]] Execute all processes
     * @param yaspExecution:
     *   A [[it.yasp.service.model.YaspExecution]] instance to run
     */
@@ -46,9 +47,10 @@ object YaspService {
     override def run(yaspExecution: YaspExecution): Either[YaspServiceError, Unit] = {
       logger.info(s"Execute YaspService with YaspExecution: $yaspExecution")
       for {
-        session <- sessionFactory.create(yaspExecution.session).leftMap(YaspInitError)
+        sortedPlan <- yaspExecution.plan.sort
+        session    <- sessionFactory.create(yaspExecution.session).leftMap(YaspInitError)
         executor = yaspExecutorFactory.create(session)
-        _ <- executor.exec(yaspExecution.plan)
+        _ <- executor.exec(sortedPlan)
       } yield ()
     }
 

@@ -2,6 +2,7 @@ package it.yasp.service.err
 
 import it.yasp.core.spark.err.YaspCoreError
 import it.yasp.service.model.YaspAction._
+import it.yasp.service.model.YaspPlan
 
 /** YaspCoreError Sum Type
   */
@@ -41,5 +42,13 @@ object YaspServiceError {
   ) extends YaspServiceError(
         message = s"Unable to write sink: $sink",
         cause = yaspCoreError
+      )
+
+  final case class YaspPlanError(
+      yaspPlan: YaspPlan,
+      throwable: Throwable
+  ) extends YaspServiceError(
+        message = s"The provided YaspPlan is not a DAG",
+        cause = throwable
       )
 }

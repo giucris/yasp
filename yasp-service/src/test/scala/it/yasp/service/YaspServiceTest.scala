@@ -48,7 +48,7 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
       )
     )
 
-    YaspService().run(
+    val actual = YaspService().run(
       YaspExecution(
         session = Session(Local, "my-app-name", None, None, None, None),
         plan = YaspPlan(
@@ -86,20 +86,24 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
               dataset = "data_3",
               partitions = None,
               cache = None,
-              process = Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id")
+              process = Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id"),
+              dependsOn = Some(Seq("id1","2"))
             ),
             YaspSink(
               id = "4",
               dataset = "data_3",
-              dest = Format("parquet", options = Map("path" -> s"$workspace/parquet-out/"))
+              dest = Format("parquet", options = Map("path" -> s"$workspace/parquet-out/")),
+              dependsOn = Some(Seq("3"))
             )
           )
         )
       )
     )
 
-    val actual   = spark.read.parquet(s"$workspace/parquet-out/")
-    val expected = spark.createDataset(
+    print(actual)
+
+    val actualDf   = spark.read.parquet(s"$workspace/parquet-out/")
+    val expectedDf = spark.createDataset(
       Seq(
         Row("1", "name-1", "surname-1", "city-1", "address-1"),
         Row("2", "name-2", "surname-2", "city-2", "address-2")
@@ -118,7 +122,7 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
       )
     )
 
-    assertDatasetEquals(actual, expected)
+    assertDatasetEquals(actualDf, expectedDf)
   }
 
 }
