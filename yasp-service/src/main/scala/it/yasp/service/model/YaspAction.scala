@@ -2,7 +2,11 @@ package it.yasp.service.model
 
 import it.yasp.core.spark.model.{CacheLayer, DataOperations, Dest, Process, Source}
 
-sealed trait YaspAction extends Product with Serializable
+sealed trait YaspAction extends Product with Serializable {
+  def id:String
+  def dataset:String
+  def dependsOn:Option[Seq[String]]
+}
 
 object YaspAction {
 
@@ -22,7 +26,7 @@ object YaspAction {
       source: Source,
       partitions: Option[Int],
       cache: Option[CacheLayer],
-      dependsOn : Option[String] = None
+      dependsOn : Option[Seq[String]] = None
   ) extends YaspAction
 
   /** A YaspProcess model
@@ -41,7 +45,7 @@ object YaspAction {
       process: Process,
       partitions: Option[Int],
       cache: Option[CacheLayer],
-      dependsOn : Option[String]=None,
+      dependsOn : Option[Seq[String]]=None,
   ) extends YaspAction
 
   /** YaspSink model
@@ -54,7 +58,7 @@ object YaspAction {
       id: String,
       dataset: String,
       dest: Dest,
-      dependsOn : Option[String]=None
+      dependsOn : Option[Seq[String]]=None
   ) extends YaspAction
 
   implicit class YaspActionOps(yaspAction: YaspAction) {
@@ -70,5 +74,6 @@ object YaspAction {
         case dataOps: DataOperations    => Some(dataOps)
       }
     }
+
   }
 }
