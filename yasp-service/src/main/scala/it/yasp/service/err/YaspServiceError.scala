@@ -44,11 +44,11 @@ object YaspServiceError {
         cause = yaspCoreError
       )
 
-  final case class YaspPlanError(
+  final case class YaspResolveError(
       yaspPlan: YaspPlan,
       throwable: Throwable
   ) extends YaspServiceError(
-        message = s"The provided YaspPlan is not a DAG",
+        message = s"Unable to resolve the provided YaspPlan",
         cause = throwable
       )
 }

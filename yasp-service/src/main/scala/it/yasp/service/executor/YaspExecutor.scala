@@ -7,6 +7,7 @@ import it.yasp.service.loader.YaspLoader
 import it.yasp.service.model.YaspAction._
 import it.yasp.service.model.YaspPlan
 import it.yasp.service.processor.YaspProcessor
+import it.yasp.service.resolver.YaspResolver
 import it.yasp.service.writer.YaspWriter
 
 /** YaspExecutor
@@ -23,11 +24,12 @@ trait YaspExecutor {
 object YaspExecutor {
 
   def apply(loader: YaspLoader, processor: YaspProcessor, writer: YaspWriter): YaspExecutor =
-    new DefaultYaspExecutor(loader, processor, writer)
+    new DefaultYaspExecutor(new YaspResolver(), loader, processor, writer)
 
   /** A YaspExecutor default implementation
     */
   class DefaultYaspExecutor(
+      resolver: YaspResolver,
       loader: YaspLoader,
       processor: YaspProcessor,
       writer: YaspWriter
