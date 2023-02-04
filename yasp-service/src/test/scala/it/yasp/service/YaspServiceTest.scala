@@ -100,8 +100,8 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
       )
     )
 
-    val actualDf   = spark.read.parquet(s"$workspace/parquet-out/")
-    val expectedDf = spark.createDataset(
+    val actual   = spark.read.parquet(s"$workspace/parquet-out/")
+    val expected = spark.createDataset(
       Seq(
         Row("1", "name-1", "surname-1", "city-1", "address-1"),
         Row("2", "name-2", "surname-2", "city-2", "address-2")
@@ -120,7 +120,7 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
       )
     )
 
-    assertDatasetEquals(actualDf, expectedDf)
+    assertDatasetEquals(actual, expected)
   }
 
 }
