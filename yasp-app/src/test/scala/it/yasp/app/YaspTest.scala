@@ -126,6 +126,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |        format: json
            |        options:
            |          path: $workspace/input/source/addresses.jsonl
+           |      depends_on: users
            |  processes:
            |    - id: user_with_address
            |      dataset: user_with_address
@@ -133,6 +134,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |        query: >-
            |          SELECT u.name,u.surname,a.address
            |          FROM users u JOIN addresses a ON u.id = a.user_id
+           |      depends_on: addresses
            |  sinks:
            |    - id: user_with_address
            |      dataset: user_with_address
@@ -140,6 +142,7 @@ class YaspTest extends AnyFunSuite with BeforeAndAfterAll {
            |        format: json
            |        options:
            |          path: $workspace/output/
+           |      depends_on: user_with_address
            |""".stripMargin
       )
     )

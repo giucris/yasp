@@ -21,7 +21,8 @@ object YaspAction {
       dataset: String,
       source: Source,
       partitions: Option[Int],
-      cache: Option[CacheLayer]
+      cache: Option[CacheLayer],
+      dependsOn : Option[String] = None
   ) extends YaspAction
 
   /** A YaspProcess model
@@ -39,7 +40,8 @@ object YaspAction {
       dataset: String,
       process: Process,
       partitions: Option[Int],
-      cache: Option[CacheLayer]
+      cache: Option[CacheLayer],
+      dependsOn : Option[String]=None,
   ) extends YaspAction
 
   /** YaspSink model
@@ -51,7 +53,8 @@ object YaspAction {
   final case class YaspSink(
       id: String,
       dataset: String,
-      dest: Dest
+      dest: Dest,
+      dependsOn : Option[String]=None
   ) extends YaspAction
 
   implicit class YaspActionOps(yaspAction: YaspAction) {
