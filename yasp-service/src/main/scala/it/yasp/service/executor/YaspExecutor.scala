@@ -38,13 +38,16 @@ object YaspExecutor {
 
     override def exec(yaspPlan: YaspPlan): Either[YaspServiceError, Unit] = {
       logger.info(s"Execute Yasp plan: $yaspPlan")
-      yaspPlan.actions.toList
-        .traverse {
-          case x: YaspSource  => loader.load(x)
-          case x: YaspProcess => processor.process(x)
-          case x: YaspSink    => writer.write(x)
-        }
-        .map(_ => Right(()))
+      resolver.resolve(yaspPlan).flatMap { plan =>
+        plan.actions.toList
+          .traverse {
+            case x: YaspSource  => loader.load(x)
+            case x: YaspProcess => processor.process(x)
+            case x: YaspSink    => writer.write(x)
+          }
+          .map(_ => Right(()))
+      }
+
     }
 
   }

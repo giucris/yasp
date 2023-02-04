@@ -1,6 +1,7 @@
 package it.yasp.service.resolver
 
 import cats.implicits._
+import com.typesafe.scalalogging.StrictLogging
 import it.yasp.service.err.YaspServiceError.YaspResolveError
 import it.yasp.service.model.{YaspAction, YaspPlan}
 
@@ -12,7 +13,7 @@ import scala.annotation.tailrec
   *
   * Currently it only resolve the dependency between action provided by the User.
   */
-class YaspResolver {
+class YaspResolver extends StrictLogging {
 
   /** Resolve a [[YaspPlan]]
     * @param yaspPlan:
@@ -20,8 +21,10 @@ class YaspResolver {
     * @return
     *   A new [[YaspPlan]] with all actions in provided order
     */
-  def resolve(yaspPlan: YaspPlan): Either[Throwable, YaspPlan] =
+  def resolve(yaspPlan: YaspPlan): Either[YaspResolveError, YaspPlan] = {
+    logger.info(s"Resolving YaspPlan dependency")
     topologicalSort(yaspPlan.actions).map(YaspPlan).leftMap(t => YaspResolveError(yaspPlan, t))
+  }
 
   @tailrec
   private def topologicalSort(

@@ -47,10 +47,9 @@ object YaspService {
     override def run(yaspExecution: YaspExecution): Either[YaspServiceError, Unit] = {
       logger.info(s"Execute YaspService with YaspExecution: $yaspExecution")
       for {
-        sortedPlan <- yaspExecution.plan.sort
-        session    <- sessionFactory.create(yaspExecution.session).leftMap(YaspInitError)
+        session <- sessionFactory.create(yaspExecution.session).leftMap(YaspInitError)
         executor = yaspExecutorFactory.create(session)
-        _ <- executor.exec(sortedPlan)
+        _ <- executor.exec(yaspExecution.plan)
       } yield ()
     }
 
