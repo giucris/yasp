@@ -48,7 +48,7 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
       )
     )
 
-    val actual = YaspService().run(
+    YaspService().run(
       YaspExecution(
         session = Session(Local, "my-app-name", None, None, None, None),
         plan = YaspPlan(
@@ -99,8 +99,6 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
         )
       )
     )
-
-    print(actual)
 
     val actualDf   = spark.read.parquet(s"$workspace/parquet-out/")
     val expectedDf = spark.createDataset(
