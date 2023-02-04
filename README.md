@@ -82,13 +82,13 @@ session:
 plan:   
   # List of all actions
   actions:
-    - id: csv_load          # Id of the source action.
-      dataset: my_csv       # Name of the dataset
-      source:               # Source field, will contains all the configuration to read the data
-        format: csv         # Standard Spark format
-        options:            # Standard Spark format options
+    - id: csv_load              # Id of the source action.
+      dataset: my_csv           # Name of the dataset
+      source:                   # Source field, will contains all the configuration to read the data
+        format: csv             # Standard Spark format
+        options:                # Standard Spark format options
           header: 'true'
-          path: path/to/input/csv/
+          path: path/to/input/csv/ 
     - id: filter_csv             # Id of the process action.
       dataset: my_csv_filtered   # Name of the dataset
       process:                   # Process field, will contains all the Process configuration to transform the data
@@ -96,6 +96,8 @@ plan:
           SELECT * 
           FROM my_csv 
           WHERE id=1
+      dependsOn:                # Depends on to enforce dependency
+        - csv_load
     - id: sink_data             # Id of the sink action.
       dataset: my_csv_filtered  # Name of the dataset to sink. 
       dest:                     # Destination field, contains all the Dest configuration to write the data
@@ -103,6 +105,8 @@ plan:
         options:                # Standard Spark format options
           header: 'true'
           path: path/to/out/csv/
+      dependsOn:
+        - filter_csv            # Depends on to enforce dependency
 ```
 
 Take a look to the detailed user documentation for [Session](/docs/Session.md), [YaspExecution](/docs/YaspExecution.md)
