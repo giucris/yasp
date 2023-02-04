@@ -87,7 +87,7 @@ class YaspServiceTest extends AnyFunSuite with SparkTestSuite with MockFactory w
               partitions = None,
               cache = None,
               process = Sql("SELECT d1.*,d2.city,d2.address FROM data_1 d1 JOIN data_2 d2 ON d1.id=d2.id"),
-              dependsOn = Some(Seq("id1","2"))
+              dependsOn = Some(Seq("id1", "2"))
             ),
             YaspSink(
               id = "4",
