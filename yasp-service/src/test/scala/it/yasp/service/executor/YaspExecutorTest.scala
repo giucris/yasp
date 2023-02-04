@@ -8,6 +8,7 @@ import it.yasp.service.loader.YaspLoader
 import it.yasp.service.model.YaspAction.{YaspProcess, YaspSink, YaspSource}
 import it.yasp.service.model.YaspPlan
 import it.yasp.service.processor.YaspProcessor
+import it.yasp.service.resolver.YaspResolver
 import it.yasp.service.writer.YaspWriter
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
@@ -18,7 +19,7 @@ class YaspExecutorTest extends AnyFunSuite with MockFactory {
   val processor: YaspProcessor = mock[YaspProcessor]
   val writer: YaspWriter       = mock[YaspWriter]
 
-  val yaspExecutor = new DefaultYaspExecutor(loader, processor, writer)
+  val yaspExecutor = new DefaultYaspExecutor(new YaspResolver(), loader, processor, writer)
 
   test("exec with 1 source and 1 sink") {
     inSequence(
